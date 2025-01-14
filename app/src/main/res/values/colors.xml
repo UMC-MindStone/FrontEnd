@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Primary Colors -->
+    <color name="primary_200">#FCF8F9</color>
+    <color name="primary_300">#F8E6E9</color>
+    <color name="primary_400">#F3CBD1</color>
+    <color name="primary_500">#D998A4</color>
+    <color name="primary_600">#B86774</color>
+
+    <!-- Point Colors -->
+    <color name="point_yellow">#FFF4AD</color>
+    <color name="point_blue">#B0EBFF</color>
+    <color name="point_green">#C7FFBE</color>
+    <color name="point_purple">#F0C6FF</color>
+    <color name="point_red">#FFB4B2</color>
+
+    <!-- Achromatic Colors -->
+    <color name="black">#212121</color>
+    <color name="dark_gray">#494949</color>
+    <color name="medium_gray">#B0B0B0</color>
+    <color name="light_gray">#CECECE</color>
+    <color name="lighter_gray">#DFDFDF</color>
+    <color name="lightest_gray">#F6F6F6</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- Button State Colors -->
+    <color name="button_default">#F3CBD1</color>
+    <color name="button_pressed">#D998A4</color>
+    <color name="button_disabled">#CECECE</color>
+
+    <!-- Additional Colors -->
+    <color name="background">#FCF8F9</color>
+    <color name="error">#FF0000</color> <!-- Error 상태용 색상 -->
+    <color name="gradient_start">#F3CBD1</color> <!-- 그라데이션 시작 -->
+    <color name="gradient_end">#D998A4</color> <!-- 그라데이션 끝 -->
 </resources>
