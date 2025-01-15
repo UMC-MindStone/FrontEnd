@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SignupCodeActivity">
+    <ImageButton
+        android:layout_width="12dp"
+        android:layout_height="22dp"
+        android:src="@drawable/btn_back"
+        android:layout_marginStart="23dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:textSize="20sp"
+        android:text="회원가입"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <TextView
+        android:id="@+id/signup_checkCode_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="95dp"
+        android:text="인증번호를 확인해주세요"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/signup_codeMent_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:textSize="13sp"
+        android:text="dddd@gmail.com으로 보내드린 인증번호를 입력하세요"
+        app:layout_constraintStart_toStartOf="@id/signup_checkCode_tv"
+        app:layout_constraintTop_toBottomOf="@id/signup_checkCode_tv"/>
+    <LinearLayout
+        android:id="@+id/signup_code_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:layout_marginHorizontal="35dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/signup_codeMent_tv">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signup_code1_til"
+            android:layout_marginStart="0dp"
+            app:boxStrokeColor="@color/black"
+            app:helperText=""
+            app:helperTextTextColor="@color/error"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@drawable/ic_emailerror"
+            app:layout_constraintTop_toBottomOf="@id/signup_codeMent_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/SmallTextInputLayoutStyle">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signup_code2_til"
+            app:boxStrokeColor="@color/black"
+            app:helperText=""
+            app:helperTextTextColor="@color/error"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@drawable/ic_emailerror"
+
+            app:layout_constraintStart_toEndOf="@id/signup_code1_til"
+            style="@style/SmallTextInputLayoutStyle">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signup_code3_til"
+            app:boxStrokeColor="@color/black"
+            app:helperText=""
+            app:helperTextTextColor="@color/error"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@drawable/ic_emailerror"
+            app:layout_constraintTop_toBottomOf="@id/signup_codeMent_tv"
+            app:layout_constraintStart_toEndOf="@id/signup_code2_til"
+            style="@style/SmallTextInputLayoutStyle">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/signup_code4_til"
+            android:layout_marginEnd="0dp"
+            app:boxStrokeColor="@color/black"
+            app:helperText=""
+            app:helperTextTextColor="@color/error"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@drawable/ic_emailerror"
+            app:layout_constraintTop_toBottomOf="@id/signup_codeMent_tv"
+            app:layout_constraintStart_toEndOf="@id/signup_code3_til"
+            style="@style/SmallTextInputLayoutStyle">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/signup_resend_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
+        android:text="인증번호 재전송"
+        android:textSize="16sp"
+        android:textColor="@color/gray"
+        android:textAlignment="center"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="33dp"
+        android:background="@drawable/btn_transparent_background"
+        app:layout_constraintTop_toBottomOf="@id/signup_code_ll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/signup_emailNext_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_pink_background"
+        android:text="다음"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:paddingVertical="15dp"
+        android:layout_marginBottom="27dp"
+        android:layout_marginHorizontal="34dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

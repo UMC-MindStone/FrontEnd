@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="34dp"
-        android:layout_marginTop="94dp"
+        android:layout_marginTop="95dp"
         android:text="이메일 주소를 입력하세요"
         android:textColor="@color/black"
         android:textStyle="bold"
@@ -43,26 +43,15 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_email_til"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="136dp"
-        android:layout_marginStart="34dp"
-        android:layout_marginEnd="34dp"
-        android:textSize="16sp"
+        style="@style/TextInputLayoutStyle"
         android:hint="이메일*"
-        app:boxBackgroundMode="outline"
         app:boxStrokeColor="@color/black"
-        app:boxStrokeWidth="2dp"
         app:helperText=""
         app:helperTextTextColor="@color/error"
         app:errorEnabled="true"
         app:errorIconDrawable="@drawable/ic_emailerror"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:boxCornerRadiusBottomEnd="7dp"
-        app:boxCornerRadiusBottomStart="7dp"
-        app:boxCornerRadiusTopStart="7dp"
-        app:boxCornerRadiusTopEnd="7dp">
+        app:layout_constraintStart_toStartOf="parent">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signup_emailText_tie"
             android:layout_width="match_parent"
@@ -84,5 +73,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
