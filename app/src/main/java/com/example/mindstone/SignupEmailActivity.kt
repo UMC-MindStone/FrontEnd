@@ -28,17 +28,20 @@ class SignupEmailActivity : AppCompatActivity() {
 
         if(input.isEmpty()){
             binding.signupEmailTil.apply{
+                helperText = "example@example.com"
                 errorIconDrawable = ContextCompat.getDrawable(this@SignupEmailActivity,R.drawable.ic_emailerror)
                 boxStrokeColor = getColor(R.color.error)
             }
         } else if(!input.matches(emailPattern.toRegex())){
             binding.signupEmailTil.apply{
+                helperText = "example@example.com"
                 errorIconDrawable = ContextCompat.getDrawable(this@SignupEmailActivity,R.drawable.ic_emailerror)
                 boxStrokeColor = getColor(R.color.error)
 
             }
         } else {
             binding.signupEmailTil.apply{
+                helperText = null
                 errorIconDrawable = null
                 boxStrokeColor = getColor(R.color.black)
             }
