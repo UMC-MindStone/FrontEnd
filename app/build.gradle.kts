@@ -6,7 +6,9 @@ plugins {
 android {
     namespace = "com.example.mindstone"
     compileSdk = 35
-
+    viewBinding{
+        enable = true
+    }
     defaultConfig {
         applicationId = "com.example.mindstone"
         minSdk = 26

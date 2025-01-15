@@ -30,7 +30,7 @@
 
     <!-- Additional Colors -->
     <color name="background">#FCF8F9</color>
-    <color name="error">#FF0000</color> <!-- Error 상태용 색상 -->
-    <color name="gradient_start">#F3CBD1</color> <!-- 그라데이션 시작 -->
+    <color name="error">#C20D00</color>
+    <color name="red">#FF0000</color><!-- Error 상태용 색상 -->
     <color name="gradient_end">#D998A4</color> <!-- 그라데이션 끝 -->
 </resources>
