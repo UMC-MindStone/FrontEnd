@@ -72,7 +72,10 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLength="1"/>
+                android:gravity="center"
+                android:maxLength="1"
+                android:ellipsize="none"
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -81,13 +84,12 @@
             app:helperText=""
             app:helperTextTextColor="@color/error"
             app:errorEnabled="true"
-            app:errorIconDrawable="@drawable/ic_emailerror"
-
             app:layout_constraintStart_toEndOf="@id/signup_code1_til"
             style="@style/SmallTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:maxLength="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -97,13 +99,13 @@
             app:helperText=""
             app:helperTextTextColor="@color/error"
             app:errorEnabled="true"
-            app:errorIconDrawable="@drawable/ic_emailerror"
             app:layout_constraintTop_toBottomOf="@id/signup_codeMent_tv"
             app:layout_constraintStart_toEndOf="@id/signup_code2_til"
             style="@style/SmallTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:maxLength="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,16 +116,24 @@
             app:helperText=""
             app:helperTextTextColor="@color/error"
             app:errorEnabled="true"
-            app:errorIconDrawable="@drawable/ic_emailerror"
             app:layout_constraintTop_toBottomOf="@id/signup_codeMent_tv"
             app:layout_constraintStart_toEndOf="@id/signup_code3_til"
             style="@style/SmallTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:maxLength="1"/>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:text=""
+        android:textColor="@color/error"
+        app:layout_constraintStart_toStartOf="@id/signup_code_ll"
+        app:layout_constraintTop_toBottomOf="@id/signup_code_ll"/>
 
     <TextView
         android:id="@+id/signup_resend_tv"
@@ -137,18 +147,19 @@
         android:textAlignment="center"
         android:textColor="@color/gray"
         android:textSize="16sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/signup_code_ll" />
 
     <TextView
-        android:id="@+id/signup_emailNext_btn"
+        android:id="@+id/signup_codeNext_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_pink_background"
+        android:background="@drawable/btn_disabled"
         android:text="다음"
         android:textSize="16sp"
-        android:textColor="@color/black"
+        android:textColor="@color/disabled"
         android:textAlignment="center"
         android:paddingVertical="15dp"
         android:layout_marginBottom="27dp"

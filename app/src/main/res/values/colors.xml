@@ -19,7 +19,7 @@
     <color name="dark_gray">#494949</color>
     <color name="medium_gray">#B0B0B0</color>
     <color name="light_gray">#CECECE</color>
-    <color name="lighter_gray">#DFDFDF</color>
+    <color name="disabled">#AFAFAF</color>
     <color name="lightest_gray">#F6F6F6</color>
     <color name="white">#FFFFFF</color>
 
