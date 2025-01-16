@@ -32,12 +32,14 @@ class SignupEmailActivity : AppCompatActivity() {
 
         if(input.isEmpty()){
             binding.signupEmailTil.apply{
+                hintTextColor= getColorStateList(R.color.black)
                 helperText = "example@example.com"
                 errorIconDrawable = ContextCompat.getDrawable(this@SignupEmailActivity,R.drawable.ic_emailerror)
                 boxStrokeColor = getColor(R.color.error)
             }
         } else if(!input.matches(emailPattern.toRegex())){
             binding.signupEmailTil.apply{
+                hintTextColor= getColorStateList(R.color.black)
                 helperText = "example@example.com"
                 errorIconDrawable = ContextCompat.getDrawable(this@SignupEmailActivity,R.drawable.ic_emailerror)
                 boxStrokeColor = getColor(R.color.error)

@@ -44,6 +44,7 @@
         android:id="@+id/signup_email_til"
         style="@style/TextInputLayoutStyle"
         android:hint="이메일*"
+        android:textColorHint="@color/black"
         app:boxStrokeColor="@color/black"
         app:helperText=""
         app:helperTextTextColor="@color/error"
