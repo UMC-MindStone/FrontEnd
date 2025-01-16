@@ -15,7 +15,13 @@ class SignupCodeActivity : AppCompatActivity() {
         binding = ActivitySignupCodeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val email = intent.getStringExtra("email")
+        binding.signupCodeMentTv.text = "${email}으로 보내드린 인증번호를 입력하세요"
+    }
 
+    private fun initClicker(){
+        binding.signupResendTv.setOnClickListener{
 
+        }
     }
 }

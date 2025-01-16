@@ -1,5 +1,6 @@
 package com.example.mindstone
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,9 @@ class SignupEmailActivity : AppCompatActivity() {
 
         binding= ActivitySignupEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //초기 설정
+        initClicker()
 
         binding.signupEmailTextTie.addTextChangedListener{ text ->
             validateEmail(text.toString())
@@ -46,5 +50,14 @@ class SignupEmailActivity : AppCompatActivity() {
                 boxStrokeColor = getColor(R.color.black)
             }
         }
+    }
+
+    private fun initClicker(){
+        binding.signupEmailNextBtn.setOnClickListener{
+            val intent = Intent(this, SignupCodeActivity::class.java)
+            intent.putExtra("email", binding.signupEmailTextTie.text.toString())
+            startActivity(intent)
+        }
+
     }
 }

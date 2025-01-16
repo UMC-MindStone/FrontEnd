@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
         android:textSize="13sp"
-        android:text="dddd@gmail.com으로 보내드린 인증번호를 입력하세요"
+        android:text=""
         app:layout_constraintStart_toStartOf="@id/signup_checkCode_tv"
         app:layout_constraintTop_toBottomOf="@id/signup_checkCode_tv"/>
     <LinearLayout
@@ -71,7 +71,8 @@
             style="@style/SmallTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:maxLength="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -86,7 +87,8 @@
             style="@style/SmallTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:maxLength="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -101,7 +103,8 @@
             style="@style/SmallTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:maxLength="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -117,24 +120,26 @@
             style="@style/SmallTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:maxLength="1"/>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
+
     <TextView
         android:id="@+id/signup_resend_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="46dp"
-        android:text="인증번호 재전송"
-        android:textSize="16sp"
-        android:textColor="@color/gray"
-        android:textAlignment="center"
-        android:paddingVertical="10dp"
-        android:paddingHorizontal="33dp"
+        android:layout_marginTop="44dp"
         android:background="@drawable/btn_transparent_background"
-        app:layout_constraintTop_toBottomOf="@id/signup_code_ll"
+        android:paddingHorizontal="33dp"
+        android:paddingVertical="10dp"
+        android:text="인증번호 재전송"
+        android:textAlignment="center"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/signup_code_ll" />
 
     <TextView
         android:id="@+id/signup_emailNext_btn"

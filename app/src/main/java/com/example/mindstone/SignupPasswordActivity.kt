@@ -16,6 +16,10 @@ class SignupPasswordActivity : AppCompatActivity() {
         binding = ActivitySignupPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //초기 설정
+        initClicker()
+
+
 
     }
     private fun validatePassword(input: String){
@@ -47,6 +51,14 @@ class SignupPasswordActivity : AppCompatActivity() {
     private fun containsCharacter(input:String):Boolean {
         val characterRegex = ".*[a-zA-Z].*".toRegex()
         return characterRegex.matches(input)
+    }
+
+    private fun initClicker(){
+        binding.signupPasswordNextBtn.setOnClickListener{
+            val input = binding.signupPasswordTextTie.text.toString()
+            validatePassword(input)
+        }
+
     }
 
 }

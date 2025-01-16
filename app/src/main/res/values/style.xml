@@ -23,9 +23,10 @@
         <item name="android:layout_height">52dp</item>
         <item name="android:layout_marginStart">23dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:layout_weight">1</item>
-        <!-- 박스 스타일 -->
-        <item name="boxBackgroundMode">outline</item>
+        <item name="android:layout_weight">1</item>>1
+
+        <!-- 박스 스타일 -->>1
+        <item name="boxBackgroundMode">outline</item>>1
         <item name="boxStrokeWidth">2dp</item>
         <item name="boxCornerRadiusTopStart">7dp</item>
         <item name="boxCornerRadiusTopEnd">7dp</item>
