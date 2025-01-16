@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SignupEmailActivity">
-    <ImageButton
+    <ImageView
         android:layout_width="12dp"
         android:layout_height="22dp"
         android:src="@drawable/btn_back"
@@ -26,7 +26,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 
     <TextView
         android:layout_width="match_parent"
