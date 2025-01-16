@@ -42,6 +42,10 @@ class PrivacyFragment : Fragment() {
                 "  닉네임, 프로필 이미지, 일기 본문 이미지, 메시지 텍스트, 일기 본문 텍스\n"
 
         binding.privacyClauseTv.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+        binding.privacyCloseIv.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStackImmediate()
+        }
         return binding.root
     }
 }

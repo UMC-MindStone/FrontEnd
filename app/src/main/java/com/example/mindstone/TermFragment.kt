@@ -34,6 +34,10 @@ class TermFragment : Fragment() {
                 "\n"
 
         binding.termClauseTv.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+        binding.termCloseIv.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStackImmediate()
+        }
         return binding.root
     }
 }
