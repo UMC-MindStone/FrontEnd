@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ServiceActivity">
+
+    <ImageView
+        android:id="@+id/service_back_iv"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <ImageView
+        android:id="@+id/service_register_iv"
+        android:layout_width="69dp"
+        android:layout_height="28dp"
+        android:src="@drawable/ic_register"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/service_agree_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="서비스 이용 동의"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/service_register_iv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="51dp"/>
+
+    <LinearLayout
+    android:id="@+id/service_allagree_ll"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toBottomOf="@id/service_agree_tv"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginTop="36dp">
+
+        <ImageView
+            android:id="@+id/service_uncheck1_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_check"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="38dp"/>
+
+        <TextView
+            android:id="@+id/service_allagree_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="약관 전체 동의"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="18dp"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/service_line_iv"
+        android:layout_width="300dp"
+        android:layout_height="1dp"
+        android:src="@drawable/ic_line"
+        app:layout_constraintTop_toBottomOf="@id/service_allagree_ll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"/>
+
+    <LinearLayout
+        android:id="@+id/service_fourteen_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/service_allagree_ll"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="43dp">
+
+        <ImageView
+            android:id="@+id/service_uncheck2_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_check"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="38dp"/>
+
+        <TextView
+            android:id="@+id/service_fourteen_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(필수) 만 14세 이상입니다."
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/service_term_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/service_fourteen_ll"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="36dp">
+
+        <ImageView
+            android:id="@+id/service_uncheck3_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_check"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="38dp"/>
+
+        <TextView
+            android:id="@+id/service_term_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(필수) 서비스 이용 약관"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_go"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="40dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/service_collection_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/service_term_ll"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="36dp">
+        <ImageView
+            android:id="@+id/service_uncheck4_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_check"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="38dp"/>
+
+        <TextView
+            android:id="@+id/service_collection_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(필수) 개인정보 수집 및 이용 동의"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_go"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="40dp"/>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_nextbutton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="27dp"/>
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
