@@ -24,6 +24,7 @@
     <color name="white">#FFFFFF</color>
 
     <color name="gray">#6C6C6C</color>
+
     <!-- Button State Colors -->
     <color name="button_default">#F3CBD1</color>
     <color name="button_pressed">#D998A4</color>
