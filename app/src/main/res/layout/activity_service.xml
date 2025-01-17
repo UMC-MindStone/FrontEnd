@@ -51,9 +51,18 @@
             android:id="@+id/service_uncheck1_iv"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/bnt_checked_normal"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="38dp"/>
+
+        <ImageView
+            android:id="@+id/service_checked1_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/btn_checked_selected"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="38dp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/service_allagree_tv"
@@ -87,9 +96,18 @@
             android:id="@+id/service_uncheck2_iv"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/bnt_checked_normal"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="38dp"/>
+
+        <ImageView
+            android:id="@+id/service_checked2_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/btn_checked_selected"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="38dp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/service_fourteen_tv"
@@ -113,9 +131,18 @@
             android:id="@+id/service_uncheck3_iv"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/bnt_checked_normal"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="38dp"/>
+
+        <ImageView
+            android:id="@+id/service_checked3_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/btn_checked_selected"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="38dp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/service_term_tv"
@@ -151,9 +178,18 @@
             android:id="@+id/service_uncheck4_iv"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_check"
+            android:src="@drawable/bnt_checked_normal"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="38dp"/>
+
+        <ImageView
+            android:id="@+id/service_checked4_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/btn_checked_selected"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="38dp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/service_collection_tv"
