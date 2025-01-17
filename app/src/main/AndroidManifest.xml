@@ -28,6 +28,15 @@
             android:name=".auth.LoginActivity"
             android:exported="false" />
         <activity
+            android:name=".SignupPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignupEmailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignupCodeActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
