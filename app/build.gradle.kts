@@ -7,6 +7,12 @@ android {
     namespace = "com.example.mindstone"
     compileSdk = 35
 
+    buildFeatures {
+        viewBinding {
+            enable = true
+        }
+    }
+
     defaultConfig {
         applicationId = "com.example.mindstone"
         minSdk = 26
