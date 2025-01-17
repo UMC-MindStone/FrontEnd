@@ -38,6 +38,12 @@ class TermFragment : Fragment() {
         binding.termCloseIv.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStackImmediate()
         }
+
+        binding.termAgreeIv.setOnClickListener {
+            (activity as? ServiceActivity)?.setServiceUseOn()
+            requireActivity().supportFragmentManager.popBackStackImmediate()
+        }
+
         return binding.root
     }
 }

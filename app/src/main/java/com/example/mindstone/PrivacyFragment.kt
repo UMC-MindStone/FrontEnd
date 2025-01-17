@@ -46,6 +46,12 @@ class PrivacyFragment : Fragment() {
         binding.privacyCloseIv.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStackImmediate()
         }
+
+        binding.privacyAgreeIv.setOnClickListener {
+            (activity as? ServiceActivity)?.setPersonalInformationUseOn()
+            requireActivity().supportFragmentManager.popBackStackImmediate()
+        }
+
         return binding.root
     }
 }
