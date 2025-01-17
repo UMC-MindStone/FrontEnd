@@ -1,5 +1,6 @@
 package com.example.mindstone
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -150,6 +151,16 @@ class ServiceActivity : AppCompatActivity() {
             binding.serviceChecked1Iv.visibility = View.GONE
         }
     }
+
+    binding.serviceNextIv.setOnClickListener {
+        if(binding.serviceChecked1Iv.visibility == View.VISIBLE){
+            finish()
+
+            val intent = Intent(this, CompleteActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
 }
 
     private fun openFragment(fragment: Fragment){
