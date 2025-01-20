@@ -20,7 +20,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version = "2.7.1" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version = "2.7.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
