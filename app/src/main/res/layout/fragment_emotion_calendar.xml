@@ -5,7 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EmotionCalendarFragment">
+    tools:context=".EmotionCalendarFragment"
+    android:background="@color/background">
     
     <TextView
         android:id="@+id/emotion_calendar_date_tv"
@@ -40,6 +41,7 @@
         android:layout_marginTop="46dp"/>
 
     <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/emotion_calendar_stat_vp"
         android:layout_width="320dp"
         android:layout_height="140dp"
         app:layout_constraintEnd_toEndOf="parent"
