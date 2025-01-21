@@ -33,5 +33,10 @@
         <item name="boxCornerRadiusBottomStart">7dp</item>
         <item name="boxCornerRadiusBottomEnd">7dp</item>
     </style>
+    <style name="numberPickerCustomSize">
+        <item name="android:textSize">50sp</item>
+    </style>
+
+
 </resources>
 
