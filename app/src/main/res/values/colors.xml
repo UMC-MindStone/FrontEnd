@@ -35,4 +35,13 @@
     <color name="error">#C20D00</color>
     <color name="red">#FF0000</color><!-- Error 상태용 색상 -->
     <color name="gradient_end">#D998A4</color> <!-- 그라데이션 끝 -->
+
+    <!-- 감정별 색상 추가 -->
+    <color name="happyColor">#FFF08F</color>
+    <color name="excitedColor">#FF93AC</color>
+    <color name="joyColor">#C3FFB7</color>
+    <color name="calmColor">#D9D9D9</color>
+    <color name="angryColor">#FF8E84</color>
+    <color name="depressedColor">#EEBFFF</color>
+    <color name="sadColor">#AEE7FF</color>
 </resources>

@@ -31,67 +31,122 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/login_email_et"
-        android:layout_width="292dp"
-        android:layout_height="52dp"
+
+
+    <!-- 이메일 입력 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/loginEmailTil"
         android:hint="이메일"
-        android:background="@drawable/background_radius_gray"
-        android:padding="16dp"
-        android:fontFamily="@font/pretendard_regular"
-        android:textSize="16sp"
-        android:textColor="#494949"
-        android:layout_marginTop="301dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Login_TextInputLayoutStyle"
+        android:textColorHint="@color/black"
+        app:boxStrokeColor="#AFAFAF"
+        app:helperText=""
+        app:helperTextTextColor="@color/error"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@drawable/ic_emailerror"
+        app:layout_constraintTop_toBottomOf="@id/login_logo_iv"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <EditText
-        android:id="@+id/login_password_et"
-        android:layout_width="292dp"
-        android:layout_height="52dp"
-        android:hint="비밀번호"
-        android:background="@drawable/background_radius_gray"
-        android:padding="16dp"
-        android:fontFamily="@font/pretendard_regular"
-        android:textSize="16sp"
-        android:textColor="#494949"
-        android:layout_marginTop="374dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_marginTop="94dp">
 
-    <ImageView
-        android:id="@+id/login_check_iv"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_check"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/login_login_iv"
-        app:layout_constraintBottom_toTopOf="@+id/login_login_iv" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/login_email_et"
+            android:layout_width="292dp"
+            android:layout_height="52dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- 이메일 오류 메시지 -->
     <TextView
-        android:id="@+id/login_autoLogin_tv"
-        android:text="자동 로그인"
-        android:textSize="13dp"
+        android:id="@+id/loginEmailErrorTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/pretendard_regular"
-        android:layout_width="66dp"
-        android:layout_height="20dp"
-        android:gravity="center"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/login_login_iv"
-        app:layout_constraintLeft_toRightOf="@id/login_check_iv"/>
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/loginEmailTil"
+        app:layout_constraintTop_toBottomOf="@id/loginEmailTil"/>
+
+
+    <!-- 비밀번호 입력 -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/loginPasswordTil"
+        style="@style/Login_TextInputLayoutStyle"
+        android:hint="비밀번호"
+        android:textColorHint="@color/black"
+        app:boxStrokeColor="#AFAFAF"
+        app:helperText=""
+        app:helperTextTextColor="@color/error"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@drawable/ic_emailerror"
+        app:layout_constraintTop_toBottomOf="@+id/loginEmailTil"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/login_password_et"
+            android:layout_width="292dp"
+            android:layout_height="52dp"
+            android:inputType="textPassword"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- 비밀번호 오류 메시지 -->
+    <TextView
+        android:id="@+id/loginPasswordErrorTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_regular"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/loginPasswordTil"
+        app:layout_constraintTop_toBottomOf="@id/loginPasswordTil"/>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/login_login_iv"
+        app:layout_constraintBottom_toTopOf="@+id/login_login_iv">
+
+        <ImageView
+            android:id="@+id/login_checked_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/btn_checked_normal"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/login_checked2_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/btn_checked_selected"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/login_autoLogin_tv"
+            android:text="자동 로그인"
+            android:textSize="13dp"
+            android:fontFamily="@font/pretendard_regular"
+            android:layout_width="66dp"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toRightOf="@id/login_checked_iv"/>
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/login_login_iv"
         android:src="@drawable/btn_login"
         android:layout_width="292dp"
         android:layout_height="52dp"
-        android:layout_marginTop="489dp"
+        android:layout_marginTop="68dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/loginPasswordTil" />
 
 
     <!-- Fragment가 표시될 컨테이너 추가 -->
