@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".CompleteActivity">
+    
+    <ImageView
+        android:id="@+id/complete_complete_iv"
+        android:layout_width="195dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_complete"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="119dp"/>
+    
+    <ImageView
+        android:id="@+id/complete_checkmark_iv"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_checkmark"
+        app:layout_constraintTop_toBottomOf="@id/complete_complete_iv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="91dp"/>
+    
+    <ImageView
+        android:id="@+id/complete_login_iv"
+        android:layout_width="270dp"
+        android:layout_height="50dp"
+        android:src="@drawable/btn_login_normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="45dp"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
