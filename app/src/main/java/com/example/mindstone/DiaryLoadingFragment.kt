@@ -13,7 +13,7 @@ class DiaryLoadingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initClicker()
+
     }
 
     override fun onCreateView(
@@ -29,8 +29,8 @@ class DiaryLoadingFragment : Fragment() {
         _binding = null
     }
 
-    private fun initClicker(){
-
+    private fun changeScreen(){
+        //서버에서 자동 완성된 일기가 넘어오는 순간 홈-자동일기완성 화면으로 넘어가는 것 구현
     }
 
 }
