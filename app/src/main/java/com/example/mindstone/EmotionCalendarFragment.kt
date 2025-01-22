@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
 import androidx.fragment.app.Fragment
 import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
 import java.util.Calendar
@@ -42,7 +41,7 @@ class EmotionCalendarFragment : Fragment() {
     // 캘린더 데이터를 생성하고 GridView에 어댑터를 설정하는 메서드
     private fun setupCalendar() {
         val year = 2025 // 표시할 년도
-        val month = 2   // 표시할 월 (1월)
+        val month = 1   // 표시할 월 (1월)
 
         // 캘린더 데이터 생성
         val calendarData = generateCalendarData(year, month)
