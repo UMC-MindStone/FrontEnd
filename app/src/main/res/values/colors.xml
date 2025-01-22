@@ -17,7 +17,7 @@
     <!-- Achromatic Colors -->
     <color name="black">#212121</color>
     <color name="dark_gray">#494949</color>
-    <color name="medium_gray">#B0B0B0</color>
+    <color name="medium_gray">#AFAFAF</color>
     <color name="light_gray">#CECECE</color>
     <color name="disabled">#AFAFAF</color>
     <color name="lightest_gray">#F6F6F6</color>
