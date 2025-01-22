@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".EmotionCalendarFragment"
     android:background="@color/background">
-    
+
+    <!-- 상단 날짜 텍스트 -->
     <TextView
         android:id="@+id/emotion_calendar_date_tv"
         android:layout_width="wrap_content"
@@ -20,7 +21,8 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="38dp"
         android:layout_marginStart="19dp"/>
-    
+
+    <!-- 하단 화살표 아이콘 -->
     <ImageView
         android:id="@+id/emotion_calendar_down_iv"
         android:layout_width="18dp"
@@ -31,15 +33,26 @@
         android:layout_marginTop="41dp"
         android:layout_marginStart="7dp"/>
 
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/emotion_calendar_calendar_mcv"
-        android:layout_width="312dp"
-        android:layout_height="358dp"
+    <GridView
+        android:id="@+id/emotion_calendar_calendar_gv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/emotion_calendar_date_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="46dp"/>
+        app:layout_constraintBottom_toTopOf="@id/emotion_calendar_stat_vp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="46dp"
+        android:layout_marginBottom="15dp"
+        android:numColumns="7"
+        android:horizontalSpacing="8dp"
+        android:verticalSpacing="8dp"
+        android:padding="8dp"
+        android:gravity="center"
+        android:stretchMode="columnWidth" />
 
+
+    <!-- ViewPager2 통계 -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/emotion_calendar_stat_vp"
         android:layout_width="320dp"
@@ -49,6 +62,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="88dp"/>
 
+    <!-- CircleIndicator3 -->
     <me.relex.circleindicator.CircleIndicator3
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,6 +71,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="61dp"/>
 
+    <!-- 오른쪽 화살표 아이콘 -->
     <ImageView
         android:id="@+id/emotion_calendar_right_iv"
         android:layout_width="24dp"
@@ -67,6 +82,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginEnd="24dp"/>
 
+    <!-- 왼쪽 화살표 아이콘 -->
     <ImageView
         android:id="@+id/emotion_calendar_left_iv"
         android:layout_width="24dp"

@@ -16,7 +16,7 @@ class SplashActivity : AppCompatActivity() {
 
         // 스플래시 -> 2초 후 MainActivity로 이동
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
             finish() // SplashActivity 종료
         }, 2000) // 2초 딜레이
 
