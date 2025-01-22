@@ -55,11 +55,12 @@
     <!-- ViewPager2 통계 -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/emotion_calendar_stat_vp"
-        android:layout_width="320dp"
+        android:layout_width="match_parent"
         android:layout_height="140dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="88dp"/>
 
     <!-- CircleIndicator3 -->

@@ -57,7 +57,8 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.material.calendarview)
-    implementation (libs.circleindicator)
+    implementation(libs.circleindicator)
+    implementation(libs.mpandroidchart)
 
 
     testImplementation(libs.junit)

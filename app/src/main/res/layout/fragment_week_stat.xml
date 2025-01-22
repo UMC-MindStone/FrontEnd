@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".WeakStatFragment"
+    android:background="@color/white">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="감정 분포"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/pretendard_regular"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/week_stat_chart_ll"
+        android:layout_marginStart="24dp"/>
+    <LinearLayout
+        android:id="@+id/week_stat_chart_ll"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="10dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+        
+        <com.example.mindstone.CustomBarChartView
+            android:id="@+id/week_stat_chart1_bc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <com.example.mindstone.CustomBarChartView
+            android:id="@+id/week_stat_chart2_bc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <com.example.mindstone.CustomBarChartView
+            android:id="@+id/week_stat_chart3_bc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <com.example.mindstone.CustomBarChartView
+            android:id="@+id/week_stat_chart4_bc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <com.example.mindstone.CustomBarChartView
+            android:id="@+id/week_stat_chart5_bc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:layout_constraintBottom_toBottomOf="@id/week_stat_chart_ll"
+        android:layout_marginHorizontal="10dp"
+        android:background="@android:color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/week_stat_chart_ll"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginHorizontal="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1주"
+            android:textSize="11sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2주"
+            android:textSize="11sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3주"
+            android:textSize="11sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4주"
+            android:textSize="11sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5주"
+            android:textSize="11sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
