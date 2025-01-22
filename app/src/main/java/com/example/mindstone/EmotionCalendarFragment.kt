@@ -27,6 +27,7 @@ class EmotionCalendarFragment : Fragment() {
         setupViewPager()
         setupCalendar() // 캘린더 설정 호출
 
+        binding.emotionCalendarDateTv
         // 오른쪽 버튼 클릭 시 한 달 후로 이동
         binding.emotionCalendarRightIv.setOnClickListener {
             changeMonth(1) // 1은 한 달 후로 이동
@@ -58,6 +59,9 @@ class EmotionCalendarFragment : Fragment() {
         // GridView와 어댑터 연결
         val adapter = EmotionCalendarGridAdapter(requireContext(), calendarData)
         binding.emotionCalendarCalendarGv.adapter = adapter
+
+        // 날짜 표시: 2025 1월 형식으로 설정
+        binding.emotionCalendarDateTv.text = "${currentYear} ${currentMonth}월"
     }
 
     // 캘린더 데이터를 생성하는 유틸리티 함수
