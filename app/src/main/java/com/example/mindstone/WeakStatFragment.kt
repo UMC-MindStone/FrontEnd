@@ -22,7 +22,7 @@ class WeakStatFragment : Fragment() {
         val testValues1 = listOf(0f,2f,3f,4f,5f,6f,7f)
         binding.weekStatChart1Bc.setValues(testValues1)
 
-        val testValues2 = listOf(0f,4f,6f,8f,10f,12f,14f)
+        val testValues2 = listOf(4f,4f,4f,4f,5f,7f,6f)
         binding.weekStatChart2Bc.setValues(testValues2)
 
         return binding.root

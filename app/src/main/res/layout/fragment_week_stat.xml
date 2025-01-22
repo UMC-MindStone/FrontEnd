@@ -17,14 +17,16 @@
         android:fontFamily="@font/pretendard_regular"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/week_stat_chart_ll"
-        android:layout_marginStart="24dp"/>
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="15dp"/>
     <LinearLayout
         android:id="@+id/week_stat_chart_ll"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="60dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:gravity="center">
         

@@ -15,19 +15,18 @@ class CustomBarChartView(context: Context, attrs: AttributeSet? = null) : View(c
     private val values: MutableList<Float> = mutableListOf()
 
     init {
-        paint.color = Color.BLUE
         paint.style = Paint.Style.FILL
-
-        // 7개의 예시 데이터
-        values.add(50f)
-        values.add(100f)
-        values.add(150f)
-        values.add(200f)
-        values.add(250f)
-        values.add(300f)
-        values.add(350f)
+        // 초기 값들 (예시로 7개의 값)
+        values.add(1f)
+        values.add(2f)
+        values.add(3f)
+        values.add(4f)
+        values.add(5f)
+        values.add(6f)
+        values.add(7f)
     }
 
+    // 수치를 외부에서 설정할 수 있는 함수
     fun setValues(newValues: List<Float>) {
         if (newValues.size == 7) {  // 7개의 값만 받도록 설정
             values.clear()
@@ -52,8 +51,10 @@ class CustomBarChartView(context: Context, attrs: AttributeSet? = null) : View(c
         // 막대의 두께 설정: 공백을 제외한 너비를 막대 수로 나누고, 조금의 간격을 위해 값을 줄임
         val barWidth = (availableWidth / values.size.toFloat()) * 0.9f  // 0.9배로 크기 약간 줄이기 (틈을 위한)
 
-        val maxValue = values.maxOrNull() ?: 0f
+        // 최대값 7로 고정 (이 값이 기준)
+        val maxValue = 7f
 
+        // colors.xml에 정의된 색상 목록을 ContextCompat로 가져옴
         val colors = listOf(
             ContextCompat.getColor(context, R.color.depression),
             ContextCompat.getColor(context, R.color.angry),
@@ -66,13 +67,16 @@ class CustomBarChartView(context: Context, attrs: AttributeSet? = null) : View(c
 
         // 막대 그래프 그리기
         for (i in values.indices) {
-            paint.color = colors[i]
             val value = values[i]
-            // 높이를 비례적으로 조정
+
+            // 값에 비례한 막대 높이 계산 (maxValue = 7로 고정)
             val barHeight = (value / maxValue) * height
 
+            // 막대 색상 설정
+            paint.color = colors[i]
+
             // 막대 위치 계산 (양쪽 끝에 공백을 적용)
-            val left = (i * (barWidth / 0.9f)) + padding // 간격을 고려하여 위치 조정
+            val left = (i * (barWidth / 0.9f)) + padding
             val top = (height - barHeight)
             val right = (left + barWidth)
             val bottom = height.toFloat()
@@ -81,7 +85,7 @@ class CustomBarChartView(context: Context, attrs: AttributeSet? = null) : View(c
             val rectF = RectF(left, top, right, bottom)
 
             // 막대 그리기 (모서리를 둥글게)
-            canvas.drawRoundRect(rectF, 5f, 5f, paint) // 20f는 둥근 정도를 나타냄
+            canvas.drawRoundRect(rectF, 5f, 5f, paint)
         }
     }
 }
