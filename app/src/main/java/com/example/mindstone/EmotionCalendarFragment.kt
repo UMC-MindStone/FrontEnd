@@ -14,6 +14,8 @@ class EmotionCalendarFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewPagerAdapter: EmotionCalendarVPAdapter
+    private var currentYear = 2025 // 초기 년도 설정
+    private var currentMonth = 1   // 초기 월 설정 (1월)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,6 +26,16 @@ class EmotionCalendarFragment : Fragment() {
 
         setupViewPager()
         setupCalendar() // 캘린더 설정 호출
+
+        // 오른쪽 버튼 클릭 시 한 달 후로 이동
+        binding.emotionCalendarRightIv.setOnClickListener {
+            changeMonth(1) // 1은 한 달 후로 이동
+        }
+
+        // 왼쪽 버튼 클릭 시 한 달 전으로 이동
+        binding.emotionCalendarLeftIv.setOnClickListener {
+            changeMonth(-1) // -1은 한 달 전으로 이동
+        }
 
         return binding.root
     }
@@ -40,11 +52,8 @@ class EmotionCalendarFragment : Fragment() {
 
     // 캘린더 데이터를 생성하고 GridView에 어댑터를 설정하는 메서드
     private fun setupCalendar() {
-        val year = 2025 // 표시할 년도
-        val month = 1   // 표시할 월 (1월)
-
         // 캘린더 데이터 생성
-        val calendarData = generateCalendarData(year, month)
+        val calendarData = generateCalendarData(currentYear, currentMonth)
 
         // GridView와 어댑터 연결
         val adapter = EmotionCalendarGridAdapter(requireContext(), calendarData)
@@ -79,6 +88,21 @@ class EmotionCalendarFragment : Fragment() {
         return calendarData
     }
 
+    // 월을 변경하는 메서드
+    private fun changeMonth(delta: Int) {
+        currentMonth += delta
+
+        if (currentMonth > 12) {
+            currentMonth = 1
+            currentYear++
+        } else if (currentMonth < 1) {
+            currentMonth = 12
+            currentYear--
+        }
+
+        // 캘린더 갱신
+        setupCalendar()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
