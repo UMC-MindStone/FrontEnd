@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    
+
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".DiaryCompleteFragment">
+    tools:context=".AutoCreatedTodayFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="38dp"
             android:text="자동 일기 제작"
+            android:fontFamily="@font/pretendard_regular"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,7 +67,7 @@
             android:paddingTop="15dp"
             android:paddingBottom="49dp"
             android:paddingHorizontal="16dp"
-            android:background="@drawable/background_textfield"
+            android:background="@drawable/ic_diary_box"
             app:layout_constraintTop_toBottomOf="@id/diary_character_iv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -85,11 +86,12 @@
             android:layout_width="292dp"
             android:layout_height="52dp"
             android:text="사진 최대 4장 첨부해주세요."
+            android:fontFamily="@font/pretendard_regular"
             android:layout_marginTop="24dp"
             android:gravity="center"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:background="@drawable/background_textfield"
+            android:background="@drawable/ic_question_box"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/diary_text_tv"
             app:layout_constraintEnd_toEndOf="parent"
@@ -106,6 +108,3 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
-
-
-
