@@ -16,9 +16,10 @@
         android:textStyle="bold"
         android:fontFamily="@font/pretendard_regular"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/week_stat_chart_ll"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="24dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="90dp"/>
     <LinearLayout
         android:id="@+id/week_stat_chart_ll"
         android:layout_width="match_parent"

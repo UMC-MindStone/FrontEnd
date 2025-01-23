@@ -20,12 +20,13 @@
 
         <TextView
             android:id="@+id/month_stat_month_tv"
+            android:text="1월에는 50% 기록했고\n행복 감정이 가장 많았어요."
             android:layout_width="190dp"
             android:layout_height="50dp"
             android:fontFamily="@font/pretendard_regular"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:gravity="center"/>
+            android:gravity="start"/>
         
         <ImageView
             android:id="@+id/month_stat_icon_iv"

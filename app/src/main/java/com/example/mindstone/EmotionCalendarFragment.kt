@@ -112,6 +112,7 @@ class EmotionCalendarFragment : Fragment() {
 
         // 캘린더 갱신
         setupCalendar()
+        updateViewPagerFragments()
     }
 
     // 년도와 월 선택 다이얼로그 표시
@@ -124,12 +125,19 @@ class EmotionCalendarFragment : Fragment() {
 
             // 캘린더 갱신
             setupCalendar()
+            updateViewPagerFragments()
         }
         dialog.show(parentFragmentManager, "YearMonthPickerDialog")
     }
 
+    private fun updateViewPagerFragments() {
+        viewPagerAdapter.updateFragment(0, MonthStatFragment.newInstance(currentMonth))
+        viewPagerAdapter.updateFragment(2, MonthSummaryFragment.newInstance(currentMonth))
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // 메모리 누수 방지
+        _binding = null
     }
 }

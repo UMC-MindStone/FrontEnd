@@ -1,59 +1,42 @@
 package com.example.mindstone
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.mindstone.databinding.FragmentMonthSummaryBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MonthSummaryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MonthSummaryFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    lateinit var binding : FragmentMonthSummaryBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    companion object {
+        private const val ARG_MONTH = "month"
+
+        // Month 정보를 전달받아 프래그먼트를 생성하는 메서드
+        fun newInstance(month: Int): MonthSummaryFragment {
+            val fragment = MonthSummaryFragment()
+            val args = Bundle()
+            args.putInt(ARG_MONTH, month)
+            fragment.arguments = args
+            return fragment
         }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_month_summary, container, false)
-    }
+        binding = FragmentMonthSummaryBinding.inflate(inflater, container, false)
+        val month = arguments?.getInt(ARG_MONTH) ?: 1 // 기본값: 1월
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MonthSummaryFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MonthSummaryFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        val text1 = "${month}월 감정 요약"
+        val text2 = "${month}월 초에 비해 ${month}월 말에 감정 관리가 잘 되었습니다."
+
+        binding.monthSummaryMonthTv.text = text1
+        binding.monthSummaryCompareTv.text = text2
+
+        return binding.root
     }
 }
