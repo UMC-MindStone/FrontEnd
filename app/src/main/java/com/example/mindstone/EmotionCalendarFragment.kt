@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
-import me.relex.circleindicator.CircleIndicator3
 import java.util.Calendar
 
 class EmotionCalendarFragment : Fragment() {
@@ -29,7 +27,6 @@ class EmotionCalendarFragment : Fragment() {
         setupViewPager()
         setupCalendar() // 캘린더 설정 호출
 
-        binding.emotionCalendarDateTv
         // 오른쪽 버튼 클릭 시 한 달 후로 이동
         binding.emotionCalendarRightIv.setOnClickListener {
             changeMonth(1) // 1은 한 달 후로 이동
@@ -40,6 +37,11 @@ class EmotionCalendarFragment : Fragment() {
             changeMonth(-1) // -1은 한 달 전으로 이동
         }
 
+        // 년도/월 선택 버튼 클릭 시 다이얼로그 호출
+        binding.emotionCalendarDownIv.setOnClickListener {
+            showYearMonthPickerDialog()
+        }
+
         return binding.root
     }
 
@@ -48,17 +50,12 @@ class EmotionCalendarFragment : Fragment() {
         viewPagerAdapter = EmotionCalendarVPAdapter(this)
         binding.emotionCalendarStatVp.adapter = viewPagerAdapter
 
-
-
         viewPagerAdapter.addFragment(MonthStatFragment())
         viewPagerAdapter.addFragment(WeakStatFragment())
         viewPagerAdapter.addFragment(MonthSummaryFragment())
 
         binding.emotionCalendarStatCi.setViewPager(binding.emotionCalendarStatVp)
-
     }
-
-
 
     // 캘린더 데이터를 생성하고 GridView에 어댑터를 설정하는 메서드
     private fun setupCalendar() {
@@ -115,6 +112,20 @@ class EmotionCalendarFragment : Fragment() {
 
         // 캘린더 갱신
         setupCalendar()
+    }
+
+    // 년도와 월 선택 다이얼로그 표시
+    private fun showYearMonthPickerDialog() {
+        val dialog = YearMonthPickerDialog()
+        dialog.onDateSelected = { selectedYear, selectedMonth ->
+            // 선택된 년도와 월로 업데이트
+            currentYear = selectedYear
+            currentMonth = selectedMonth
+
+            // 캘린더 갱신
+            setupCalendar()
+        }
+        dialog.show(parentFragmentManager, "YearMonthPickerDialog")
     }
 
     override fun onDestroyView() {
