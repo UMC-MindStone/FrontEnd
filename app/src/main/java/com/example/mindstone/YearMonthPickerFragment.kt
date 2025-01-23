@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.example.mindstone.databinding.FragmentYearMonthPickerBinding // 자동 생성된 바인딩 클래스 이름
+import com.example.mindstone.databinding.FragmentYearMonthPickerBinding
 
 class YearMonthPickerDialog : DialogFragment() {
 
