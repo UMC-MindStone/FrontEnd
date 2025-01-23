@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
+import me.relex.circleindicator.CircleIndicator3
 import java.util.Calendar
 
 class EmotionCalendarFragment : Fragment() {
@@ -46,10 +48,17 @@ class EmotionCalendarFragment : Fragment() {
         viewPagerAdapter = EmotionCalendarVPAdapter(this)
         binding.emotionCalendarStatVp.adapter = viewPagerAdapter
 
+
+
         viewPagerAdapter.addFragment(MonthStatFragment())
         viewPagerAdapter.addFragment(WeakStatFragment())
         viewPagerAdapter.addFragment(MonthSummaryFragment())
+
+        binding.emotionCalendarStatCi.setViewPager(binding.emotionCalendarStatVp)
+
     }
+
+
 
     // 캘린더 데이터를 생성하고 GridView에 어댑터를 설정하는 메서드
     private fun setupCalendar() {
