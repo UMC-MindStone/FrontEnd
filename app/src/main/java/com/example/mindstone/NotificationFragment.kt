@@ -1,6 +1,7 @@
 package com.example.mindstone
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ class NotificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("NotificationFragment", "RecyclerView width: ${binding.notiRl.width}, height: ${binding.notiRl.height}")
 
         // mock data
         val notificationList = arrayListOf(
@@ -53,6 +55,10 @@ class NotificationFragment : Fragment() {
 
         }
 
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 

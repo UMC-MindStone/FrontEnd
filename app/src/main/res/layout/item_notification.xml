@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:backgroundTint="#FFFFFF">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_notification_cl"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/item_notiIcon_iv"
@@ -33,7 +33,7 @@
             app:layout_constraintBottom_toBottomOf="@id/item_notiIcon_iv"/>
         <TextView
             android:id="@+id/item_notiDate_tv"
-            android:layout_width="40dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/medium_gray"
             android:text="1일전"
@@ -43,6 +43,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

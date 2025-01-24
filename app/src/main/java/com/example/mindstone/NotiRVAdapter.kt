@@ -1,5 +1,6 @@
 package com.example.mindstone
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,7 @@ class NotiRVAdapter(private val itemList: ArrayList<NotificationItem>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(itemList[position])
+        Log.d("NotiRVAdapter", "Binding item at position: $position")
     }
 }
 
