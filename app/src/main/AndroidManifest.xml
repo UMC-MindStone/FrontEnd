@@ -43,12 +43,6 @@
             android:name=".auth.LoginActivity2"
             android:exported="false" />
         <activity
-            android:name=".auth.FindPasswordActivity"
-            android:exported="false" />
-        <activity
-            android:name=".auth.FindEmailActivity"
-            android:exported="false" />
-        <activity
             android:name=".auth.LoginErrorActivity"
             android:exported="false" />
         <activity
@@ -59,9 +53,6 @@
             android:exported="false" />
         <activity
             android:name=".SignupEmailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SignupCodeActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
@@ -75,6 +66,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
