@@ -7,18 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentHomeBinding
+import com.example.mindstone.model.EmotionModel
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private lateinit var viewModel: EmotionModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,20 +36,27 @@ class HomeFragment : Fragment() {
             insets
         }
 
-        // 감정 선택 버튼 클릭 이벤트 설정
-        binding.homeHappyIv.setOnClickListener { navigateToEmotion("행복", R.color.happyColor, true) }
-        binding.homeExcitedIv.setOnClickListener { navigateToEmotion("설렘", R.color.excitedColor, true) }
-        binding.homeJoyIv.setOnClickListener { navigateToEmotion("기쁨", R.color.joyColor, true) }
-        binding.homeCalmIv.setOnClickListener { navigateToEmotion("평온", R.color.calmColor, true) }
+        // ViewModel을 Activity 범위에서 가져옴 (여러 Fragment에서 공유 가능)
+        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
-        binding.homeAngryIv.setOnClickListener { navigateToEmotion("화남", R.color.angryColor, false) }
-        binding.homeDepressedIv.setOnClickListener { navigateToEmotion("우울", R.color.depressedColor, false) }
-        binding.homeSadIv.setOnClickListener { navigateToEmotion("슬픔", R.color.sadColor, false) }
+        // 감정 선택 버튼 클릭 이벤트 설정
+        binding.homeHappyIv.setOnClickListener { navigateToIntensity("행복", R.color.happyColor, true) }
+        binding.homeExcitedIv.setOnClickListener { navigateToIntensity("설렘", R.color.excitedColor, true) }
+        binding.homeJoyIv.setOnClickListener { navigateToIntensity("기쁨", R.color.joyColor, true) }
+        binding.homeCalmIv.setOnClickListener { navigateToIntensity("평온", R.color.calmColor, true) }
+
+        binding.homeAngryIv.setOnClickListener { navigateToIntensity("화남", R.color.angryColor, false) }
+        binding.homeDepressedIv.setOnClickListener { navigateToIntensity("우울", R.color.depressedColor, false) }
+        binding.homeSadIv.setOnClickListener { navigateToIntensity("슬픔", R.color.sadColor, false) }
     }
 
 
-    private fun navigateToEmotion(emotion: String, colorResId: Int, isPositive: Boolean) {
-        val fragment = EmotionIntensityFragment.newInstance(emotion, colorResId, isPositive)
+    private fun navigateToIntensity(emotion: String, colorResId: Int, isPositive: Boolean) {
+        // ViewModel에 데이터 저장 (Fragment 간 데이터 공유)
+        viewModel.setEmotionData(emotion, colorResId, isPositive)
+        viewModel.resetIntensity() // 감정 강도를 기본값(10)으로 초기화
+
+        val fragment = EmotionIntensityFragment()
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
             .addToBackStack(null)
@@ -61,5 +67,4 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

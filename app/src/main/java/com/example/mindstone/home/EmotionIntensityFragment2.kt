@@ -1,7 +1,9 @@
 package com.example.mindstone.home
 
-import android.graphics.PorterDuff
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +13,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
-import com.example.mindstone.databinding.FragmentEmotionIntensityBinding
+import com.example.mindstone.databinding.FragmentEmotionIntensity2Binding
 import com.example.mindstone.model.EmotionModel
 
-class EmotionIntensityFragment : Fragment() {
+class EmotionIntensityFragment2 : Fragment() {
 
-    private var _binding: FragmentEmotionIntensityBinding? = null
+    private var _binding: FragmentEmotionIntensity2Binding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
@@ -25,7 +27,7 @@ class EmotionIntensityFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentEmotionIntensityBinding.inflate(inflater, container, false)
+        _binding = FragmentEmotionIntensity2Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -38,53 +40,58 @@ class EmotionIntensityFragment : Fragment() {
             insets
         }
 
-        // ViewModel을 Activity 범위에서 가져오기 (HomeFragment에서 설정한 데이터 사용)
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
         // 감정에 맞는 질문 업데이트
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
-            binding.intensityStatusTv.text = getEmotionQuestion(emotion)
+            binding.resultStatusTv.text = getEmotionQuestion(emotion)
         }
 
         // 감정에 따른 말풍선 색상 적용
         viewModel.colorResId.observe(viewLifecycleOwner) { colorResId ->
-            binding.intensityBubble.setColorFilter(
-                ContextCompat.getColor(requireContext(), colorResId),
-                PorterDuff.Mode.SRC_IN
-            )
+            binding.resultBubble.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), colorResId))
         }
 
-        // 감정 정도 값 업데이트
+        // 감정 강도 표시 (+숫자 또는 -숫자)
         viewModel.intensity.observe(viewLifecycleOwner) { intensity ->
-            binding.intensityTv.text = intensity.toString()
+            val intensityText = if (viewModel.isPositive.value == true) "+$intensity" else "-$intensity"
+            binding.resultBubbleTv.text = intensityText
         }
 
-        // '+' 버튼 클릭 시 강도 증가
-        binding.intensityPlus.setOnClickListener { viewModel.increaseIntensity() }
-        // '-' 버튼 클릭 시 강도 감소
-        binding.intensityMinus.setOnClickListener { viewModel.decreaseIntensity() }
-
-        // '취소' 버튼 클릭 시 이전 화면으로 돌아감
-        binding.intensityCancel.setOnClickListener {
-            viewModel.resetIntensity() // 감정 강도 초기화
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-
-        // '확인' 버튼 클릭 시 -> IntensityResult 으로 넘어감
-        binding.intensityConfirm.setOnClickListener {
-            viewModel.setIntensity(viewModel.intensity.value ?: 10) // 감정 강도를 ViewModel에 저장
-            navigateToIntensityResult()
-        }
+        // 1초간 정지 후 애니메이션 실행
+        Handler(Looper.getMainLooper()).postDelayed({
+            animateResultBubble()
+        }, 1000)
     }
 
-    private fun navigateToIntensityResult() {
-        val fragment = EmotionIntensityFragment2()
+
+    private fun animateResultBubble() {
+        binding.resultBubble.animate()
+            .translationY(-100f) // 위로 이동
+            .alpha(0f) // 투명해짐
+            .setDuration(1000) // 1초 동안 애니메이션 실행
+            .withEndAction {
+                navigateToEmotionReasonFragment() // 애니메이션 끝나면 다음 Fragment로 이동
+            }
+            .start()
+        binding.resultBubbleTv.animate()
+            .translationY(-100f) // 위로 이동
+            .alpha(0f) // 투명해짐
+            .setDuration(1000) // 1초 동안 애니메이션 실행
+            .withEndAction {
+                navigateToEmotionReasonFragment() // 애니메이션 끝나면 다음 Fragment로 이동
+            }
+            .start()
+    }
+
+    private fun navigateToEmotionReasonFragment() {
+        val fragment = EmotionReasonFragment()
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
             .addToBackStack(null)
             .commit()
     }
-
 
     // 감정에 맞는 질문을 반환하는 함수
     private fun getEmotionQuestion(emotion: String?): String {
@@ -105,3 +112,4 @@ class EmotionIntensityFragment : Fragment() {
         _binding = null
     }
 }
+

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.replace
 import com.example.mindstone.databinding.ActivityMainBinding
 import com.example.mindstone.home.HomeFragment
 
@@ -29,9 +30,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 앱이 처음 실행될 때 기본 프래그먼트(HomeFragment) 설정
-        if (savedInstanceState == null) {
-            replaceFragment(HomeFragment())
-        }
+//        if (savedInstanceState == null) {
+//            replaceFragment(HomeFragment())
+//        }
+
+        supportFragmentManager.beginTransaction()
+            .replace(binding.mainContainer.id, HomeFragment())
+            .commitAllowingStateLoss()
 
         // 네비게이션 바 아이템 클릭 시 프래그먼트 변경
         binding.bottomNavigationView.setOnItemSelectedListener { item ->

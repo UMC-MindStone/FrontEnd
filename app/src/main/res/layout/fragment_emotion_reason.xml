@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <TextView
             android:id="@+id/reason_question_tv"
             android:layout_width="match_parent"
@@ -29,43 +28,81 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
-            android:id="@+id/reason_bubble_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/btn_notification"
+            android:layout_margin="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_bubble_happy"
-            app:tint="@color/happyColor"
-            android:layout_marginTop="194dp"
+            android:layout_marginTop="190dp"
             app:layout_constraintTop_toBottomOf="@id/reason_question_tv"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:padding="8dp"/>
+            app:layout_constraintEnd_toEndOf="parent">
+            <!-- 말풍선과 EditText를 함께 묶을 FrameLayout -->
+            <FrameLayout
+                android:id="@+id/reason_bubble_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <!-- 말풍선 배경 (ImageView) -->
+                <ImageView
+                    android:id="@+id/reason_bubble_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_bubble_happy"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"/>
+                <!-- 감정 이유 입력 (EditText) -->
+                <EditText
+                    android:id="@+id/reason_et"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="입력"
+                    android:minWidth="130dp"
+                    android:maxWidth="250dp"
+                    android:minHeight="40dp"
+                    android:maxLines="3"
+                    android:background="@null"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine"
+                    android:scrollHorizontally="false"
+                    android:layout_margin="10dp"/>
+            </FrameLayout>
 
-        <EditText
-            android:id="@+id/reason_et"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="입력"
-            android:minWidth="80dp"
-            android:maxWidth="200dp"
-            android:minHeight="40dp"
-            android:maxLines="3"
-            android:background="@null"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:imeOptions="actionDone"
-            app:layout_constraintTop_toTopOf="@id/reason_bubble_iv"
-            app:layout_constraintBottom_toBottomOf="@id/reason_bubble_iv"
-            app:layout_constraintStart_toStartOf="@id/reason_bubble_iv"
-            app:layout_constraintEnd_toEndOf="@id/reason_bubble_iv"/>
+            <!-- 확인 버튼 -->
+            <TextView
+                android:id="@+id/reason_confirm_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="확인"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_regular"
+                android:gravity="center"
+                android:paddingTop="8dp"
+                android:paddingBottom="25dp"
+                app:layout_constraintStart_toStartOf="@id/reason_bubble_container"
+                app:layout_constraintEnd_toEndOf="@id/reason_bubble_container"
+                app:layout_constraintBottom_toBottomOf="@id/reason_bubble_container"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
         <ImageView
-            android:id="@+id/reason_calm_icon_iv"
+            android:id="@+id/reason_icon_iv"
             android:src="@drawable/ic_calm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="112dp"
+            android:layout_height="96dp"
             android:layout_marginTop="470dp"
             android:layout_marginStart="124dp"
             android:layout_marginEnd="124dp"
@@ -80,10 +117,9 @@
             android:layout_marginTop="55dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            app:layout_constraintTop_toBottomOf="@+id/reason_calm_icon_iv"
+            app:layout_constraintTop_toBottomOf="@+id/reason_icon_iv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
