@@ -33,4 +33,8 @@ class DiaryEditFragment : Fragment() {
 
     }
 
+    private fun changeVisibility(){
+        // diary_edit_auto_tv와 diary_edit_date_tv의 visibility를 변경해주시면 됩니다.
+    }
+
 }
