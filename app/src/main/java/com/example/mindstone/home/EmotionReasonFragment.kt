@@ -47,47 +47,39 @@ class EmotionReasonFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
-        // 감정에 따른 말풍선 색상 적용
+        // 감정에 따라 말풍선 배경 색 변경
         viewModel.colorResId.observe(viewLifecycleOwner) { colorResId ->
-            binding.reasonBubbleIv.setColorFilter(
-                ContextCompat.getColor(requireContext(), colorResId),
-                PorterDuff.Mode.SRC_IN
-            )
+            binding.reasonContainer.backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), colorResId)
         }
 
-
-        binding.reasonEt.addTextChangedListener(object : TextWatcher {
+        // 글자 수 제한 (최대 10줄까지)
+        binding.reasonBubbleEt.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.reasonEt.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
-                val newWidth = binding.reasonEt.measuredWidth + 50
-                val newHeight = binding.reasonEt.measuredHeight + 30
-
-                // FrameLayout (reason_bubble_container) 크기 조정
-                binding.reasonBubbleContainer.layoutParams.width = newWidth
-                binding.reasonBubbleContainer.layoutParams.height = newHeight
-                binding.reasonBubbleContainer.requestLayout()
-
-                // 말풍선 배경 크기도 같이 조정
-                binding.reasonBubbleIv.layoutParams.width = newWidth
-                binding.reasonBubbleIv.layoutParams.height = newHeight
-                binding.reasonBubbleIv.requestLayout()
+                val lineCount = binding.reasonBubbleEt.lineCount
+                if (lineCount > 10) {
+                    // 문자열을 Editable로 변환하여 설정
+                    binding.reasonBubbleEt.setText(binding.reasonBubbleEt.text?.substring(0, binding.reasonBubbleEt.selectionStart - 1))
+                    binding.reasonBubbleEt.setSelection(binding.reasonBubbleEt.text?.length ?: 0) // 커서 위치 조정
+                }
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
 
-
-
-
-//        // 확인 버튼 클릭 시 애니메이션 실행 및 다음 화면 이동
-//        binding.reasonConfirmTv.setOnClickListener {
-//            val reasonText = binding.reasonEt.text.toString()
-//            if (reasonText.isNotEmpty()) {
-//                showEmotionReason(reasonText) // 입력값을 보여주고 애니메이션 실행
-//            }
-//        }
+        // '확인' 버튼 클릭 시 ViewModel에 이유 저장 후 Fragment 이동
+        binding.reasonConfirmTv.setOnClickListener {
+            val reasonText = binding.reasonBubbleEt.text.toString().trim()
+            if (reasonText.isNotEmpty()) {
+                // ViewModel에 이유 저장
+                viewModel.setEmotionReason(reasonText)
+                // EmotionReasonFragment2로 이동
+                val transaction = requireActivity().supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.main_container, EmotionReasonFragment2())
+                transaction.addToBackStack(null) // 뒤로 가기 지원
+                transaction.commit()
+            }
+        }
     }
 
 

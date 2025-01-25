@@ -7,13 +7,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionFinalBinding
+import com.example.mindstone.home.negative.EmotionManageChoiceFragment
 import com.example.mindstone.model.EmotionModel
 
 class EmotionFinalFragment : Fragment() {
@@ -23,15 +26,13 @@ class EmotionFinalFragment : Fragment() {
 
     private lateinit var viewModel: EmotionModel
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentEmotionFinalBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,60 +45,129 @@ class EmotionFinalFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
-        // 감정과 강도 UI 업데이트
+        // 감정에 맞는 상태 업데이트
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
-            viewModel.intensity.observe(viewLifecycleOwner) { intensity ->
-                updateEmotionBubble(emotion, intensity)
-            }
+            binding.finalStatusTv.text = getEmotionStatus(emotion)
+        }
+
+        hideAllEmotionViews()
+
+        val selectedEmotion = viewModel.emotion.value ?: return
+        val intensity = viewModel.intensity.value ?: 0
+
+
+        // 부정적 감정이면 finalStatus2Tv 보이기
+        if (selectedEmotion in listOf("화남", "우울", "슬픔")) {
+            binding.finalStatus2Tv.visibility = View.VISIBLE
+        }
+
+        // 감정별로 말풍선 및 텍스트 보여주기
+        when (selectedEmotion) {
+            "화남" -> animateSelectedEmotion(binding.finalAngryIv, binding.finalAngryLl, binding.angryIntensityTv, intensity, false)
+            "우울" -> animateSelectedEmotion(binding.finalDepressedIv, binding.finalDepressedLl, binding.depressedIntensityTv, intensity, false)
+            "슬픔" -> animateSelectedEmotion(binding.finalSadIv, binding.finalSadLl, binding.sadIntensityTv, intensity, false)
+            "평온" -> animateSelectedEmotion(binding.finalCalmIv, binding.finalCalmLl, binding.calmIntensityTv, intensity, true)
+            "행복" -> animateSelectedEmotion(binding.finalHappyIv, binding.finalHappyLl, binding.happyIntensityTv, intensity, true)
+            "기쁨" -> animateSelectedEmotion(binding.finalJoyIv, binding.finalJoyLl, binding.joyIntensityTv, intensity, true)
+            "설렘" -> animateSelectedEmotion(binding.finalExcitedIv, binding.finalExcitedLl, binding.excitedIntensityTv, intensity, true)
         }
     }
 
-    private fun updateEmotionBubble(emotion: String?, intensity: Int) {
-        val intensityText = if (viewModel.isPositive.value == true) "+$intensity" else "-$intensity"
-        when (emotion) {
-            "화남" -> showEmotionBubble(binding.finalAngryIv, binding.angryIntensityTv, intensityText)
-            "행복" -> showEmotionBubble(binding.finalHappyIv, binding.happyIntensityTv, intensityText)
-            "우울" -> showEmotionBubble(binding.finalDepressedIv, binding.depressedIntensityTv, intensityText)
-            "설렘" -> showEmotionBubble(binding.finalExcitedIv, binding.excitedIntensityTv, intensityText)
-            "슬픔" -> showEmotionBubble(binding.finalSadIv, binding.sadIntensityTv, intensityText)
-            "평온" -> showEmotionBubble(binding.finalCalmIv, binding.calmIntensityTv, intensityText)
-            "기쁨" -> showEmotionBubble(binding.finalJoyIv, binding.joyIntensityTv, intensityText)
-        }
-    }
 
-    private fun showEmotionBubble(imageView: ImageView, textView: TextView, intensityText: String) {
-        textView.text = intensityText
+    private fun animateSelectedEmotion(
+        imageView: ImageView, layout: LinearLayout, textView: TextView, intensity: Int, isPositive: Boolean
+    ) {
+        // 선택된 뷰 보이기
         imageView.visibility = View.VISIBLE
-        textView.visibility = View.VISIBLE
+        layout.visibility = View.VISIBLE
 
-        // 1초간 유지 후 애니메이션 실행
+        // 강도 텍스트 설정
+        textView.text = if (isPositive) "+$intensity" else "-$intensity"
+
+        // 1초간 정지 후 애니메이션 실행
         Handler(Looper.getMainLooper()).postDelayed({
-            animateEmotionBubble(imageView, textView)
+            animateEmotionBubble(imageView, layout)
         }, 1000)
     }
 
-    private fun animateEmotionBubble(imageView: ImageView, textView: TextView) {
-        val animDuration = 1000L
+
+    // 감정 말풍선 애니메이션 적용
+    private fun animateEmotionBubble(imageView: ImageView, layout: LinearLayout) {
+        val duration = 1500L // 애니메이션 지속 시간
 
         imageView.animate()
             .translationY(-100f) // 위로 이동
             .alpha(0f) // 점점 사라짐
-            .setDuration(animDuration)
-            .withEndAction { imageView.visibility = View.GONE }
+            .setDuration(duration)
+            .setInterpolator(AccelerateDecelerateInterpolator()) // 부드러운 감속
+            .withEndAction {
+                imageView.visibility = View.GONE // 애니메이션 종료 후 숨김
+                checkNegativeEmotionAndNavigate() // 부정적 감정이면 Fragment 이동
+            }
             .start()
-
-        textView.animate()
-            .translationY(-100f) // 위로 이동
-            .alpha(0f) // 점점 사라짐
-            .setDuration(animDuration)
-            .withEndAction { textView.visibility = View.GONE }
+        layout.animate()
+            .translationY(-100f)
+            .alpha(0f)
+            .setDuration(duration)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .withEndAction {
+                layout.visibility = View.GONE
+                checkNegativeEmotionAndNavigate()
+            }
             .start()
     }
 
+    // 부정적 감정이면 EmotionManageChoiceFragment로 이동
+    private fun checkNegativeEmotionAndNavigate() {
+        val selectedEmotion = viewModel.emotion.value ?: return
+        if (selectedEmotion in listOf("화남", "우울", "슬픔")) {
+            navigateToEmotionManageChoiceFragment()
+        }
+    }
+    // EmotionManageChoiceFragment로 이동하는 함수
+    private fun navigateToEmotionManageChoiceFragment() {
+        val fragment = EmotionManageChoiceFragment()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    // 감정에 맞는 상태 메시지를 반환하는 함수
+    private fun getEmotionStatus(emotion: String?): String {
+        return when (emotion) {
+            "행복" -> "밍돌은 지금 행복한 상태에요!"
+            "설렘" -> "밍돌은 지금 설레는 상태에요!"
+            "기쁨" -> "밍돌은 지금 기쁜 상태에요!"
+            "평온" -> "밍돌은 지금 평온한 상태에요!"
+            "화남" -> "밍돌은 지금 화나는 상태에요."
+            "우울" -> "밍돌은 지금 우울한 상태에요."
+            "슬픔" -> "밍돌은 지금 슬픈 상태에요."
+            else -> ""
+        }
+    }
+
+    // 모든 감정 말풍선 숨기기
+    private fun hideAllEmotionViews() {
+        binding.finalStatus2Tv.visibility = View.GONE
+        binding.finalAngryIv.visibility = View.GONE
+        binding.finalAngryLl.visibility = View.GONE
+        binding.finalDepressedIv.visibility = View.GONE
+        binding.finalDepressedLl.visibility = View.GONE
+        binding.finalSadIv.visibility = View.GONE
+        binding.finalSadLl.visibility = View.GONE
+        binding.finalCalmIv.visibility = View.GONE
+        binding.finalCalmLl.visibility = View.GONE
+        binding.finalJoyIv.visibility = View.GONE
+        binding.finalJoyLl.visibility = View.GONE
+        binding.finalHappyIv.visibility = View.GONE
+        binding.finalHappyLl.visibility = View.GONE
+        binding.finalExcitedIv.visibility = View.GONE
+        binding.finalExcitedLl.visibility = View.GONE
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

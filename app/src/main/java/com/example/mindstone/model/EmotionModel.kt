@@ -22,6 +22,18 @@ class EmotionModel : ViewModel() {
     private val _intensity = MutableLiveData<Int>().apply { value = 10 }
     val intensity: LiveData<Int> get() = _intensity
 
+    // 활동한 시간 저장 (시)
+    private val _activityHour = MutableLiveData<Int>().apply { value = 0 }
+    val activityHour: LiveData<Int> get() = _activityHour
+    // 활동한 시간 저장 (분)
+    private val _activityMinute = MutableLiveData<Int>().apply { value = 0 }
+    val activityMinute: LiveData<Int> get() = _activityMinute
+
+    // 사용자가 입력한 감정 이유
+    private val _emotionReason = MutableLiveData<String>()
+    val emotionReason: LiveData<String> get() = _emotionReason
+
+
     // 감정 데이터 설정
     fun setEmotionData(emotion: String, colorResId: Int, isPositive: Boolean) {
         _emotion.value = emotion
@@ -48,5 +60,16 @@ class EmotionModel : ViewModel() {
     // 감정 강도 기본값(10)으로 초기화
     fun resetIntensity() {
         _intensity.value = 10
+    }
+
+    // 감정 이유 저장
+    fun setEmotionReason(reason: String) {
+        _emotionReason.value = reason
+    }
+
+    // 활동 시간 설정
+    fun setActivityTime(hour: Int, minute: Int) {
+        _activityHour.value = hour
+        _activityMinute.value = minute
     }
 }

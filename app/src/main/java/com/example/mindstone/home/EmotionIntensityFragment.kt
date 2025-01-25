@@ -73,11 +73,11 @@ class EmotionIntensityFragment : Fragment() {
         // '확인' 버튼 클릭 시 -> IntensityResult 으로 넘어감
         binding.intensityConfirm.setOnClickListener {
             viewModel.setIntensity(viewModel.intensity.value ?: 10) // 감정 강도를 ViewModel에 저장
-            navigateToIntensityResult()
+            navigateToIntensity2()
         }
     }
 
-    private fun navigateToIntensityResult() {
+    private fun navigateToIntensity2() {
         val fragment = EmotionIntensityFragment2()
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)

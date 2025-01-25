@@ -27,19 +27,48 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
+        <TextView
+            android:id="@+id/final_status2_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_question_box"
+            android:text="스트레스 관리가 필요해요."
+            android:textSize="16sp"
+            android:fontFamily="@font/pretendard_regular"
+            android:gravity="center"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="34dp"
+            android:layout_marginEnd="34dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/final_status_tv"/>
+
         <ImageView
+            android:id="@+id/notification"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/btn_notification"
             android:layout_margin="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/notification_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_notification_number"
+            android:text="2"
+            android:textSize="6sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_marginBottom="2dp"
+            app:layout_constraintRight_toRightOf="@id/notification"
+            app:layout_constraintBottom_toBottomOf="@id/notification"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/home_emotion_cl"
             android:layout_width="290dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="110dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/final_status_tv">
@@ -85,7 +114,7 @@
                 android:layout_width="90dp"
                 android:layout_height="75dp"
                 android:src="@drawable/ic_bubble_depressed"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="-10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/final_angry_iv"/>
             <LinearLayout
@@ -121,7 +150,7 @@
                 android:layout_width="90dp"
                 android:layout_height="75dp"
                 android:src="@drawable/ic_bubble_sad"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="-10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/final_depressed_iv"/>
             <LinearLayout
@@ -158,6 +187,7 @@
                 android:layout_width="90dp"
                 android:layout_height="75dp"
                 android:src="@drawable/ic_bubble_calm"
+                android:layout_marginBottom="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/final_sad_iv"
                 app:layout_constraintRight_toLeftOf="@+id/final_joy_iv"/>
@@ -230,7 +260,7 @@
                 android:layout_width="90dp"
                 android:layout_height="75dp"
                 android:src="@drawable/ic_bubble_excited"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="-10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/final_happy_iv"/>
             <LinearLayout
@@ -266,7 +296,7 @@
                 android:layout_width="90dp"
                 android:layout_height="75dp"
                 android:src="@drawable/ic_bubble_joy"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="-10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/final_excited_iv"/>
             <LinearLayout
