@@ -70,6 +70,7 @@
             app:layout_constraintStart_toStartOf="@id/diary_img_box_iv" />
 
         <ImageView
+            android:id="@+id/diary_add_img_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_gallery"
@@ -100,6 +101,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginStart="16dp"
             android:elevation="4dp"
+            android:scaleType="centerCrop"
             android:background="@color/medium_gray"
             app:layout_constraintTop_toBottomOf="@+id/diary_add_img_tv"
             app:layout_constraintStart_toStartOf="@id/diary_img_box_iv"/>
@@ -111,6 +113,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"
             android:elevation="4dp"
+            android:scaleType="centerCrop"
             android:background="@color/medium_gray"
             app:layout_constraintTop_toBottomOf="@id/diary_add_img_tv"
             app:layout_constraintEnd_toEndOf="@id/diary_img_box_iv"/>
@@ -122,6 +125,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginStart="16dp"
             android:elevation="4dp"
+            android:scaleType="centerCrop"
             android:background="@color/medium_gray"
             app:layout_constraintTop_toBottomOf="@+id/diary_img1_iv"
             app:layout_constraintStart_toStartOf="@id/diary_img_box_iv"/>
@@ -133,6 +137,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"
             android:elevation="4dp"
+            android:scaleType="centerCrop"
             android:background="@color/medium_gray"
             app:layout_constraintTop_toBottomOf="@id/diary_img2_iv"
             app:layout_constraintEnd_toEndOf="@id/diary_img_box_iv"/>
