@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.activityViewModels
 import com.example.mindstone.databinding.FragmentDiaryImgBinding
 import java.net.URI
 
@@ -15,6 +16,7 @@ import java.net.URI
 class DiaryImgFragment : Fragment() {
     private var _binding: FragmentDiaryImgBinding? = null
     private val binding get() = _binding!!
+    private val diaryViewModel: DiaryViewModel by activityViewModels()
 
     private val imageViews = mutableListOf<ImageView>()
     private var imageCnt = 0
@@ -55,6 +57,16 @@ class DiaryImgFragment : Fragment() {
                 binding.diaryImg4Iv
             )
         )
+
+        // 뷰모델에 저장된 이미지를 ui에 반영
+        diaryViewModel.images.observe(viewLifecycleOwner){ images ->
+            for ( i in images.indices){
+                if (i<4){
+                    imageViews[i].setImageURI(images[i])
+                }
+            }
+            imageCnt = images.size
+        }
 
         binding.diaryAddImgIv.setOnClickListener{
             selectImageLauncher.launch("image/*")

@@ -110,7 +110,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/diary_blanck_text_cl"
+                android:id="@+id/diary_blank_text_cl"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="88dp"
                 android:layout_height="wrap_content"
