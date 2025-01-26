@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
 import com.example.mindstone.databinding.FragmentHabitCalendarBinding
 import java.util.Calendar
 
@@ -54,12 +53,56 @@ class HabitCalendarFragment : Fragment() {
         val calendarData = generateCalendarData(currentYear, currentMonth)
 
         // GridView와 어댑터 연결
-        val adapter = HabitCalendarGridAdapter(requireContext(), calendarData)
+        val adapter = HabitCalendarGridAdapter(requireContext(), calendarData) { date ->
+            onDateClicked(date)
+        }
         binding.habitCalendarCalendarGv.adapter = adapter
 
         // 날짜 표시: 2025 1월 형식으로 설정
         binding.habitCalendarDateTv.text = "${currentYear} ${currentMonth}월"
     }
+
+    private fun onDateClicked(date: String) {
+        val day = date.toInt()
+
+        val calendar = Calendar.getInstance().apply {
+            set(currentYear, currentMonth - 1, day) // currentMonth는 1부터 시작하므로 -1 필요
+        }
+
+        val year = calendar.get(Calendar.YEAR) // 연도 가져오기
+        val month = calendar.get(Calendar.MONTH) + 1 // 월 (0부터 시작하므로 +1 필요)
+        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH) // 일
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) // 요일 (1: 일요일, 7: 토요일)
+
+        // 요일을 문자열로 변환
+        val dayOfWeekStr = when (dayOfWeek) {
+            Calendar.SUNDAY -> "일요일"
+            Calendar.MONDAY -> "월요일"
+            Calendar.TUESDAY -> "화요일"
+            Calendar.WEDNESDAY -> "수요일"
+            Calendar.THURSDAY -> "목요일"
+            Calendar.FRIDAY -> "금요일"
+            Calendar.SATURDAY -> "토요일"
+            else -> ""
+        }
+
+        val fragment = HabitCheckFragment()
+
+        val bundle = Bundle().apply {
+            putInt("year", year)
+            putInt("month", month)
+            putInt("day", dayOfMonth)
+            putString("dayOfWeek", dayOfWeekStr)
+        }
+        fragment.arguments = bundle
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.habit_calendar_container_fl, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+
 
     private fun generateCalendarData(year: Int, month: Int): List<String> {
         val calendar = Calendar.getInstance().apply {

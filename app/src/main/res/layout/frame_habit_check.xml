@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/frame_habit_check_fl"
+    android:layout_width="300dp"
+    android:layout_height="128dp"
+    android:background="@drawable/background_radius_gray">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/frame_habit_check_habit_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="운동 1시간"
+            android:textStyle="bold"
+            android:fontFamily="@font/pretendard_regular"
+            android:textSize="16sp"
+            android:textColor="@color/gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="49dp"
+            android:layout_marginStart="18dp"/>
+
+        <ImageView
+            android:id="@+id/frame_habit_check_icon_iv"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:src="@drawable/btn_nothing_normal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="18dp"/>
+
+        <ImageView
+            android:id="@+id/frame_habit_check_bubble_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_text_bubble"
+            android:scaleType="fitStart"
+            android:adjustViewBounds="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="66dp"/>
+
+        <TextView
+            android:id="@+id/frame_habit_check_custom_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="하지 않았어요.."
+            android:textSize="13sp"
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/pretendard_regular"
+            app:layout_constraintTop_toTopOf="@id/frame_habit_check_bubble_iv"
+            app:layout_constraintEnd_toEndOf="@id/frame_habit_check_bubble_iv"
+            app:layout_constraintStart_toStartOf="@id/frame_habit_check_bubble_iv"
+            app:layout_constraintBottom_toBottomOf="@id/frame_habit_check_bubble_iv"
+            android:layout_marginBottom="6.8dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

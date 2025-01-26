@@ -11,7 +11,8 @@ import com.example.mindstone.databinding.GridHabitItemBinding
 
 class HabitCalendarGridAdapter(
     private val context: Context,
-    private val dates: List<String>
+    private val dates: List<String>,
+    private val onDateClick: (String) -> Unit
 ) : BaseAdapter() {
 
     override fun getCount(): Int = dates.size
@@ -57,13 +58,20 @@ class HabitCalendarGridAdapter(
                 }
             }
         }
+        binding.root.setOnClickListener {
+            //빈 날짜는 무시
+            if (text.isNotEmpty()) {
+                onDateClick(text)
+            }
+        }
 
         return binding.root
     }
 
     // 총 해야 할 일
     fun getTotalHabit(): Int {
-        return 3 // 예시로 3으로 고정
+        val denominator = 3 //예시 3
+        return denominator
     }
 
     // 해당 날짜에 완료한 일
@@ -71,6 +79,8 @@ class HabitCalendarGridAdapter(
         val dateNumber = date.padStart(2, '0')
         val fullDate = "2025-01-$dateNumber"
 
+
+        //예시 데이터
         return when (fullDate) {
             "2025-01-01" -> 1
             "2025-01-02" -> 2
