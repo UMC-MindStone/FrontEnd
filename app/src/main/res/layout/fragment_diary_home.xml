@@ -69,6 +69,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/diary_complete_tv"/>
 
+
+            <!-- 내용이 있을 때 보여지는 컴포넌트-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/diary_text_cl"
                 android:layout_width="wrap_content"
@@ -105,7 +107,7 @@
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            />
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/diary_blanck_text_cl"
