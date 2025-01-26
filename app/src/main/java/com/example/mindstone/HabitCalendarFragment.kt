@@ -16,6 +16,13 @@ class HabitCalendarFragment : Fragment() {
     private var currentYear = 2025 // 초기 년도 설정
     private var currentMonth = 1   // 초기 월 설정 (1월)
 
+    private val habitData = mapOf(
+        "2025-01-01" to Pair(1, 3),
+        "2025-01-02" to Pair(2, 3),
+        "2025-01-03" to Pair(1, 3),
+        "2025-01-04" to Pair(2, 3)
+    )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

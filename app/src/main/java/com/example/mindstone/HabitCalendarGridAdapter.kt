@@ -12,8 +12,8 @@ import com.example.mindstone.databinding.GridHabitItemBinding
 class HabitCalendarGridAdapter(
     private val context: Context,
     private val dates: List<String>
-
 ) : BaseAdapter() {
+
     override fun getCount(): Int = dates.size
 
     override fun getItem(position: Int): Any = dates[position]
@@ -41,12 +41,45 @@ class HabitCalendarGridAdapter(
                 dateProgress.visibility = View.GONE
                 subText.visibility = View.GONE
             } else {
-                // 보조 텍스트 추가
-                subText.text = "1/3" // 원하는 텍스트로 설정
-                subText.visibility = View.VISIBLE
+                val denominator = getTotalHabit()
+                val numerator = getDoneHabit(text)
+
+                if (numerator == 0) {
+                    dateProgessBar.visibility = View.GONE
+                    subText.visibility = View.VISIBLE
+                    subText.text = "${numerator}/${denominator}"
+                } else {
+                    // float으로 계산
+                    val progress = (numerator.toFloat() / denominator.toFloat()) * 100
+                    dateProgessBar.progress = progress.toInt()
+                    subText.visibility = View.VISIBLE
+                    subText.text = "${numerator}/${denominator}"
+                }
             }
         }
 
         return binding.root
+    }
+
+    // 총 해야 할 일
+    fun getTotalHabit(): Int {
+        return 3 // 예시로 3으로 고정
+    }
+
+    // 해당 날짜에 완료한 일
+    fun getDoneHabit(date: String): Int {
+        val dateNumber = date.padStart(2, '0')
+        val fullDate = "2025-01-$dateNumber"
+
+        return when (fullDate) {
+            "2025-01-01" -> 1
+            "2025-01-02" -> 2
+            "2025-01-03" -> 3
+            "2025-01-04" -> 1
+            "2025-01-05" -> 2
+            "2025-01-06" -> 3
+            "2025-01-07" -> 1
+            else -> 0
+        }
     }
 }
