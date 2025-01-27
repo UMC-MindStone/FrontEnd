@@ -335,10 +335,49 @@
                             android:textSize="7sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
-
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="@id/habit_report_height_bar_v"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/habit_report_width_bar_v"
+                        android:layout_marginStart="31dp"
+                        android:layout_marginEnd="9dp">
 
+                        <com.example.mindstone.CustomBarChartView
+                            android:id="@+id/habit_report_time1_cbc"
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="10dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:id="@+id/habit_report_time2_cbc"
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:id="@+id/habit_report_time3_cbc"
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:id="@+id/habit_report_time4_cbc"
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:id="@+id/habit_report_time5_cbc"
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="10dp"/>
+                    </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
 
@@ -548,6 +587,43 @@
                             android:textSize="7sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="@id/habit_report_height2_bar_v"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/habit_report_width2_bar_v"
+                        android:layout_marginStart="31dp"
+                        android:layout_marginEnd="9dp">
+
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="10dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="10dp"/>
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
@@ -759,6 +835,43 @@
                             android:textSize="7sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="@id/habit_report_height3_bar_v"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/habit_report_width3_bar_v"
+                        android:layout_marginStart="31dp"
+                        android:layout_marginEnd="9dp">
+
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="10dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"/>
+                        <com.example.mindstone.CustomBarChartView
+                            android:layout_width="40dp"
+                            android:layout_height="74dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="10dp"/>
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
