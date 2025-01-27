@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:id="@+id/ib_back_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@android:color/transparent"/>
+
+    <TextView
+        android:id="@+id/tv_title1_search2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="관리 방법"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_question_search3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4. 만들고 싶은 습관을 선택해주세요.(선택)"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_title1_search2"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="75dp"/>
+
+    <TextView
+        android:id="@+id/tv_question1_search3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(1) 습관을 선택 및 입력해주세요."
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_question_search3"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp" />
+
+    <TextView
+        android:id="@+id/tv_exercise_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="운동"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_question1_search3"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_reading_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="독서"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_exercise_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question1_search3"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_sleep_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="취침"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_reading_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question1_search3"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_cook_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="요리"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_sleep_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question1_search3"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C" />
+
+    <TextView
+        android:id="@+id/tv_medicine_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="약 먹기"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise_search"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <EditText
+        android:id="@+id/et_enter_directly_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="+ 직접 입력"
+        app:layout_constraintStart_toEndOf="@+id/tv_medicine_search"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise_search"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColorHint="#6C6C6C" />
+
+    <TextView
+        android:id="@+id/tv_question2_search3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(2) 진행 요일을 선택해주세요."
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_enter_directly_search"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp" />
+
+    <Spinner
+        android:id="@+id/spinner_weekdays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/weekdays"
+        android:background="@drawable/border_shape"
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_question2_search3"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_question3_search3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="(3) 알림 시간을 선택해주세요."
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_weekdays"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp" />
+
+    <Spinner
+        android:id="@+id/spinner_hour"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/hour"
+        android:background="@drawable/border_shape"
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_question3_search3"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_hour_search3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="시"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@id/spinner_hour"
+        app:layout_constraintTop_toBottomOf="@+id/tv_question3_search3"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="15dp"/>
+
+    <Spinner
+        android:id="@+id/spinner_minute"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/minute"
+        android:background="@drawable/border_shape"
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="32dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_hour_search3"
+        android:layout_marginStart="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_question3_search3"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_minute_search3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="분"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@id/spinner_minute"
+        app:layout_constraintTop_toBottomOf="@+id/tv_question3_search3"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="15dp"/>
+
+    <ImageButton
+        android:id="@+id/ib_search_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/btn_search_next"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="27dp"
+        android:contentDescription="@string/search_button_description"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

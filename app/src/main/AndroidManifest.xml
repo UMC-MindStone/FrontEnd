@@ -13,6 +13,18 @@
         android:theme="@style/Theme.MindStone"
         tools:targetApi="31">
         <activity
+            android:name=".Search1ActivityActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".Search2Activity"
+            android:exported="false"/>
+        <activity
+            android:name=".Search3Activity"
+            android:exported="false"/>
+        <activity
+            android:name=".Start1Activity"
+            android:exported="false"/>
+        <activity
             android:name=".MakeNicknameActivity"
             android:exported="false" />
         <activity
@@ -31,12 +43,6 @@
             android:name=".auth.LoginActivity2"
             android:exported="false" />
         <activity
-            android:name=".auth.FindPasswordActivity"
-            android:exported="false" />
-        <activity
-            android:name=".auth.FindEmailActivity"
-            android:exported="false" />
-        <activity
             android:name=".auth.LoginErrorActivity"
             android:exported="false" />
         <activity
@@ -47,9 +53,6 @@
             android:exported="false" />
         <activity
             android:name=".SignupEmailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SignupCodeActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
@@ -63,6 +66,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

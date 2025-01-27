@@ -25,6 +25,15 @@
 
     <color name="gray">#6C6C6C</color>
 
+    <!-- Character Colors -->
+    <color name="depression">#EDCDFF</color>
+    <color name="angry">#FFA0A0</color>
+    <color name="sad">#E0E8FC</color>
+    <color name="calm">#D9D9D9</color>
+    <color name="joy">#CBFFDA</color>
+    <color name="happy">#FFF4AD</color>
+    <color name="romance">#FFBCCD</color>
+
     <!-- Button State Colors -->
     <color name="button_default">#F3CBD1</color>
     <color name="button_pressed">#D998A4</color>
