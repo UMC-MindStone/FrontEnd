@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.mindstone.databinding.FragmentHabitCalendarBinding
 import java.util.Calendar
@@ -14,13 +15,6 @@ class HabitCalendarFragment : Fragment() {
 
     private var currentYear = 2025 // 초기 년도 설정
     private var currentMonth = 1   // 초기 월 설정 (1월)
-
-    private val habitData = mapOf(
-        "2025-01-01" to Pair(1, 3),
-        "2025-01-02" to Pair(2, 3),
-        "2025-01-03" to Pair(1, 3),
-        "2025-01-04" to Pair(2, 3)
-    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +37,21 @@ class HabitCalendarFragment : Fragment() {
         // 년도/월 선택 버튼 클릭 시 다이얼로그 호출
         binding.habitCalendarDownIv.setOnClickListener {
             showYearMonthPickerDialog()
+        }
+
+        binding.habitCalendarGraphIv.setOnClickListener {
+            val fragment = HabitReportFragment()
+            val bundle = Bundle()
+            bundle.putInt("currentYear", currentYear)
+            bundle.putInt("currentMonth", currentMonth)
+            fragment.arguments = bundle
+
+            val fragmentManager = (it.context as AppCompatActivity).supportFragmentManager
+            val transaction = fragmentManager.beginTransaction()
+
+            transaction.replace(R.id.habit_calendar_container_fl, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
         }
 
         return binding.root

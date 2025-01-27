@@ -5,33 +5,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HabitReportFragment">
+    tools:context=".HabitReportFragment"
+    android:background="@color/background">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/habit_report_date_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="2025 1월"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/pretendard_regular"
+        android:layout_gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="38dp">
-        <TextView
-            android:id="@+id/habit_report_date_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2024 12월"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/pretendard_regular"
-            android:layout_gravity="center"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="38dp"/>
 
-        <ImageView
-            android:id="@+id/habit_report_down_iv"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/btn_down_normal"
-            android:layout_gravity="center"/>
-    </LinearLayout>
-    
+    <ImageView
+        android:id="@+id/habit_report_down_iv"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:src="@drawable/btn_down_normal"
+        app:layout_constraintStart_toEndOf="@id/habit_report_date_tv"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="43dp"
+        android:layout_marginStart="7dp"/>
+
     <ImageView
         android:layout_width="24dp"
         android:layout_height="24dp"
@@ -86,9 +86,10 @@
                 android:elevation="8dp"
                 android:translationZ="8dp">
                 <TextView
+                    android:id="@+id/habit_report_title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="12월 습관 요약"
+                    android:text="1월 습관 요약"
                     android:textSize="18sp"
                     android:fontFamily="@font/pretendard_regular"
                     android:textStyle="bold"
@@ -96,9 +97,10 @@
                     android:layout_marginStart="15dp"/>
 
                 <TextView
+                    android:id="@+id/habit_report_success_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="12월 한달 동안 습관 달성률은 40%입니다."
+                    android:text="1월 한달 동안 습관 달성률은 40%입니다."
                     android:textSize="12sp"
                     android:fontFamily="@font/pretendard_regular"
                     android:textStyle="bold"
@@ -106,9 +108,10 @@
                     android:layout_marginStart="15dp"/>
 
                 <TextView
+                    android:id="@+id/habit_report_up_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="12월 초에 비해 12월 말에 습관 달성률이 50% 증가했습니다."
+                    android:text="1월 초에 비해 1월 말에 습관 달성률이 50% 증가했습니다."
                     android:textSize="12sp"
                     android:fontFamily="@font/pretendard_regular"
                     android:textStyle="bold"
@@ -116,6 +119,7 @@
                     android:layout_marginStart="15dp"/>
 
                 <TextView
+                    android:id="@+id/habit_report_highest_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="달성률이 가장 높은 습관은 ‘운동 1시간’ 입니다."
@@ -288,7 +292,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="1주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular" />
 
@@ -299,7 +303,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="2주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -310,7 +314,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="3주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -321,7 +325,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="4주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -332,7 +336,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="5주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
                     </LinearLayout>
@@ -540,7 +544,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="1주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -551,7 +555,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="2주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -562,7 +566,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="3주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -573,7 +577,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="4주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -584,7 +588,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="5주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
                     </LinearLayout>
@@ -788,7 +792,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="1주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular" />
 
@@ -799,7 +803,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="2주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -810,7 +814,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="3주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -821,7 +825,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="4주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
 
@@ -832,7 +836,7 @@
                             android:layout_gravity="center"
                             android:gravity="center"
                             android:text="5주"
-                            android:textSize="7sp"
+                            android:textSize="8sp"
                             android:textStyle="bold"
                             android:fontFamily="@font/pretendard_regular"/>
                     </LinearLayout>
