@@ -5,7 +5,8 @@
     android:id="@+id/frame_habit_check_fl"
     android:layout_width="300dp"
     android:layout_height="128dp"
-    android:background="@drawable/background_radius_gray">
+    android:background="@drawable/background_radius_gray"
+    android:elevation="4dp">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
