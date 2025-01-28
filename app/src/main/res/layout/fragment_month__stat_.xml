@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MonthStatFragment"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/month_stat_month_tv"
+            android:text="1월에는 50% 기록했고\n행복 감정이 가장 많았어요."
+            android:layout_width="190dp"
+            android:layout_height="50dp"
+            android:fontFamily="@font/pretendard_regular"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="start"/>
+        
+        <ImageView
+            android:id="@+id/month_stat_icon_iv"
+            android:layout_width="64dp"
+            android:layout_height="54dp"
+            android:gravity="center"
+            android:layout_marginStart="20dp"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

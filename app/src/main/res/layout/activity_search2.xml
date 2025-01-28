@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageButton
+        android:id="@+id/ib_back_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@android:color/transparent"/>
+
+    <TextView
+        android:id="@+id/tv_title1_search2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="관리 방법"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_question1_search2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1. 스트레스 받을 때 무엇을 하나요?"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_title1_search2"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="75dp"/>
+
+    <TextView
+        android:id="@+id/tv_exercise_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="운동"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_question1_search2"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_reading_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="독서"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_exercise_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question1_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_sleep_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="취침"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_reading_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question1_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_cook_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="요리"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_sleep_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question1_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C" />
+
+    <TextView
+        android:id="@+id/tv_meet_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="모임"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise_search"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_call_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="연락"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_meet_search"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise_search"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <EditText
+        android:id="@+id/et_enter_directly_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="+ 직접 입력"
+        app:layout_constraintStart_toEndOf="@+id/tv_call_search"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise_search"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColorHint="#6C6C6C" />
+
+    <TextView
+        android:id="@+id/tv_question2_search2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2. 취미가 무엇인가요?"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_meet_search"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="65dp"/>
+
+    <TextView
+        android:id="@+id/tv_exercise2_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="운동"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_question2_search2"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_reading2_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="독서"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_exercise_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question2_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_sleep2_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="취침"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_reading_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question2_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_cook2_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="요리"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_sleep_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question2_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C" />
+
+    <TextView
+        android:id="@+id/tv_meet2_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="모임"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise2_search"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_call2_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="연락"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_meet_search"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise2_search"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <EditText
+        android:id="@+id/et_enter_directly2_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="+ 직접 입력"
+        app:layout_constraintStart_toEndOf="@+id/tv_call_search"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise2_search"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColorHint="#6C6C6C" />
+
+    <TextView
+        android:id="@+id/tv_question3_search2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3. 특기가 무엇인가요?"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_meet2_search"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="65dp"/>
+
+    <TextView
+        android:id="@+id/tv_exercise3_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="운동"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_question3_search2"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_reading3_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="독서"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_exercise_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question3_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_sleep3_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="취침"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_reading_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question3_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_cook3_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="요리"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_sleep_search"
+        app:layout_constraintTop_toTopOf="@+id/tv_question3_search2"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C" />
+
+    <TextView
+        android:id="@+id/tv_meet3_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="모임"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise3_search"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <TextView
+        android:id="@+id/tv_call3_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="연락"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_meet_search"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise3_search"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColor="#6C6C6C"/>
+
+    <EditText
+        android:id="@+id/et_enter_directly3_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="+ 직접 입력"
+        app:layout_constraintStart_toEndOf="@+id/tv_call_search"
+        app:layout_constraintTop_toBottomOf="@+id/tv_exercise3_search"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/textview_background_search"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="15dp"
+        android:textColorHint="#6C6C6C" />
+
+    <ImageButton
+        android:id="@+id/ib_search_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/btn_search_next"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="27dp"
+        android:contentDescription="@string/search_button_description"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,13 +17,22 @@
     <!-- Achromatic Colors -->
     <color name="black">#212121</color>
     <color name="dark_gray">#494949</color>
-    <color name="medium_gray">#B0B0B0</color>
+    <color name="medium_gray">#AFAFAF</color>
     <color name="light_gray">#CECECE</color>
     <color name="disabled">#AFAFAF</color>
     <color name="lightest_gray">#F6F6F6</color>
     <color name="white">#FFFFFF</color>
 
     <color name="gray">#6C6C6C</color>
+
+    <!-- Character Colors -->
+    <color name="depression">#EDCDFF</color>
+    <color name="angry">#FFA0A0</color>
+    <color name="sad">#E0E8FC</color>
+    <color name="calm">#D9D9D9</color>
+    <color name="joy">#CBFFDA</color>
+    <color name="happy">#FFF4AD</color>
+    <color name="romance">#FFBCCD</color>
 
     <!-- Button State Colors -->
     <color name="button_default">#F3CBD1</color>
