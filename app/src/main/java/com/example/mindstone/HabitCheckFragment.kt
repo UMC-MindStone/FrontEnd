@@ -1,5 +1,6 @@
 package com.example.mindstone
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -115,7 +116,7 @@ class HabitCheckFragment : Fragment() {
         // 각 프레임에 대한 고유한 timeNum을 관리
         var timeNum = frameTimeNums.getOrDefault(index, 1)
         if (isEditing) {
-            setEditMode(timeNum, timeTextViews, index)
+            setEditMode(timeNum, timeTextViews, index, frameLayoutBinding)
         } else {
             setNonEditMode(timeNum, timeTextViews, index)
         }
@@ -137,19 +138,21 @@ class HabitCheckFragment : Fragment() {
         // 각 프레임에 대한 고유한 timeNum을 관리
         var timeNum = frameTimeNums.getOrDefault(index, 1)
         if (isEditing) {
-            setEditMode(timeNum, timeTextViews, index)
+            setEditMode(timeNum, timeTextViews, index, frameLayoutBinding)
         } else {
             setNonEditMode(timeNum, timeTextViews, index)
         }
     }
 
-    private fun setEditMode(timeNum: Int, timeTextViews: List<TextView>, index: Int) {
+    private fun setEditMode(timeNum: Int, timeTextViews: List<TextView>, index: Int, frameLayoutBinding: FrameHabitCheckBinding) {
         for (j in 0 until timeNum) {
             timeTextViews[j].visibility = View.VISIBLE
             timeTextViews[j].setOnClickListener { textView ->
                 showTimePickerDialog { selectedTime ->
                     (textView as TextView).text = selectedTime
-
+                    timeTextViews[j].setTextColor(Color.BLACK)
+                    frameLayoutBinding.frameHabitCheckHabitTv.setTextColor(Color.BLACK)
+                    frameLayoutBinding.frameHabitCheckCustomEt.setTextColor(Color.BLACK)
                     // timeNum을 증가시키되 최대값은 4로 제한
                     var updatedTimeNum = timeNum
                     if (timeNum < (j + 2).coerceAtMost(5)) {
@@ -160,7 +163,7 @@ class HabitCheckFragment : Fragment() {
                     frameTimeNums[index] = updatedTimeNum
 
                     if (updatedTimeNum <= 4) {
-                        setEditMode(updatedTimeNum, timeTextViews, index)
+                        setEditMode(updatedTimeNum, timeTextViews, index, frameLayoutBinding)
                     }
                 }
             }
