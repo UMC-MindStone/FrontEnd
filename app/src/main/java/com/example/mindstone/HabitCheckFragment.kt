@@ -1,11 +1,16 @@
 package com.example.mindstone
 
+import android.content.res.Resources
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.mindstone.databinding.FragmentHabitCheckBinding
 import com.example.mindstone.databinding.FrameHabitCheckBinding
@@ -100,6 +105,38 @@ class HabitCheckFragment : Fragment() {
             layoutParams.topMargin = resources.getDimensionPixelSize(R.dimen.padding_top)
             frameLayoutBinding.root.layoutParams = layoutParams
 
+            val editText = frameLayoutBinding.frameHabitCheckCustomEt  // EditText
+            val imageView = frameLayoutBinding.frameHabitCheckBubbleIv    // ImageView
+
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, after: Int) {
+                    val maxWidth = resources.getDimensionPixelSize(R.dimen.max_image_width)  // 이미지 뷰 최대 너비
+                    val textLength = charSequence.length
+                    val maxCharacters = maxWidth / 20  // 글자 하나당 10dp로 가정하여 최대 글자 수 계산
+
+                    if (textLength > maxCharacters) {
+                        // 텍스트가 초과되었을 경우 자르기
+                        val truncatedText = charSequence.substring(0, maxCharacters)
+                        editText.setText(truncatedText)
+                        editText.setSelection(truncatedText.length)  // 커서를 맨 뒤로 이동
+                    }
+
+                    // 텍스트에 맞춰 이미지 뷰 너비 조정
+                    val newWidth = calculateWidthBasedOnTextLength(charSequence.length)
+                    val params = imageView.layoutParams
+                    params.width = newWidth.coerceAtMost(maxWidth)  // 최대 너비 제한 적용
+                    imageView.layoutParams = params
+                }
+
+                override fun afterTextChanged(editable: Editable) {}
+            })
+
+
+
+
+
             frameLayoutBinding.frameHabitCheckIconIv.setOnClickListener {
                 if (binding.habitCheckEditTv.text == "완료") {
                     val dialog = ColorPickerFragment()
@@ -123,6 +160,17 @@ class HabitCheckFragment : Fragment() {
 
             habitCheckContainerLL.addView(frameLayoutBinding.root)
         }
+    }
+
+    fun calculateWidthBasedOnTextLength(textLength: Int): Int {
+        val minWidth = resources.getDimensionPixelSize(R.dimen.min_image_width)  // 최소 너비 (예: 100dp)
+        val maxWidth = resources.getDimensionPixelSize(R.dimen.max_image_width)  // 최대 너비 (예: 300dp)
+
+        // 텍스트 길이에 따라 너비 계산 (여기서는 길이가 증가할수록 너비가 비례적으로 늘어남)
+        val calculatedWidth = minWidth + (textLength * 10)  // 텍스트 길이에 비례하여 너비 증가 (10px씩 증가)
+
+        // 계산된 너비가 최소, 최대 범위 내에 있도록 조정
+        return calculatedWidth.coerceIn(minWidth, maxWidth)
     }
 
     // 날짜 변경 함수

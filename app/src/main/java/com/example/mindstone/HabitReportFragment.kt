@@ -43,6 +43,15 @@ class HabitReportFragment : Fragment() {
             transaction.commit()
         }
 
+        binding.habitCalendarRightIv.setOnClickListener {
+            changeMonth(1) // 1은 한 달 후로 이동
+        }
+
+        // 왼쪽 버튼 클릭 시 한 달 전으로 이동
+        binding.habitCalendarLeftIv.setOnClickListener {
+            changeMonth(-1) // -1은 한 달 전으로 이동
+        }
+
 
         return binding.root
     }
@@ -68,6 +77,22 @@ class HabitReportFragment : Fragment() {
         binding.habitReportTitleTv.text = "${currentMonth}월 습관 요약"
         binding.habitReportSuccessTv.text = "${currentMonth}월 한달 동안 습관 달성률은 40%입니다."
         binding.habitReportUpTv.text = "${currentMonth}월 초에 비해 ${currentMonth}월 말에 습관 달성률이 50% 증가했습니다."
+    }
+
+    private fun changeMonth(delta: Int) {
+        currentMonth += delta
+
+        if (currentMonth > 12) {
+            currentMonth = 1
+            currentYear++
+        } else if (currentMonth < 1) {
+            currentMonth = 12
+            currentYear--
+        }
+
+        // 캘린더 갱신
+        setUpDateText()
+        setUpHabitText()
     }
 
 }

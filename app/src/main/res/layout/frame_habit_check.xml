@@ -37,30 +37,32 @@
 
         <ImageView
             android:id="@+id/frame_habit_check_bubble_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="103dp"
+            android:layout_height="34dp"
             android:src="@drawable/ic_text_bubble"
-            android:scaleType="fitStart"
+            android:scaleType="fitXY"
             android:adjustViewBounds="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="19dp"
             android:layout_marginEnd="66dp"/>
 
-        <TextView
-            android:id="@+id/frame_habit_check_custom_tv"
+        <EditText
+            android:id="@+id/frame_habit_check_custom_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="하지 않았어요.."
+            android:hint="하지 않았어요.."
             android:textSize="13sp"
+            android:background="@android:color/transparent"
             android:textColor="@color/gray"
             android:textStyle="bold"
             android:fontFamily="@font/pretendard_regular"
+            android:gravity="center"
+            android:inputType="text"
             app:layout_constraintTop_toTopOf="@id/frame_habit_check_bubble_iv"
             app:layout_constraintEnd_toEndOf="@id/frame_habit_check_bubble_iv"
             app:layout_constraintStart_toStartOf="@id/frame_habit_check_bubble_iv"
             app:layout_constraintBottom_toBottomOf="@id/frame_habit_check_bubble_iv"
-            android:layout_marginBottom="6.8dp"/>
-
+            android:layout_marginBottom="6.8dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
