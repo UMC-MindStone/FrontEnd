@@ -83,4 +83,8 @@
         android:layout_marginBottom="15dp"
         android:layout_marginStart="24dp"/>
 
+    <FrameLayout
+        android:id="@+id/habit_check_container_fl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

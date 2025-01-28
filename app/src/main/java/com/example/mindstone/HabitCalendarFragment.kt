@@ -13,14 +13,17 @@ class HabitCalendarFragment : Fragment() {
     private var _binding: FragmentHabitCalendarBinding? = null
     private val binding get() = _binding!!
 
-    private var currentYear = 2025 // 초기 년도 설정
-    private var currentMonth = 1   // 초기 월 설정 (1월)
+    private var currentYear = arguments?.getInt("currentYear") ?: 2025
+    private var currentMonth = arguments?.getInt("currentMonth") ?: 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        currentYear = arguments?.getInt("currentYear") ?: 2025
+        currentMonth = arguments?.getInt("currentMonth") ?: 1
         _binding = FragmentHabitCalendarBinding.inflate(inflater, container, false)
 
         setupCalendar()

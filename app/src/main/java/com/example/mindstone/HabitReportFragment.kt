@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.mindstone.databinding.FragmentHabitReportBinding
 
@@ -26,6 +27,22 @@ class HabitReportFragment : Fragment() {
         binding.habitReportDownIv.setOnClickListener {
             showYearMonthPickerDialog()
         }
+
+        binding.habitReportCloseIv.setOnClickListener {
+            val fragment = HabitCalendarFragment()
+            val bundle = Bundle()
+            bundle.putInt("currentYear", currentYear)
+            bundle.putInt("currentMonth", currentMonth)
+            fragment.arguments = bundle
+
+            val fragmentManager = (it.context as AppCompatActivity).supportFragmentManager
+            val transaction = fragmentManager.beginTransaction()
+
+            transaction.replace(R.id.habit_report_container_fl, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
+        }
+
 
         return binding.root
     }

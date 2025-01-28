@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.mindstone.databinding.FragmentHabitCheckBinding
 import com.example.mindstone.databinding.FrameHabitCheckBinding
@@ -51,12 +52,27 @@ class HabitCheckFragment : Fragment() {
             changeDate(1)  // 하루 후로 변경
         }
 
+        binding.habitCheckCloseIv.setOnClickListener {
+
+        }
+
         binding.habitCheckEditTv.setOnClickListener {
             if(binding.habitCheckEditTv.text == "편집"){
                 binding.habitCheckEditTv.text = "완료"
             } else {
                 binding.habitCheckEditTv.text = "편집"
             }
+        }
+
+        binding.habitCheckCloseIv.setOnClickListener {
+            val fragment = HabitCalendarFragment()
+
+            val fragmentManager = (it.context as AppCompatActivity).supportFragmentManager
+            val transaction = fragmentManager.beginTransaction()
+
+            transaction.replace(R.id.habit_check_container_fl, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
         }
 
         return binding.root
