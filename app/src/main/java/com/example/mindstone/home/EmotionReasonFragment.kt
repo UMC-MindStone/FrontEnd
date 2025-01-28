@@ -81,24 +81,4 @@ class EmotionReasonFragment : Fragment() {
             }
         }
     }
-
-
-//    // 감정 최종 반영 프래그먼트 (EmotionFinalFrgament) 로 이동
-//    private fun navigateToFinalFragment() {
-//        // EmotionFinalFragment로 이동 (이유 데이터 전달)
-//        val fragment = EmotionFinalFragment.newInstance("reason", "extraData")
-//        requireActivity().supportFragmentManager.beginTransaction()
-//            .replace(R.id.main_container, fragment) // 메인 컨테이너에 새로운 프래그먼트 교체
-//            .addToBackStack(null) // 뒤로가기 버튼을 눌렀을 때 이전 화면으로 돌아갈 수 있도록 추가
-//            .commit()
-//    }
-
-    companion object {
-        fun newInstance(emotion: String) =
-            EmotionReasonFragment().apply {
-                arguments = Bundle().apply {
-                    putString("emotion", emotion)
-                }
-            }
-    }
 }

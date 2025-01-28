@@ -19,6 +19,9 @@ class EmotionIntensityFragment : Fragment() {
     private var _binding: FragmentEmotionIntensityBinding? = null
     private val binding get() = _binding!!
 
+    private var isAfterAction = false
+    private var selectedEmotion: String? = null
+
     private lateinit var viewModel: EmotionModel
 
     override fun onCreateView(
@@ -40,6 +43,21 @@ class EmotionIntensityFragment : Fragment() {
 
         // ViewModel을 Activity 범위에서 가져오기 (HomeFragment에서 설정한 데이터 사용)
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
+
+        // `isAfterAction` 여부 확인
+        isAfterAction = arguments?.getBoolean("isAfterAction", false) ?: false
+        selectedEmotion = arguments?.getString("selectedEmotion")
+        if (isAfterAction && selectedEmotion != null) {
+            viewModel.setEmotionData(selectedEmotion!!, viewModel.getEmotionColor(selectedEmotion!!) ?: 0, true)
+            viewModel.resetIntensity()
+        }
+
+
+        // 상태바 & 캐릭터 업데이트
+        viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
+        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
+
 
         // 감정에 맞는 질문 업데이트
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
@@ -70,15 +88,43 @@ class EmotionIntensityFragment : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        // '확인' 버튼 클릭 시 -> IntensityResult 으로 넘어감
+        // '확인' 버튼 클릭 시 -> Intensity2 으로 넘어감
         binding.intensityConfirm.setOnClickListener {
             viewModel.setIntensity(viewModel.intensity.value ?: 10) // 감정 강도를 ViewModel에 저장
             navigateToIntensity2()
         }
     }
 
+
+//    // 새로운 감정 선택 시 감정 강도 초기화 (감정 비율과 최근 감정은 유지)
+//    private fun resetEmotionIntensity() {
+//        viewModel.resetIntensity() // 감정 강도만 초기화 (기존 데이터 유지)
+//    }
+
+    // 상태바 업데이트 (감정 비율에 따른 색상 적용)
+    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
+        val sortedRatios = viewModel.getSortedEmotionRatios()
+        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
+            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
+        }
+        if (sortedColors.isNotEmpty()) {
+            val dominantColor = sortedColors.first()
+            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
+        }
+    }
+
+    // 최근 감정 기반 캐릭터 변경
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion)
+        binding.iconIv.setImageResource(characterResId)
+    }
+
     private fun navigateToIntensity2() {
-        val fragment = EmotionIntensityFragment2()
+        val fragment = EmotionIntensityFragment2().apply {
+            arguments = Bundle().apply {
+                putBoolean("isAfterAction", isAfterAction)
+            }
+        }
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
             .addToBackStack(null)

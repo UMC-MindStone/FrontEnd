@@ -1,6 +1,7 @@
 package com.example.mindstone.home
 
 import android.content.res.ColorStateList
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -20,6 +21,8 @@ class EmotionIntensityFragment2 : Fragment() {
 
     private var _binding: FragmentEmotionIntensity2Binding? = null
     private val binding get() = _binding!!
+
+    private var isAfterAction = false
 
     private lateinit var viewModel: EmotionModel
 
@@ -41,6 +44,14 @@ class EmotionIntensityFragment2 : Fragment() {
         }
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
+        // `isAfterAction` 여부 확인
+        isAfterAction = arguments?.getBoolean("isAfterAction", false) ?: false
+
+        // 상태바 & 캐릭터 업데이트
+        viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
+        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
+
 
         // 감정에 맞는 질문 업데이트
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
@@ -66,32 +77,61 @@ class EmotionIntensityFragment2 : Fragment() {
     }
 
 
+
+    // 상태바 업데이트 (감정 비율에 따른 색상 적용)
+    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
+        val sortedRatios = viewModel.getSortedEmotionRatios()
+        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
+            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
+        }
+        if (sortedColors.isNotEmpty()) {
+            val dominantColor = sortedColors.first()
+            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
+        }
+    }
+
+    // 최근 감정 기반 캐릭터 변경
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion)
+        binding.iconIv.setImageResource(characterResId)
+    }
+
+
     private fun animateResultBubble() {
         binding.resultBubble.animate()
             .translationY(-100f) // 위로 이동
             .alpha(0f) // 투명해짐
             .setDuration(1000) // 1초 동안 애니메이션 실행
             .withEndAction {
-                navigateToEmotionReasonFragment() // 애니메이션 끝나면 다음 Fragment로 이동
+                navigateToNextFragment() // 애니메이션 끝나면 다음 Fragment로 이동
             }
             .start()
         binding.resultBubbleTv.animate()
-            .translationY(-100f) // 위로 이동
-            .alpha(0f) // 투명해짐
-            .setDuration(1000) // 1초 동안 애니메이션 실행
+            .translationY(-100f)
+            .alpha(0f)
+            .setDuration(1000)
             .withEndAction {
-                navigateToEmotionReasonFragment() // 애니메이션 끝나면 다음 Fragment로 이동
+                navigateToNextFragment()
             }
             .start()
     }
 
-    private fun navigateToEmotionReasonFragment() {
-        val fragment = EmotionReasonFragment()
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, fragment)
-            .addToBackStack(null)
-            .commit()
+    private fun navigateToNextFragment() {
+        if (isAfterAction) {
+            // 부정적 감정 관리 후 EmotionFinalFragment로 이동
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, EmotionFinalFragment())
+                .addToBackStack(null)
+                .commit()
+        } else {
+            // 최초 감정 선택 시 EmotionReasonFragment로 이동
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, EmotionReasonFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
+
 
     // 감정에 맞는 질문을 반환하는 함수
     private fun getEmotionQuestion(emotion: String?): String {
@@ -112,4 +152,3 @@ class EmotionIntensityFragment2 : Fragment() {
         _binding = null
     }
 }
-
