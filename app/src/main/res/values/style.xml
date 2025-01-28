@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextInputLayoutStyle">
+        <!-- 레이아웃 크기 -->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">136dp</item>
+        <item name="android:layout_marginStart">35dp</item>
+        <item name="android:layout_marginEnd">35dp</item>
+        <item name="android:textSize">16sp</item>
+
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxCornerRadiusTopStart">7dp</item>
+        <item name="boxCornerRadiusTopEnd">7dp</item>
+        <item name="boxCornerRadiusBottomStart">7dp</item>
+        <item name="boxCornerRadiusBottomEnd">7dp</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
+
+
+    <style name="SmallTextInputLayoutStyle">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_marginStart">33dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAlignment">center</item>
+        <!-- 박스 스타일 -->
+        <item name="boxBackgroundMode">outline</item>>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxCornerRadiusTopStart">7dp</item>
+        <item name="boxCornerRadiusTopEnd">7dp</item>
+        <item name="boxCornerRadiusBottomStart">7dp</item>
+        <item name="boxCornerRadiusBottomEnd">7dp</item>
+    </style>
+
+    <style name="Login_TextInputLayoutStyle">
+        <!-- 레이아웃 크기 -->
+        <item name="android:layout_width">292dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">136dp</item>
+        <item name="android:textSize">16sp</item>
+
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxCornerRadiusTopStart">7dp</item>
+        <item name="boxCornerRadiusTopEnd">7dp</item>
+        <item name="boxCornerRadiusBottomStart">7dp</item>
+        <item name="boxCornerRadiusBottomEnd">7dp</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
+
+    <style name="CustomCalendarLetterAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+    </style>
+
+    <style name="CustomCalendarDigitAppearance" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="android:lineSpacingExtra">8dp</item>
+    </style>
+</resources>
+
