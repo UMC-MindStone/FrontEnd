@@ -64,5 +64,64 @@
             app:layout_constraintStart_toStartOf="@id/frame_habit_check_bubble_iv"
             app:layout_constraintBottom_toBottomOf="@id/frame_habit_check_bubble_iv"
             android:layout_marginBottom="6.8dp" />
+
+        <TextView
+            android:id="@+id/frame_habit_check_time1_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00'00:00"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:textColor="@color/gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="82dp"/>
+
+        <TextView
+            android:id="@+id/frame_habit_check_time2_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00'00:00"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:textColor="@color/gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="85dp"
+            android:layout_marginTop="82dp"
+            />
+
+        <TextView
+            android:id="@+id/frame_habit_check_time3_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00'00:00"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:textColor="@color/gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="102dp"
+            />
+
+        <TextView
+            android:id="@+id/frame_habit_check_time4_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00'00:00"
+            android:fontFamily="@font/pretendard_regular"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:textColor="@color/gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="85dp"
+            android:layout_marginTop="102dp"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

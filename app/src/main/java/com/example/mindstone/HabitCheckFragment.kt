@@ -1,6 +1,5 @@
 package com.example.mindstone
 
-import android.content.res.Resources
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,9 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.mindstone.databinding.FragmentHabitCheckBinding
 import com.example.mindstone.databinding.FrameHabitCheckBinding
@@ -21,9 +21,13 @@ class HabitCheckFragment : Fragment() {
     private var selectedMonth: Int? = null
     private var selectedDay: Int? = null
     private var selectedDayOfWeek: String? = null
+    private var isEditing = false
 
     private lateinit var habitCheckContainerLL: LinearLayout
     private lateinit var binding: FragmentHabitCheckBinding
+
+    // 각 프레임의 timeNum을 관리할 Map
+    private val frameTimeNums = mutableMapOf<Int, Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,26 +62,11 @@ class HabitCheckFragment : Fragment() {
         }
 
         binding.habitCheckCloseIv.setOnClickListener {
-
+            closeFragment()
         }
 
         binding.habitCheckEditTv.setOnClickListener {
-            if(binding.habitCheckEditTv.text == "편집"){
-                binding.habitCheckEditTv.text = "완료"
-            } else {
-                binding.habitCheckEditTv.text = "편집"
-            }
-        }
-
-        binding.habitCheckCloseIv.setOnClickListener {
-            val fragment = HabitCalendarFragment()
-
-            val fragmentManager = (it.context as AppCompatActivity).supportFragmentManager
-            val transaction = fragmentManager.beginTransaction()
-
-            transaction.replace(R.id.habit_check_container_fl, fragment)
-            transaction.addToBackStack(null)
-            transaction.commit()
+            toggleEditMode()
         }
 
         return binding.root
@@ -87,111 +76,198 @@ class HabitCheckFragment : Fragment() {
     private fun updateDateView() {
         binding.habitCheckDateTv.text = "${selectedMonth}월 ${selectedDay}일 ${selectedDayOfWeek}"
 
-        // 기존의 FrameLayout 제거
-        habitCheckContainerLL.removeAllViews()
-
-        // 새로 FrameLayout 추가
+        // 기존 뷰들을 초기화하지 않고 유지
         val count = 3 // 예시: 3개의 FrameLayout 추가
-        val context = requireContext()
-
         for (i in 0 until count) {
-            val frameLayoutBinding = FrameHabitCheckBinding.inflate(LayoutInflater.from(context))
-
-            // 각 FrameLayout에 LayoutParams 설정
-            val layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                380
-            )
-            layoutParams.topMargin = resources.getDimensionPixelSize(R.dimen.padding_top)
-            frameLayoutBinding.root.layoutParams = layoutParams
-
-            val editText = frameLayoutBinding.frameHabitCheckCustomEt  // EditText
-            val imageView = frameLayoutBinding.frameHabitCheckBubbleIv    // ImageView
-
-            editText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
-
-                override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, after: Int) {
-                    val maxWidth = resources.getDimensionPixelSize(R.dimen.max_image_width)  // 이미지 뷰 최대 너비
-                    val textLength = charSequence.length
-                    val maxCharacters = maxWidth / 20  // 글자 하나당 10dp로 가정하여 최대 글자 수 계산
-
-                    if (textLength > maxCharacters) {
-                        // 텍스트가 초과되었을 경우 자르기
-                        val truncatedText = charSequence.substring(0, maxCharacters)
-                        editText.setText(truncatedText)
-                        editText.setSelection(truncatedText.length)  // 커서를 맨 뒤로 이동
-                    }
-
-                    // 텍스트에 맞춰 이미지 뷰 너비 조정
-                    val newWidth = calculateWidthBasedOnTextLength(charSequence.length)
-                    val params = imageView.layoutParams
-                    params.width = newWidth.coerceAtMost(maxWidth)  // 최대 너비 제한 적용
-                    imageView.layoutParams = params
-                }
-
-                override fun afterTextChanged(editable: Editable) {}
-            })
-
-
-
-
-
-            frameLayoutBinding.frameHabitCheckIconIv.setOnClickListener {
-                if (binding.habitCheckEditTv.text == "완료") {
-                    val dialog = ColorPickerFragment()
-                    dialog.onColorSelected = { colorIndex ->
-                        colorIndex?.let {
-                            when (it) {
-                                1 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_depression)
-                                2 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_angry)
-                                3 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_sad)
-                                4 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_calm)
-                                5 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_joy)
-                                6 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_happy)
-                                7 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_romance)
-                                else -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.btn_nothing_normal)
-                            }
-                        }
-                    }
-                    dialog.show(parentFragmentManager, "ColorPickerFragment")
-                }
+            // 이미 뷰가 추가되어 있다면, 해당 뷰를 업데이트하도록 변경
+            if (habitCheckContainerLL.childCount > i) {
+                val frameLayoutBinding = FrameHabitCheckBinding.bind(habitCheckContainerLL.getChildAt(i))
+                updateHabitCheckView(frameLayoutBinding, i)
+            } else {
+                createHabitCheckView(i)
             }
-
-            habitCheckContainerLL.addView(frameLayoutBinding.root)
         }
     }
 
-    fun calculateWidthBasedOnTextLength(textLength: Int): Int {
-        val minWidth = resources.getDimensionPixelSize(R.dimen.min_image_width)  // 최소 너비 (예: 100dp)
-        val maxWidth = resources.getDimensionPixelSize(R.dimen.max_image_width)  // 최대 너비 (예: 300dp)
+    private fun createHabitCheckView(index: Int) {
+        val context = requireContext()
+        val frameLayoutBinding = FrameHabitCheckBinding.inflate(LayoutInflater.from(context))
 
-        // 텍스트 길이에 따라 너비 계산 (여기서는 길이가 증가할수록 너비가 비례적으로 늘어남)
-        val calculatedWidth = minWidth + (textLength * 10)  // 텍스트 길이에 비례하여 너비 증가 (10px씩 증가)
+        // 각 FrameLayout에 LayoutParams 설정
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            380
+        )
+        layoutParams.topMargin = resources.getDimensionPixelSize(R.dimen.padding_top)
+        frameLayoutBinding.root.layoutParams = layoutParams
 
-        // 계산된 너비가 최소, 최대 범위 내에 있도록 조정
+        val editText = frameLayoutBinding.frameHabitCheckCustomEt
+        val imageView = frameLayoutBinding.frameHabitCheckBubbleIv
+        val timeTextViews: List<TextView> = listOf(
+            frameLayoutBinding.frameHabitCheckTime1Tv,
+            frameLayoutBinding.frameHabitCheckTime2Tv,
+            frameLayoutBinding.frameHabitCheckTime3Tv,
+            frameLayoutBinding.frameHabitCheckTime4Tv
+        )
+
+        timeTextViews.forEach { it.visibility = View.GONE }
+
+        // 각 프레임에 대한 고유한 timeNum을 관리
+        var timeNum = frameTimeNums.getOrDefault(index, 1)
+        if (isEditing) {
+            setEditMode(timeNum, timeTextViews, index)
+        } else {
+            setNonEditMode(timeNum, timeTextViews, index)
+        }
+
+        setupEditTextListener(editText, imageView)
+        setupIconClickListener(frameLayoutBinding)
+
+        habitCheckContainerLL.addView(frameLayoutBinding.root)
+    }
+
+    private fun updateHabitCheckView(frameLayoutBinding: FrameHabitCheckBinding, index: Int) {
+        val timeTextViews: List<TextView> = listOf(
+            frameLayoutBinding.frameHabitCheckTime1Tv,
+            frameLayoutBinding.frameHabitCheckTime2Tv,
+            frameLayoutBinding.frameHabitCheckTime3Tv,
+            frameLayoutBinding.frameHabitCheckTime4Tv
+        )
+
+        // 각 프레임에 대한 고유한 timeNum을 관리
+        var timeNum = frameTimeNums.getOrDefault(index, 1)
+        if (isEditing) {
+            setEditMode(timeNum, timeTextViews, index)
+        } else {
+            setNonEditMode(timeNum, timeTextViews, index)
+        }
+    }
+
+    private fun setEditMode(timeNum: Int, timeTextViews: List<TextView>, index: Int) {
+        for (j in 0 until timeNum) {
+            timeTextViews[j].visibility = View.VISIBLE
+            timeTextViews[j].setOnClickListener { textView ->
+                showTimePickerDialog { selectedTime ->
+                    (textView as TextView).text = selectedTime
+
+                    // timeNum을 증가시키되 최대값은 4로 제한
+                    var updatedTimeNum = timeNum
+                    if (timeNum < (j + 2).coerceAtMost(5)) {
+                        updatedTimeNum = (j + 2).coerceAtMost(5)
+                    }
+
+                    // 각 프레임에 대해 timeNum을 업데이트
+                    frameTimeNums[index] = updatedTimeNum
+
+                    if (updatedTimeNum <= 4) {
+                        setEditMode(updatedTimeNum, timeTextViews, index)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setNonEditMode(timeNum: Int, timeTextViews: List<TextView>, index: Int) {
+        // 설정된 시간까지만 보이도록 처리
+        for (j in 0 until timeNum-1) {
+            timeTextViews[j].visibility = View.VISIBLE
+        }
+
+        // 설정되지 않은 시간들은 숨기기
+        for (j in timeNum-1 until timeTextViews.size) {
+            timeTextViews[j].visibility = View.GONE
+        }
+    }
+
+    private fun setupEditTextListener(editText: EditText, imageView: ImageView) {
+        editText.isEnabled = isEditing
+
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, after: Int) {
+                if (isEditing) {
+                    handleTextLength(charSequence, editText, imageView)
+                }
+            }
+
+            override fun afterTextChanged(editable: Editable) {}
+        })
+    }
+
+    private fun handleTextLength(charSequence: CharSequence, editText: EditText, imageView: ImageView) {
+        val maxWidth = resources.getDimensionPixelSize(R.dimen.max_image_width)
+        val textLength = charSequence.length
+        val maxCharacters = maxWidth / 20
+
+        if (textLength > maxCharacters) {
+            val truncatedText = charSequence.substring(0, maxCharacters)
+            editText.setText(truncatedText)
+            editText.setSelection(truncatedText.length)
+        }
+
+        val newWidth = calculateWidthBasedOnTextLength(charSequence.length)
+        val params = imageView.layoutParams
+        params.width = newWidth.coerceAtMost(maxWidth)
+        imageView.layoutParams = params
+    }
+
+    private fun setupIconClickListener(frameLayoutBinding: FrameHabitCheckBinding) {
+        frameLayoutBinding.frameHabitCheckIconIv.setOnClickListener {
+            if (isEditing) {
+                val dialog = ColorPickerFragment()
+                dialog.onColorSelected = { colorIndex ->
+                    colorIndex?.let {
+                        when (it) {
+                            1 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_depression)
+                            2 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_angry)
+                            3 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_sad)
+                            4 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_calm)
+                            5 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_joy)
+                            6 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_happy)
+                            7 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_romance)
+                            else -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.btn_nothing_normal)
+                        }
+                    }
+                }
+                dialog.show(parentFragmentManager, "ColorPickerFragment")
+            }
+        }
+    }
+
+    private fun showTimePickerDialog(onTimeSelected: (String) -> Unit) {
+        val dialog = TimePickerDialogFragment { selectedTime ->
+            onTimeSelected(selectedTime)
+        }
+        dialog.show(parentFragmentManager, "TimePickerDialog")
+    }
+
+    private fun calculateWidthBasedOnTextLength(textLength: Int): Int {
+        val minWidth = resources.getDimensionPixelSize(R.dimen.min_image_width)
+        val maxWidth = resources.getDimensionPixelSize(R.dimen.max_image_width)
+
+        val calculatedWidth = minWidth + (textLength * 10)
         return calculatedWidth.coerceIn(minWidth, maxWidth)
     }
 
-    // 날짜 변경 함수
     private fun changeDate(dayOffset: Int) {
-        // Calendar 객체를 사용하여 날짜 계산
         val calendar = Calendar.getInstance()
 
-        // 현재 선택된 날짜로 설정
         calendar.set(selectedYear ?: 2025, selectedMonth?.minus(1) ?: 0, selectedDay ?: 1)
-
-        // 날짜에 하루를 더하거나 빼기
         calendar.add(Calendar.DAY_OF_MONTH, dayOffset)
 
-        // 연도, 월, 날짜 업데이트
         selectedYear = calendar.get(Calendar.YEAR)
-        selectedMonth = calendar.get(Calendar.MONTH) + 1 // 0부터 시작하므로 1을 더해줌
+        selectedMonth = calendar.get(Calendar.MONTH) + 1
         selectedDay = calendar.get(Calendar.DAY_OF_MONTH)
 
-        // 요일 계산
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-        selectedDayOfWeek = when (dayOfWeek) {
+        selectedDayOfWeek = getDayOfWeekString(dayOfWeek)
+
+        updateDateView()
+    }
+
+    private fun getDayOfWeekString(dayOfWeek: Int): String {
+        return when (dayOfWeek) {
             Calendar.SUNDAY -> "일요일"
             Calendar.MONDAY -> "월요일"
             Calendar.TUESDAY -> "화요일"
@@ -201,10 +277,21 @@ class HabitCheckFragment : Fragment() {
             Calendar.SATURDAY -> "토요일"
             else -> ""
         }
-
-        // UI 업데이트
-        updateDateView()
     }
 
+    private fun closeFragment() {
+        val fragment = HabitCalendarFragment()
+        val fragmentManager = (requireActivity() as AppCompatActivity).supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
 
+        transaction.replace(R.id.habit_check_container_fl, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
+    private fun toggleEditMode() {
+        isEditing = !isEditing
+        binding.habitCheckEditTv.text = if (isEditing) "완료" else "편집"
+        updateDateView()
+    }
 }
