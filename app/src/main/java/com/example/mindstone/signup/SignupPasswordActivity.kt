@@ -1,16 +1,15 @@
-package com.example.mindstone
+package com.example.mindstone.signup
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import com.example.mindstone.R
 import com.example.mindstone.databinding.ActivitySignupPasswordBinding
 
 class SignupPasswordActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySignupPasswordBinding
+    private val signupViewModel = SignupViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,10 +82,14 @@ class SignupPasswordActivity : AppCompatActivity() {
 
     private fun updateButtonState(input: String, check: String) {
         if (input == check) {
+
             binding.signupPasswordNextBtn.apply {
                 isEnabled = true
-
                 background = getDrawable(R.drawable.btn_pink_background) ?: return
+                setOnClickListener {
+                    signupViewModel.password.value = input
+                }
+
             }
             binding.signupPasswordCheckTil.apply {
                 boxStrokeColor = getColor(R.color.black)

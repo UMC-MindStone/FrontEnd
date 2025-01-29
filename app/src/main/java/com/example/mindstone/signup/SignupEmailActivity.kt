@@ -1,18 +1,18 @@
-package com.example.mindstone
+package com.example.mindstone.signup
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
-import com.example.mindstone.databinding.ActivityMainBinding.inflate
+import com.example.mindstone.R
 import com.example.mindstone.databinding.ActivitySignupEmailBinding
 
 
 class SignupEmailActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySignupEmailBinding
+    private val signupViewModel = SignupViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,22 +34,30 @@ class SignupEmailActivity : AppCompatActivity() {
             binding.signupEmailTil.apply{
                 hintTextColor= getColorStateList(R.color.black)
                 helperText = "example@example.com"
-                errorIconDrawable = ContextCompat.getDrawable(this@SignupEmailActivity,R.drawable.ic_emailerror)
+                errorIconDrawable = ContextCompat.getDrawable(this@SignupEmailActivity,
+                    R.drawable.ic_emailerror
+                )
                 boxStrokeColor = getColor(R.color.error)
             }
         } else if(!input.matches(emailPattern.toRegex())){
             binding.signupEmailTil.apply{
                 hintTextColor= getColorStateList(R.color.black)
                 helperText = "example@example.com"
-                errorIconDrawable = ContextCompat.getDrawable(this@SignupEmailActivity,R.drawable.ic_emailerror)
+                errorIconDrawable = ContextCompat.getDrawable(this@SignupEmailActivity,
+                    R.drawable.ic_emailerror
+                )
                 boxStrokeColor = getColor(R.color.error)
 
             }
-        } else {
+        }
+//        else if( // 여기에 이미 등록된 이메일 일 때 ){
+//        }
+        else {
             binding.signupEmailTil.apply{
                 helperText = null
                 errorIconDrawable = null
                 boxStrokeColor = getColor(R.color.black)
+                signupViewModel.email.value = input
             }
         }
     }
@@ -57,7 +65,6 @@ class SignupEmailActivity : AppCompatActivity() {
     private fun initClicker(){
         binding.signupEmailNextBtn.setOnClickListener{
             val intent = Intent(this, SignupCodeActivity::class.java)
-            intent.putExtra("email", binding.signupEmailTextTie.text.toString())
             startActivity(intent)
         }
 

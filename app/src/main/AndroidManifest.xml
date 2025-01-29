@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -31,7 +33,7 @@
             android:name=".AfterLoginActivity"
             android:exported="false" />
         <activity
-            android:name=".SignupCodeActivity"
+            android:name=".signup.SignupCodeActivity"
             android:exported="false" />
         <activity
             android:name=".CompleteActivity"
@@ -49,10 +51,10 @@
             android:name=".auth.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".SignupPasswordActivity"
+            android:name=".signup.SignupPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".SignupEmailActivity"
+            android:name=".signup.SignupEmailActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
