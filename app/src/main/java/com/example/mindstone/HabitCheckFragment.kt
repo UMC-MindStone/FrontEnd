@@ -69,7 +69,6 @@ class HabitCheckFragment : Fragment() {
         binding.habitCheckEditTv.setOnClickListener {
             toggleEditMode()
         }
-
         return binding.root
     }
 
