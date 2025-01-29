@@ -26,6 +26,11 @@ class SignupEmailActivity : AppCompatActivity() {
             validateEmail(text.toString())
         }
 
+        // 뒤로 가기 버튼 클릭 -> LoginActivity로 이동
+        binding.signupemailBackIv.setOnClickListener {
+            finish() // 현재 액티비티 종료 (LoginActivity로 돌아감)
+        }
+
     }
     private fun validateEmail(input:String){
         val emailPattern = "[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.com"
