@@ -1,9 +1,7 @@
 package com.example.mindstone
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.example.mindstone.databinding.FragmentColorPickerBinding
 
@@ -14,11 +12,14 @@ class ColorPickerFragment : DialogFragment() {
     private var selectedColorIndex: Int? = null // 선택된 색상 저장 변수 (정수 값)
     var onColorSelected: ((colorIndex: Int?) -> Unit)? = null // 선택된 색상 인덱스를 전달할 콜백
 
+    var onDialogOpened: (() -> Unit)? = null  // 다이얼로그 열릴 때 실행할 콜백
+    var onDialogClosed: (() -> Unit)? = null  // 다이얼로그 닫힐 때 실행할 콜백
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentColorPickerBinding.inflate(inflater, container, false)
 
         // 버튼-링 클릭 리스너 초기화
@@ -87,6 +88,16 @@ class ColorPickerFragment : DialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT
         )
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        //다이얼로그가 열릴 때 실행할 콜백
+        onDialogOpened?.invoke()
+    }
+
+    override fun onDismiss(dialog: android.content.DialogInterface) {
+        super.onDismiss(dialog)
+
+        //다이얼로그가 닫힐 때 실행할 콜백
+        onDialogClosed?.invoke()
     }
 
     override fun onDestroyView() {

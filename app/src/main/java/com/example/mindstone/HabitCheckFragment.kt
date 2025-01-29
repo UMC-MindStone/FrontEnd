@@ -73,6 +73,8 @@ class HabitCheckFragment : Fragment() {
         return binding.root
     }
 
+
+
     // 날짜 업데이트 함수
     private fun updateDateView() {
         binding.habitCheckDateTv.text = "${selectedMonth}월 ${selectedDay}일 ${selectedDayOfWeek}"
@@ -121,7 +123,7 @@ class HabitCheckFragment : Fragment() {
             setNonEditMode(timeNum, timeTextViews, index)
         }
 
-        setupEditTextListener(editText, imageView)
+        setupEditTextListener(editText, imageView, frameLayoutBinding)
         setupIconClickListener(frameLayoutBinding)
 
         habitCheckContainerLL.addView(frameLayoutBinding.root)
@@ -134,7 +136,9 @@ class HabitCheckFragment : Fragment() {
             frameLayoutBinding.frameHabitCheckTime3Tv,
             frameLayoutBinding.frameHabitCheckTime4Tv
         )
-
+        val editText = frameLayoutBinding.frameHabitCheckCustomEt
+        val imageView = frameLayoutBinding.frameHabitCheckBubbleIv
+        setupEditTextListener(editText, imageView, frameLayoutBinding)
         // 각 프레임에 대한 고유한 timeNum을 관리
         var timeNum = frameTimeNums.getOrDefault(index, 1)
         if (isEditing) {
@@ -148,7 +152,7 @@ class HabitCheckFragment : Fragment() {
         for (j in 0 until timeNum) {
             timeTextViews[j].visibility = View.VISIBLE
             timeTextViews[j].setOnClickListener { textView ->
-                showTimePickerDialog { selectedTime ->
+                showTimePickerDialog(frameLayoutBinding) { selectedTime ->
                     (textView as TextView).text = selectedTime
                     timeTextViews[j].setTextColor(Color.BLACK)
                     frameLayoutBinding.frameHabitCheckHabitTv.setTextColor(Color.BLACK)
@@ -182,8 +186,19 @@ class HabitCheckFragment : Fragment() {
         }
     }
 
-    private fun setupEditTextListener(editText: EditText, imageView: ImageView) {
+    private fun setupEditTextListener(editText: EditText, imageView: ImageView, frameLayoutBinding: FrameHabitCheckBinding) {
         editText.isEnabled = isEditing
+
+        // EditText에 포커스가 있는 동안 배경을 변경
+        editText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                // EditText에 포커스가 있으면 배경 변경
+                frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_red)
+            } else {
+                // 포커스가 없으면 배경 원상복구
+                frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
+            }
+        }
 
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, start: Int, count: Int, after: Int) {}
@@ -197,6 +212,7 @@ class HabitCheckFragment : Fragment() {
             override fun afterTextChanged(editable: Editable) {}
         })
     }
+
 
     private fun handleTextLength(charSequence: CharSequence, editText: EditText, imageView: ImageView) {
         val maxWidth = resources.getDimensionPixelSize(R.dimen.max_image_width)
@@ -218,29 +234,51 @@ class HabitCheckFragment : Fragment() {
     private fun setupIconClickListener(frameLayoutBinding: FrameHabitCheckBinding) {
         frameLayoutBinding.frameHabitCheckIconIv.setOnClickListener {
             if (isEditing) {
-                val dialog = ColorPickerFragment()
-                dialog.onColorSelected = { colorIndex ->
-                    colorIndex?.let {
-                        when (it) {
-                            1 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_depression)
-                            2 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_angry)
-                            3 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_sad)
-                            4 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_calm)
-                            5 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_joy)
-                            6 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_happy)
-                            7 -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.ic_romance)
-                            else -> frameLayoutBinding.frameHabitCheckIconIv.setImageResource(R.drawable.btn_nothing_normal)
+                val dialog = ColorPickerFragment().apply {
+                    onColorSelected = { colorIndex ->
+                        colorIndex?.let {
+                            val iconRes = when (it) {
+                                1 -> R.drawable.ic_depression
+                                2 -> R.drawable.ic_angry
+                                3 -> R.drawable.ic_sad
+                                4 -> R.drawable.ic_calm
+                                5 -> R.drawable.ic_joy
+                                6 -> R.drawable.ic_happy
+                                7 -> R.drawable.ic_romance
+                                else -> R.drawable.btn_nothing_normal
+                            }
+                            frameLayoutBinding.frameHabitCheckIconIv.setImageResource(iconRes)
                         }
                     }
+
+                    // 다이얼로그가 열릴 때 UI 변경 (테두리 강조)
+                    onDialogOpened = {
+                        frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_red)
+                    }
+
+                    // 다이얼로그가 닫힐 때 UI 복구 (테두리 원래대로)
+                    onDialogClosed = {
+                        frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
+                    }
                 }
+
                 dialog.show(parentFragmentManager, "ColorPickerFragment")
             }
         }
     }
 
-    private fun showTimePickerDialog(onTimeSelected: (String) -> Unit) {
+
+    private fun showTimePickerDialog(frameLayoutBinding: FrameHabitCheckBinding, onTimeSelected: (String) -> Unit) {
+        frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_red)
+
         val dialog = TimePickerDialogFragment { selectedTime ->
             onTimeSelected(selectedTime)
+
+            frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
+        }
+
+        dialog.onDismissListener = {
+            frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
         }
         dialog.show(parentFragmentManager, "TimePickerDialog")
     }
