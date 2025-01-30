@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mindstone.R
 import com.example.mindstone.databinding.ActivityLoginBinding
+import com.example.mindstone.ui.auth.signup.SignupEmailActivity
 
 class LoginActivity : AppCompatActivity() {
 

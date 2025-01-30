@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.mindstone.R
-import com.example.mindstone.data.api.RetrofitClient
+import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.databinding.ActivityServiceBinding
 import kotlinx.coroutines.launch
 

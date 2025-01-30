@@ -1,4 +1,4 @@
-package com.example.mindstone.data.api
+package com.example.mindstone.data.remote
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
