@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.mindstone.R
 import com.example.mindstone.RetrofitClient
@@ -19,7 +20,7 @@ import java.time.Instant
 
 class SignupCodeActivity : AppCompatActivity() {
     lateinit var binding: ActivitySignupCodeBinding
-    private val signupViewModel = SignupViewModel()
+    private lateinit var signupViewModel : SignupViewModel
     private val retrofitService = RetrofitClient.create(SignupService::class.java)
 
     private var debounceJob: Job? = null // 디바운싱 작업을 관리하기 위한 Job
@@ -28,6 +29,8 @@ class SignupCodeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupCodeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        signupViewModel = ViewModelProvider(this)[SignupViewModel::class.java]
 
         initClicker()
         requestCode()

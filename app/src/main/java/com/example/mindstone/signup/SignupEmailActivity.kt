@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.ActivitySignupEmailBinding
 
@@ -12,12 +13,14 @@ import com.example.mindstone.databinding.ActivitySignupEmailBinding
 class SignupEmailActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySignupEmailBinding
-    private val signupViewModel = SignupViewModel()
+    private lateinit var signupViewModel : SignupViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding= ActivitySignupEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        signupViewModel = ViewModelProvider(this)[SignupViewModel::class.java]
 
         //초기 설정
         initClicker()

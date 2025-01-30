@@ -14,4 +14,6 @@ class SignupViewModel : ViewModel() {
     val marketingAgree = MutableLiveData<Boolean>()
     val role = MutableLiveData<String>()
 
+
+
 }
