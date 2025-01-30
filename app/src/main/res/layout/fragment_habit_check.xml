@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".HabitCheckFragment">
+    tools:context=".ui.habit.HabitCheckFragment">
 
     <TextView
         android:id="@+id/habit_check_edit_tv"

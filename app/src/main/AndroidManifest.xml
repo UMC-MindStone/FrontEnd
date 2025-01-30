@@ -15,37 +15,37 @@
         android:theme="@style/Theme.MindStone"
         tools:targetApi="31">
         <activity
-            android:name=".Search1ActivityActivity"
+            android:name=".ui.search.Search1ActivityActivity"
             android:exported="false"/>
         <activity
-            android:name=".Search2Activity"
+            android:name=".ui.search.Search2Activity"
             android:exported="false"/>
         <activity
-            android:name=".Search3Activity"
+            android:name=".ui.search.Search3Activity"
             android:exported="false"/>
         <activity
-            android:name=".Start1Activity"
+            android:name=".ui.search.Start1Activity"
             android:exported="false"/>
         <activity
-            android:name=".MakeNicknameActivity"
+            android:name=".ui.search.MakeNicknameActivity"
             android:exported="false" />
         <activity
-            android:name=".AfterLoginActivity"
+            android:name=".ui.search.AfterLoginActivity"
             android:exported="false" />
         <activity
-            android:name=".signup.SignupCodeActivity"
+            android:name=".ui.auth.signup.SignupCodeActivity"
             android:exported="false" />
         <activity
-            android:name=".CompleteActivity"
+            android:name=".ui.auth.signup.CompleteActivity"
             android:exported="false" />
         <activity
-            android:name=".ServiceActivity"
+            android:name=".ui.auth.signup.ServiceActivity"
             android:exported="false" />
         <activity
-            android:name=".auth.LoginActivity2"
+            android:name=".ui.auth.login.LoginActivity2"
             android:exported="false" />
         <activity
-            android:name=".auth.LoginActivity"
+            android:name=".ui.auth.login.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".signup.SignupPasswordActivity"
@@ -57,7 +57,7 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".ui.loading.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

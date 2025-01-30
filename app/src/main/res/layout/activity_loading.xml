@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FCF8F9"
-    tools:context=".LoadingActivity">
+    tools:context=".ui.loading.LoadingActivity">
     
     <ImageView
         android:id="@+id/loading_calm_iv"
