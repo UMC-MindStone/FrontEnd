@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".HabitCalendarFragment">
+    tools:context=".ui.habit.HabitCalendarFragment">
 
     <TextView
         android:id="@+id/habit_calendar_date_tv"

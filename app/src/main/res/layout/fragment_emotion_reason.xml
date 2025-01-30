@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_200"
-    tools:context=".home.EmotionReasonFragment">
+    tools:context=".ui.home.emotion.EmotionReasonFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

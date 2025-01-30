@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_200"
-    tools:context=".home.negative.EmotionManageChoiceFragment">
+    tools:context=".ui.home.emotion.negative.EmotionManageChoiceFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

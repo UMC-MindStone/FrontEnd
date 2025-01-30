@@ -7,7 +7,7 @@
     android:background="#FFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".auth.LoginActivity2">
+    tools:context=".ui.auth.login.LoginActivity2">
 
     <ImageView
         android:id="@+id/back_iv"

@@ -7,7 +7,7 @@
     android:background="#FFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".auth.LoginActivity">
+    tools:context=".ui.auth.login.LoginActivity">
 
     <TextView
         android:layout_width="wrap_content"

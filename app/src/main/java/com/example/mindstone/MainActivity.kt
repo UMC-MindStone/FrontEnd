@@ -6,9 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.replace
 import com.example.mindstone.databinding.ActivityMainBinding
-import com.example.mindstone.home.HomeFragment
+import com.example.mindstone.ui.home.HomeFragment
 
 class MainActivity : AppCompatActivity() {
 
