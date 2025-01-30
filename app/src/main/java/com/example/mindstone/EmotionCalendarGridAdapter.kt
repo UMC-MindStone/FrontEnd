@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.core.content.ContextCompat
-import com.example.mindstone.databinding.GridItemBinding
+import com.example.mindstone.databinding.GridEmotionItemBinding
 
 class EmotionCalendarGridAdapter(
     private val context: Context,
@@ -22,7 +22,7 @@ class EmotionCalendarGridAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
-        val binding = GridItemBinding.inflate(LayoutInflater.from(context), parent, false)
+        val binding = GridEmotionItemBinding.inflate(LayoutInflater.from(context), parent, false)
         val dateText = binding.dateText
         val dateIcon = binding.dateIcon
 

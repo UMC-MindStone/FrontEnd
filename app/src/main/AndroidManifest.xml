@@ -45,9 +45,6 @@
             android:name=".auth.LoginActivity2"
             android:exported="false" />
         <activity
-            android:name=".auth.LoginErrorActivity"
-            android:exported="false" />
-        <activity
             android:name=".auth.LoginActivity"
             android:exported="false" />
         <activity

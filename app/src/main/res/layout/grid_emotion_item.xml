@@ -23,5 +23,6 @@
         android:layout_height="20dp"
         android:src="@drawable/btn_empty_emotion_normal"
         android:visibility="visible" />
+
 </LinearLayout>
 
