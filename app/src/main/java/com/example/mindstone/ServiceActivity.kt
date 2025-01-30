@@ -2,21 +2,34 @@ package com.example.mindstone
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.mindstone.databinding.ActivityServiceBinding
+import com.example.mindstone.signup.SignupService
+import com.example.mindstone.signup.SignupViewModel
+import com.example.mindstone.signup.signupRequest
+import kotlinx.coroutines.launch
 
 class ServiceActivity : AppCompatActivity() {
     lateinit var binding: ActivityServiceBinding
+    private lateinit var signupViewModel : SignupViewModel
+    private val retrofitService = RetrofitClient.create(SignupService::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityServiceBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        signupViewModel = ViewModelProvider(this)[SignupViewModel::class.java]
 
         binding.serviceGo1Iv.setOnClickListener {
             openFragment(TermFragment())
@@ -154,10 +167,36 @@ class ServiceActivity : AppCompatActivity() {
 
     binding.serviceNextIv.setOnClickListener {
         if(binding.serviceChecked1Iv.visibility == View.VISIBLE){
-            finish()
+            lifecycleScope.launch {
+                try {
+                    val response = retrofitService.signup(
+                        signupRequest(
+                            email = signupViewModel.email.value.toString(),
+                            password = signupViewModel.password.value.toString(),
+                            nickname = "Ean",
+                            mbti = "intj",
+                            birthday = "2001-01-01",
+                            job = "student",
+                            shareScope = true,
+                            marketingAgree = true,
+                            role = "user"
+                        )
+                    )
+                    // 성공 시 화면 전환 기능까지 붙여주기...?
+                    if (response.isSuccess){
+                        Log.d("isSuccess Signup", "yes")
+                    } else{
+                        Log.d("isSuccess Signup", "no")
+                    }
+                    val intent = Intent(this@ServiceActivity, CompleteActivity::class.java)
+                    startActivity(intent)
+                    finish()
 
-            val intent = Intent(this, CompleteActivity::class.java)
-            startActivity(intent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(this@ServiceActivity, "회원가입 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
