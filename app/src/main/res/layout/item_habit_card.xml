@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="40dp"
+    android:paddingBottom="16dp"
+    android:background="@drawable/border_shape_card">
+
+    <!-- 아이콘 -->
+    <ImageView
+        android:id="@+id/iv_habit_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_blue_circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="15dp"/>
+
+    <!-- 제목 -->
+    <TextView
+        android:id="@+id/tv_habit_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="운동 1시간"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toEndOf="@id/iv_habit_color"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="16dp"/>
+
+    <!-- 스위치 -->
+    <Switch
+        android:id="@+id/sw_habit_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="13dp"/>
+
+    <!-- 지속 시간 -->
+    <TextView
+        android:id="@+id/tv_duration_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="지속 시간"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_habit_title"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="15dp"/>
+
+    <TextView
+        android:id="@+id/tv_duration_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1시간"
+        android:textSize="13sp"
+        android:textColor="#494949"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_duration_label" />
+
+    <!-- 알림 요일 -->
+    <TextView
+        android:id="@+id/tv_days_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="알림 요일"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_duration_label"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/tv_days_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="월 화 수"
+        android:textSize="13sp"
+        android:textColor="#494949"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_days_label" />
+
+    <!-- 알림 시간 -->
+    <TextView
+        android:id="@+id/tv_time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="알림 시간"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_days_label"
+        android:layout_marginVertical="16dp"
+        android:layout_marginStart="15dp" />
+
+    <TextView
+        android:id="@+id/tv_time_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="07:00 / 19:00"
+        android:textSize="13sp"
+        android:textColor="#494949"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="15dp"
+        android:layout_marginVertical="16dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_time_label" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
