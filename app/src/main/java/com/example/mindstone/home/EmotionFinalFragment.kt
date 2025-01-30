@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionFinalBinding
 import com.example.mindstone.home.negative.EmotionManageChoiceFragment
-import com.example.mindstone.viewmodel.EmotionModel
+import com.example.mindstone.home.viewmodel.EmotionModel
 
 class EmotionFinalFragment : Fragment() {
 

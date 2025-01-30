@@ -1,4 +1,4 @@
-package com.example.mindstone.viewmodel
+package com.example.mindstone.home.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

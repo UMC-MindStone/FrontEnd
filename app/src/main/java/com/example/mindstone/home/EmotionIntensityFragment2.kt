@@ -15,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionIntensity2Binding
-import com.example.mindstone.viewmodel.EmotionModel
+import com.example.mindstone.home.viewmodel.EmotionModel
 
 class EmotionIntensityFragment2 : Fragment() {
 
