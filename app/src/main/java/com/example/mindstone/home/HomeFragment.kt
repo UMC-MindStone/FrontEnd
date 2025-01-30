@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentHomeBinding
-import com.example.mindstone.model.EmotionModel
+import com.example.mindstone.home.viewmodel.EmotionModel
 
 class HomeFragment : Fragment() {
 

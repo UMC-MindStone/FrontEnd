@@ -1,6 +1,5 @@
 package com.example.mindstone.home
 
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionReason2Binding
-import com.example.mindstone.model.EmotionModel
+import com.example.mindstone.home.viewmodel.EmotionModel
 
 class EmotionReasonFragment2 : Fragment() {
 
