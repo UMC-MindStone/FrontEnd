@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/transparent">
+
+    <!-- 직업 선택 그리드 -->
+    <GridLayout
+        android:id="@+id/grid_jobs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:rowCount="4"
+        android:columnCount="3"
+        android:padding="8dp"
+        android:gap="8dp"
+        android:background="@drawable/border_shape_dialog">
+
+        <!-- 직업 항목 (예시) -->
+        <TextView
+            android:id="@+id/tv_job_example"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:background="@drawable/background_radius_gray"
+            android:text="예시"
+            android:textSize="13sp"
+            android:textColor="#6C6C6C" />
+    </GridLayout>
+
+    <!-- 확인 버튼 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_confirm_job"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="확인"
+        android:textColor="#6C6C6C"
+        android:textSize="13sp"
+        android:backgroundTint="@android:color/white"
+        app:strokeColor="#494949"
+        app:strokeWidth="1.5dp"
+        app:cornerRadius="8dp"
+        android:layout_marginTop="16dp"
+        android:padding="12dp" />
+</LinearLayout>

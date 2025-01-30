@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -28,182 +29,267 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="16dp"/>
 
-    <!-- 전체 알림 -->
-    <LinearLayout
-        android:id="@+id/ll_alarm1_setting"
-        android:layout_width="match_parent"
+    <!-- 생년월일 -->
+
+    <TextView
+        android:id="@+id/tv_birth_manage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingVertical="12dp"
-        android:paddingStart="40dp"
-        android:paddingEnd="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/ib_back_manage">
+        android:text="생년월일"
+        app:layout_constraintTop_toBottomOf="@+id/ib_back_manage"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="40dp"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
 
-        <TextView
-            android:id="@+id/tv_alarm1_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="전체 알림"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"/>
-
-        <Switch
-            android:id="@+id/sw_alarm1_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_birth2_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2000.01.01"
+        android:textColor="#B0B0B0"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_title_manage"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="60dp"/>
 
     <ImageView
         android:id="@+id/iv_line_divider1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/line_divider"
-        app:layout_constraintTop_toBottomOf="@+id/ll_alarm1_setting"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_birth_manage"
+        android:layout_marginVertical="16dp"/>
 
-    <!-- 기록 알림 -->
-    <ImageView
-        android:id="@+id/iv_bg_setting"
+    <!--MBTI-->
+
+    <TextView
+        android:id="@+id/tv_mbti_manage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="MBTI"
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider1"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/tv_mbti2_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="INFJ"
+        android:textColor="#B0B0B0"
+        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_alarm1_setting"
-        app:srcCompat="@drawable/bg_pink_setting" />
-
-    <LinearLayout
-        android:id="@+id/ll_alarm2_setting"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingVertical="12dp"
-        android:paddingStart="40dp"
-        android:paddingEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/iv_bg_setting">
-
-        <TextView
-            android:id="@+id/tv_alarm2_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="기록 알림"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"/>
-
-        <Switch
-            android:id="@+id/sw_alarm2_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <!-- 알림 시간 -->
-    <LinearLayout
-        android:id="@+id/ll_time_setting"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingVertical="12dp"
-        android:paddingStart="40dp"
-        android:paddingEnd="20dp"
-        app:layout_constraintTop_toBottomOf="@id/ll_alarm2_setting">
-
-        <TextView
-            android:id="@+id/tv_time_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="알림 시간"
-            android:textSize="14sp"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/tv_add_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+"
-            android:textSize="13sp"
-            android:textColor="#B0B0B0"
-            android:clickable="true"
-            android:focusable="true"/>
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider1"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="16dp"/>
 
     <ImageView
         android:id="@+id/iv_line_divider2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/line_divider"
-        app:layout_constraintTop_toBottomOf="@+id/ll_time_setting"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_mbti_manage"
+        android:layout_marginVertical="16dp"/>
 
-    <!-- 하루 마무리 알림 -->
-    <LinearLayout
-        android:id="@+id/ll_alarm3_setting"
-        android:layout_width="match_parent"
+    <!--직업-->
+
+    <TextView
+        android:id="@+id/tv_job_manage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingVertical="12dp"
-        android:paddingStart="40dp"
-        android:paddingEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/ll_time_setting">
+        android:text="직업"
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider2"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
 
-        <TextView
-            android:id="@+id/tv_alarm3_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="하루 마무리 알림"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"/>
-
-        <Switch
-            android:id="@+id/sw_alarm3_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <!-- 전체 알림 텍스트 -->
-    <LinearLayout
-        android:id="@+id/ll_time2_setting"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_job2_manage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingVertical="12dp"
-        android:paddingStart="40dp"
-        android:paddingEnd="20dp"
-        app:layout_constraintTop_toBottomOf="@id/ll_alarm3_setting">
-
-        <TextView
-            android:id="@+id/tv_time2_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="전체 알림"
-            android:textSize="14sp"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/tv_time2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="23:50"
-            android:textSize="13sp"
-            android:textColor="#B0B0B0" />
-    </LinearLayout>
+        android:text="대학생/대학원생"
+        android:textColor="#B0B0B0"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider2"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="16dp"/>
 
     <ImageView
         android:id="@+id/iv_line_divider3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/line_divider"
+        app:layout_constraintTop_toBottomOf="@+id/tv_job_manage"
+        android:layout_marginVertical="16dp"/>
+
+    <!--취미-->
+
+    <TextView
+        android:id="@+id/tv_hobby_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="취미"
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider3"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/tv_hobby2_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="독서"
+        android:textColor="#B0B0B0"
+        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_time2_setting"/>
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider3"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="16dp"/>
+
+    <ImageView
+        android:id="@+id/iv_line_divider4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/line_divider"
+        app:layout_constraintTop_toBottomOf="@+id/tv_hobby_manage"
+        android:layout_marginVertical="16dp"/>
+
+    <!--특기-->
+
+    <TextView
+        android:id="@+id/tv_specialty_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="특기"
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider4"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/tv_specialty2_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="베이킹"
+        android:textColor="#B0B0B0"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider4"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="16dp"/>
+
+    <ImageView
+        android:id="@+id/iv_line_divider5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/line_divider"
+        app:layout_constraintTop_toBottomOf="@+id/tv_specialty_manage"
+        android:layout_marginVertical="16dp"/>
+
+    <!--스트레스 받을 때-->
+
+    <TextView
+        android:id="@+id/tv_stress_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="스트레스 받을 때"
+        app:layout_constraintTop_toBottomOf="@+id/iv_line_divider5"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/tv_stress1_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="해소 방법 1"
+        app:layout_constraintTop_toBottomOf="@+id/tv_stress_manage"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="40dp"
+        android:textSize="14sp"/>
+
+    <EditText
+        android:id="@+id/tv_stress1_manage1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="운동"
+        android:textColor="#B0B0B0"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_stress_manage"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="28dp"
+        android:background="@android:color/transparent"/>
+
+    <TextView
+        android:id="@+id/tv_stress2_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="해소 방법 2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_stress1_manage"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp"
+        android:textSize="14sp"/>
+
+    <EditText
+        android:id="@+id/tv_stress2_manage1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="독서"
+        android:textColor="#B0B0B0"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_stress1_manage1"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"/>
+
+    <TextView
+        android:id="@+id/tv_stress3_manage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="해소 방법 3"
+        app:layout_constraintTop_toBottomOf="@+id/tv_stress2_manage"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="40dp"
+        android:textSize="14sp"/>
+
+    <EditText
+        android:id="@+id/tv_stress3_manage1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="모임"
+        android:textColor="#B0B0B0"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_stress2_manage1"
+        android:layout_marginEnd="37dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"/>
+
+    <ImageView
+        android:id="@+id/iv_line_divider6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/line_divider"
+        app:layout_constraintTop_toBottomOf="@+id/tv_stress3_manage"
+        android:layout_marginVertical="16dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,43 +8,38 @@
     android:padding="16dp"
     android:background="@android:color/transparent">
 
-    <!-- NumberPicker들을 담을 LinearLayout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="@drawable/border_shape_dialog"
         android:gravity="center"
-        android:padding="5dp"
-        android:background="@drawable/border_shape_dialog">
+        android:orientation="horizontal"
+        android:padding="5dp">
 
-        <!-- 오전/오후 선택 -->
         <NumberPicker
-            android:id="@+id/np_am_pm"
+            android:id="@+id/np_year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp" />
 
-        <!-- 시간 선택 -->
         <NumberPicker
-            android:id="@+id/np_hour"
+            android:id="@+id/np_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp" />
 
-        <!-- 분 선택 -->
         <NumberPicker
-            android:id="@+id/np_minute"
+            android:id="@+id/np_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp" />
     </LinearLayout>
 
-    <!-- 추가 버튼 -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_add_time"
+        android:id="@+id/btn_fix_birth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="추가"
+        android:text="확인"
         android:textColor="#6C6C6C"
         android:textSize="13sp"
         android:backgroundTint="@android:color/white"
