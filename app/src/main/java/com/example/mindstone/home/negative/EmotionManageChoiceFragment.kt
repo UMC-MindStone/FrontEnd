@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionManageChoiceBinding
-import com.example.mindstone.model.EmotionModel
+import com.example.mindstone.viewmodel.EmotionModel
 
 class EmotionManageChoiceFragment : Fragment() {
 

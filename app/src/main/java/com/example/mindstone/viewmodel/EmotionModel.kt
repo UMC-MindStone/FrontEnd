@@ -1,8 +1,5 @@
-package com.example.mindstone.model
+package com.example.mindstone.viewmodel
 
-import android.graphics.Color
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

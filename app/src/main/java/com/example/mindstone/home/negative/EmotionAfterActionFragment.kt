@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionAfterActionBinding
 import com.example.mindstone.home.EmotionIntensityFragment
-import com.example.mindstone.model.EmotionModel
+import com.example.mindstone.viewmodel.EmotionModel
 
 class EmotionAfterActionFragment : Fragment() {
 
