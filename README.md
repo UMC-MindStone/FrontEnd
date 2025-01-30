@@ -2,9 +2,13 @@
 
 ## 📖 Foldering
 📂 data  
- ┗ 📂 api  
+ ┣ 📂 local
+ ┣ 📂 remote
+ ┗ 📂 repository
 📂 domain  
- ┗ 📂 entity  
+ ┣ 📂 entity
+ ┣ 📂 repository
+ ┗ 📂 usecase
 📂 ui  
  ┣ 📂 auth  
  ┣ 📂 emotion  
