@@ -5,8 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignupEmailActivity">
+    android:background="@color/white"
+    tools:context=".ui.auth.signup.SignupEmailActivity">
     <ImageView
+        android:id="@+id/signupemail_back_iv"
         android:layout_width="12dp"
         android:layout_height="22dp"
         android:src="@drawable/btn_back"
