@@ -11,9 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.mindstone.data.remote.RetrofitClient
-import com.example.mindstone.data.repository.FindEmailRepositoryImpl
 import com.example.mindstone.databinding.FragmentFindEmailBinding
-import com.example.mindstone.domain.usecase.FindEmailUseCase
 import com.example.mindstone.ui.auth.login.FindPasswordFragment
 import com.example.mindstone.ui.auth.login.LoginActivity2
 import com.example.mindstone.util.LoginDialogUtil
@@ -24,7 +22,7 @@ class FindEmailFragment : Fragment() {
     private var _binding: FragmentFindEmailBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: FindEmailViewModel
+    private val viewModel: FindEmailViewModel by viewModels()
 
     private var retryCount = 0
     private lateinit var sharedPreferences: SharedPreferences  // 제한 시간 저장
@@ -35,13 +33,6 @@ class FindEmailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFindEmailBinding.inflate(inflater, container, false)
-
-        val repository = FindEmailRepositoryImpl(RetrofitClient.authService)
-        val useCase = FindEmailUseCase(repository)
-        val factory = FindEmailViewModelFactory(useCase)
-
-        viewModel = ViewModelProvider(this, factory).get(FindEmailViewModel::class.java)
-
         return binding.root
     }
 
@@ -59,12 +50,10 @@ class FindEmailFragment : Fragment() {
             activity?.finish() // LoginActivity2 종료 → LoginActivity로 자동 이동
         }
 
-
+        // "이메일 찾기" 버튼 클릭 시 뜨는 다이얼로그
         binding.findEmailIv.setOnClickListener {
-            val email = binding.findEmailEmailEt.text.toString()
-            if (email.isBlank()) {
-                return@setOnClickListener
-            }
+            val email = binding.findEmailEmailEt.text.toString().trim()
+            if (email.isEmpty()) return@setOnClickListener
             if (isTimeLimitActive()) {
                 showTimeLimitDialog()
                 return@setOnClickListener
@@ -80,7 +69,9 @@ class FindEmailFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModel.emailResult.collectLatest { state ->
                 when (state) {
-                    is FindEmailResultState.Loading -> { /* 로딩 처리 가능 */ }
+                    is FindEmailResultState.Loading -> {
+                        // 로딩 처리 가능
+                    }
                     is FindEmailResultState.Success -> {
                         showSuccessDialog(state.email)
                         retryCount = 0
