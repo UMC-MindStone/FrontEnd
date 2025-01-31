@@ -2,10 +2,13 @@ package com.example.mindstone.ui.auth.signup
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.MyApplication
 import com.example.mindstone.R
 import com.example.mindstone.databinding.ActivitySignupEmailBinding
 
@@ -13,16 +16,16 @@ import com.example.mindstone.databinding.ActivitySignupEmailBinding
 class SignupEmailActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySignupEmailBinding
-    private lateinit var signupViewModel : SignupViewModel
+    private lateinit var signupViewModel: SignupViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding= ActivitySignupEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        signupViewModel = (application as MyApplication).signupViewModel
 
-        signupViewModel = ViewModelProvider(this)[SignupViewModel::class.java]
 
-        //초기 설정
         initClicker()
 
         binding.signupEmailTextTie.addTextChangedListener{ text ->
@@ -65,7 +68,12 @@ class SignupEmailActivity : AppCompatActivity() {
                 helperText = null
                 errorIconDrawable = null
                 boxStrokeColor = getColor(R.color.black)
-                signupViewModel.email.value = input
+
+                // 뷰모델에 이메일 업데이트
+                signupViewModel.updateEmail(input)
+
+                Log.d("email viewmodel", "${signupViewModel.email.value}")
+
             }
         }
     }
@@ -73,6 +81,7 @@ class SignupEmailActivity : AppCompatActivity() {
     private fun initClicker(){
         binding.signupEmailNextBtn.setOnClickListener{
             val intent = Intent(this, SignupCodeActivity::class.java)
+
             startActivity(intent)
         }
 
