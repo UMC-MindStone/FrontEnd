@@ -6,15 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.domain.entity.FindEmailRequest
-import com.example.mindstone.domain.usecase.FindEmailUseCase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import retrofit2.HttpException
 
 class FindEmailViewModel : ViewModel() {
 
-    private val _emailResult = MutableLiveData<FindEmailResultState>()
-    val emailResult: LiveData<FindEmailResultState> get() = _emailResult
+    private val _emailResult = MutableStateFlow<FindEmailResultState>(FindEmailResultState.Idle)
+    val emailResult: StateFlow<FindEmailResultState> = _emailResult
 
     fun findEmail(email: String) {
         viewModelScope.launch {
@@ -26,14 +26,17 @@ class FindEmailViewModel : ViewModel() {
                 } else {
                     _emailResult.value = FindEmailResultState.Failure(response.body()?.message ?: "이메일을 찾을 수 없습니다.")
                 }
+            } catch (e: HttpException) {
+                _emailResult.value = FindEmailResultState.Failure("서버 오류가 발생했습니다.")
             } catch (e: Exception) {
-                _emailResult.value = FindEmailResultState.Failure("네트워크 오류 발생")
+                _emailResult.value = FindEmailResultState.Failure("네트워크 오류가 발생했습니다.")
             }
         }
     }
 }
 
 sealed class FindEmailResultState {
+    object Idle : FindEmailResultState()
     object Loading : FindEmailResultState()
     data class Success(val email: String) : FindEmailResultState()
     data class Failure(val message: String) : FindEmailResultState()
