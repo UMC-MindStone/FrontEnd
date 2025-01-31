@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.mindstone.MyApplication
 import com.example.mindstone.R
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.databinding.ActivityServiceBinding
@@ -25,7 +26,7 @@ class ServiceActivity : AppCompatActivity() {
         binding = ActivityServiceBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        signupViewModel = ViewModelProvider(this)[SignupViewModel::class.java]
+        signupViewModel = (application as MyApplication).signupViewModel
 
         binding.serviceGo1Iv.setOnClickListener {
             openFragment(TermFragment())
@@ -169,13 +170,13 @@ class ServiceActivity : AppCompatActivity() {
                         signupRequest(
                             email = signupViewModel.email.value.toString(),
                             password = signupViewModel.password.value.toString(),
-                            nickname = "Ean",
-                            mbti = "intj",
-                            birthday = "2001-01-01",
-                            job = "student",
+                            nickname = "eeeaan",
+                            mbti ="INTJ",
+                            birthday = "2020-01-01",
+                            job = "STUDENT",
                             shareScope = true,
                             marketingAgree = true,
-                            role = "user"
+                            role = "USER"
                         )
                     )
                     // 성공 시 화면 전환 기능까지 붙여주기...?
