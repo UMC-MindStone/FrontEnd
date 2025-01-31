@@ -43,10 +43,10 @@ class Account1Fragment : Fragment() {
         adapter = Account1OptionAdapter(settings) { selectedSetting ->
             when (selectedSetting) {
                 "비밀번호 설정" -> {
-                    findNavController().navigate(R.id.action_accountSettingFragment_to_passwordSettingFragment)
+//                    findNavController().navigate(R.id.action_accountSettingFragment_to_passwordSettingFragment)
                 }
                 "프로필 설정" -> {
-                    findNavController().navigate(R.id.action_accountSettingFragment_to_profileSettingFragment)
+//                    findNavController().navigate(R.id.action_accountSettingFragment_to_profileSettingFragment)
                 }
                 "로그아웃" -> {
                     // 로그아웃 처리

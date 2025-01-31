@@ -36,12 +36,6 @@ class FindEmailFragment : Fragment() {
     ): View {
         _binding = FragmentFindEmailBinding.inflate(inflater, container, false)
 
-        // 🔹 ViewModelFactory를 사용하여 ViewModel 생성
-//        val useCase = FindEmailUseCase(FindEmailRepositoryImpl()) // ✅ 의존성 수동 주입
-//        val factory = FindEmailViewModelFactory(useCase)
-//        viewModel = ViewModelProvider(this, factory).get(FindEmailViewModel::class.java)
-
-
         val repository = FindEmailRepositoryImpl(RetrofitClient.authService)
         val useCase = FindEmailUseCase(repository)
         val factory = FindEmailViewModelFactory(useCase)
