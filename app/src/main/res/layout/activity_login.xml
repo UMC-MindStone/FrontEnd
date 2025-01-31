@@ -58,16 +58,6 @@
             android:inputType="textEmailAddress"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- 이메일 오류 메시지 -->
-    <TextView
-        android:id="@+id/loginEmailErrorTv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/pretendard_regular"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/loginEmailTil"
-        app:layout_constraintTop_toBottomOf="@id/loginEmailTil"/>
-
 
     <!-- 비밀번호 입력 -->
     <com.google.android.material.textfield.TextInputLayout
@@ -84,23 +74,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="10dp">
-
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/login_password_et"
             android:layout_width="292dp"
             android:layout_height="52dp"
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- 비밀번호 오류 메시지 -->
-    <TextView
-        android:id="@+id/loginPasswordErrorTv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/pretendard_regular"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/loginPasswordTil"
-        app:layout_constraintTop_toBottomOf="@id/loginPasswordTil"/>
 
 
     <LinearLayout

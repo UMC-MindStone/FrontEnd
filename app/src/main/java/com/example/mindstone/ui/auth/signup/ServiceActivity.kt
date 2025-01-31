@@ -11,13 +11,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.mindstone.R
 import com.example.mindstone.data.remote.RetrofitClient
+import com.example.mindstone.data.remote.SignupService
+import com.example.mindstone.data.remote.signupRequest
 import com.example.mindstone.databinding.ActivityServiceBinding
 import kotlinx.coroutines.launch
 
 class ServiceActivity : AppCompatActivity() {
     lateinit var binding: ActivityServiceBinding
     private lateinit var signupViewModel : SignupViewModel
-    private val retrofitService = RetrofitClient.create(SignupService::class.java)
+
+    private val signupService = RetrofitClient.signupService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -165,7 +168,7 @@ class ServiceActivity : AppCompatActivity() {
         if(binding.serviceChecked1Iv.visibility == View.VISIBLE){
             lifecycleScope.launch {
                 try {
-                    val response = retrofitService.signup(
+                    val response = signupService.signup(
                         signupRequest(
                             email = signupViewModel.email.value.toString(),
                             password = signupViewModel.password.value.toString(),

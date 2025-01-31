@@ -11,6 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.mindstone.R
 import com.example.mindstone.data.remote.RetrofitClient
+import com.example.mindstone.data.remote.SignupService
+import com.example.mindstone.data.remote.codeRequest
+import com.example.mindstone.data.remote.codeValidateRequest
 import com.example.mindstone.databinding.ActivitySignupCodeBinding
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Job
@@ -21,7 +24,8 @@ import java.time.Instant
 class SignupCodeActivity : AppCompatActivity() {
     lateinit var binding: ActivitySignupCodeBinding
     private lateinit var signupViewModel : SignupViewModel
-    private val retrofitService = RetrofitClient.create(SignupService::class.java)
+
+    private val signupService = RetrofitClient.signupService
 
     private var debounceJob: Job? = null // 디바운싱 작업을 관리하기 위한 Job
 
@@ -79,7 +83,7 @@ class SignupCodeActivity : AppCompatActivity() {
 
         try {
             // 서버에 코드 검증 요청
-            val response = retrofitService.codeValidate(
+            val response = signupService.codeValidate(
                 codeValidateRequest(
                     signupViewModel.email.value.orEmpty(),
                     inputCode
@@ -135,7 +139,7 @@ class SignupCodeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val response = retrofitService.codeRequest(
+                val response = signupService.codeRequest(
                     codeRequest(
                         email.orEmpty(),
                         updatedAt
