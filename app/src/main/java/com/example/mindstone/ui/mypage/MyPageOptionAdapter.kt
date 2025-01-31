@@ -1,4 +1,4 @@
-package com.example.mindstone
+package com.example.mindstone.ui.mypage
 
 import android.view.LayoutInflater
 import android.view.View

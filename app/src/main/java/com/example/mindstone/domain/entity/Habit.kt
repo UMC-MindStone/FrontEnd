@@ -1,4 +1,4 @@
-package com.example.mindstone
+package com.example.mindstone.domain.entity
 
 data class Habit(
     val title: String,        // 제목
