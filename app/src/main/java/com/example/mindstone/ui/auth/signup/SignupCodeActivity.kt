@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.mindstone.MyApplication
 import com.example.mindstone.R
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.databinding.ActivitySignupCodeBinding
@@ -20,7 +22,7 @@ import java.time.Instant
 
 class SignupCodeActivity : AppCompatActivity() {
     lateinit var binding: ActivitySignupCodeBinding
-    private lateinit var signupViewModel : SignupViewModel
+    private lateinit var signupViewModel: SignupViewModel
     private val retrofitService = RetrofitClient.create(SignupService::class.java)
 
     private var debounceJob: Job? = null // 디바운싱 작업을 관리하기 위한 Job
@@ -28,15 +30,21 @@ class SignupCodeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupCodeBinding.inflate(layoutInflater)
+        signupViewModel = (application as MyApplication).signupViewModel
+
         setContentView(binding.root)
 
-        signupViewModel = ViewModelProvider(this)[SignupViewModel::class.java]
+        Log.d("code activity", "${signupViewModel.email.value}")
+
 
         initClicker()
         requestCode()
 
-        val email = signupViewModel.email.value
-        binding.signupCodeMentTv.text = "${email}으로 보내드린 인증번호를 입력하세요"
+        signupViewModel.email.observe(this){ email ->
+            Log.d("email", "${email}")
+            binding.signupCodeMentTv.text = "${email}으로 보내드린 인증번호를 입력하세요"
+        }
+
     }
 
     private fun initClicker() {
@@ -57,7 +65,7 @@ class SignupCodeActivity : AppCompatActivity() {
                 onTextChanged = { _, _, _, _ ->
                     debounceJob?.cancel() // 기존 요청 취소
                     debounceJob = lifecycleScope.launch {
-                        delay(300)
+                        delay(3000)
                         updateButtonState(inputs) // 버튼 상태 업데이트
                     }
                 }
@@ -143,12 +151,14 @@ class SignupCodeActivity : AppCompatActivity() {
                 )
                 if (response.isSuccess) {
                     Log.d("SignupCodeActivity", "인증번호 전송 성공")
+                    Log.d("code response", "${response}")
                 } else {
                     Log.d("SignupCodeActivity", "인증번호 전송 실패")
+                    Log.d("code response", "${response}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this@SignupCodeActivity, "인증번호 전송 실패", Toast.LENGTH_SHORT).show()
+                Log.d("Code Error", "Error: ${e.message}")
             }
         }
     }

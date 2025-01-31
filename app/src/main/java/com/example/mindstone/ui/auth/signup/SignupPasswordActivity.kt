@@ -2,23 +2,25 @@ package com.example.mindstone.ui.auth.signup
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.MyApplication
 import com.example.mindstone.R
 import com.example.mindstone.databinding.ActivitySignupPasswordBinding
 
 class SignupPasswordActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySignupPasswordBinding
-    private lateinit var signupViewModel : SignupViewModel
+    private lateinit var signupViewModel: SignupViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        signupViewModel = (application as MyApplication).signupViewModel
 
-        signupViewModel = ViewModelProvider(this)[SignupViewModel::class.java]
 
         // 초기 설정
         initClicker()
@@ -89,7 +91,9 @@ class SignupPasswordActivity : AppCompatActivity() {
 
             binding.signupPasswordNextBtn.apply {
                 isEnabled = true
-                signupViewModel.password.value = input
+
+                // 뷰모델에 비번 업데이트
+                signupViewModel.updatePassword(input)
                 background = getDrawable(R.drawable.btn_pink_background) ?: return
                 setOnClickListener {
                     val intent = Intent(this@SignupPasswordActivity, ServiceActivity::class.java)
