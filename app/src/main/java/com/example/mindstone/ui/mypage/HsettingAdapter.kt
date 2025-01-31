@@ -1,10 +1,11 @@
-package com.example.mindstone
+package com.example.mindstone.ui.mypage
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mindstone.databinding.ItemHabitCardBinding
+import com.example.mindstone.domain.entity.Habit
 
 class HsettingAdapter(
     private val habits: List<Habit>,

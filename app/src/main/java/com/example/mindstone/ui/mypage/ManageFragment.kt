@@ -1,4 +1,4 @@
-package com.example.mindstone
+package com.example.mindstone.ui.mypage
 
 import android.os.Bundle
 import android.view.Gravity
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import com.example.mindstone.R
 import com.example.mindstone.databinding.DialogDatePickerBinding
 import com.example.mindstone.databinding.DialogJobPickerBinding
 import com.example.mindstone.databinding.DialogMbtiPickerBinding
@@ -140,8 +141,12 @@ class ManageFragment : Fragment() {
                     if (index == selectedJobIndex) R.drawable.background_radius_red else R.drawable.background_radius_gray
                 )
                 setOnClickListener {
-                    gridJobs.children.forEach { it.background = ContextCompat.getDrawable(requireContext(), R.drawable.background_radius_gray) }
-                    background = ContextCompat.getDrawable(requireContext(), R.drawable.background_radius_red)
+                    gridJobs.children.forEach { it.background = ContextCompat.getDrawable(requireContext(),
+                        R.drawable.background_radius_gray
+                    ) }
+                    background = ContextCompat.getDrawable(requireContext(),
+                        R.drawable.background_radius_red
+                    )
                     onJobSelected(job)
                 }
             }

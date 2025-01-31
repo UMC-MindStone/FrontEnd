@@ -1,4 +1,4 @@
-package com.example.mindstone
+package com.example.mindstone.ui.mypage
 
 import android.os.Bundle
 import android.text.Editable
@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentAccount2Binding
 
 class Account2Fragment : Fragment() {

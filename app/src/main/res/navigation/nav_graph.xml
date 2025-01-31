@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/account2Fragment"
-        android:name="com.example.mindstone.Account2Fragment"
+        android:name="com.example.mindstone.ui.mypage.Account2Fragment"
         android:label="Account2Fragment">
         <action
             android:id="@+id/action_account2Fragment_to_account1Fragment"
@@ -13,7 +13,7 @@
     </fragment>
     <fragment
         android:id="@+id/account1Fragment"
-        android:name="com.example.mindstone.Account1Fragment"
+        android:name="com.example.mindstone.ui.mypage.Account1Fragment"
         android:label="Account1Fragment" />
 
 </navigation>
