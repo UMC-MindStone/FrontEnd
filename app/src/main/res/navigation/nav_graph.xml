@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph">
+
+    <fragment
+        android:id="@+id/account2Fragment"
+        android:name="com.example.mindstone.ui.mypage.Account2Fragment"
+        android:label="Account2Fragment">
+        <action
+            android:id="@+id/action_account2Fragment_to_account1Fragment"
+            app:destination="@id/account1Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/account1Fragment"
+        android:name="com.example.mindstone.ui.mypage.Account1Fragment"
+        android:label="Account1Fragment" />
+
+</navigation>

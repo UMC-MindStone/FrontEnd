@@ -57,7 +57,11 @@ dependencies {
     implementation(libs.material.calendarview)
     implementation(libs.circleindicator)
     implementation(libs.mpandroidchart)
+    implementation(libs.androidx.ui.test.android)
 
+    implementation("com.github.kizitonwose:CalendarView:1.0.4") // CalendarView
+    implementation("me.relex:circleindicator:2.1.6") // CircleIndicator
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0") // MPAndroidChart
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -68,4 +72,3 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
-
