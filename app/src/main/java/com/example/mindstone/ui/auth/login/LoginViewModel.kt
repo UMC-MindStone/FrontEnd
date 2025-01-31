@@ -17,14 +17,9 @@ class LoginViewModel : ViewModel() {
     private val _loginResult = MutableLiveData<String>() // 로그인 결과 메시지
     val loginResult: LiveData<String> get() = _loginResult
 
-    private val loginService = RetrofitClient.create(LoginService::class.java)
+    private val loginService = RetrofitClient.loginService
 
-    // ✅ 저장된 AccessToken 가져오기 (자동 로그인 확인) - BASE_URL 이 없어서 오류가 뜨나?
-//    fun getAccessToken(): String? {
-//        return PreferenceManager.getAccessToken()
-//    }
-
-    // ✅ 로그인 처리
+    // 로그인 처리
     fun login(email: String, password: String) {
         val request = LoginRequest(email, password)
 
@@ -33,13 +28,6 @@ class LoginViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body?.isSuccess == true) {
-                        val accessToken = body.result?.accessToken ?: ""
-
-                        // ✅ 자동 로그인이 활성화된 경우 AccessToken 저장
-//                        if (PreferenceManager.getAutoLogin()) {
-//                            PreferenceManager.saveAccessToken(accessToken)
-//                        }
-
                         _loginResult.value = "로그인 성공"
                     } else {
                         _loginResult.value = "로그인 실패: ${body?.message ?: "알 수 없는 오류"}"

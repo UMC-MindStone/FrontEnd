@@ -8,8 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.mindstone.data.remote.RetrofitClient
+import com.example.mindstone.data.repository.FindEmailRepositoryImpl
 import com.example.mindstone.databinding.FragmentFindEmailBinding
+import com.example.mindstone.domain.usecase.FindEmailUseCase
 import com.example.mindstone.ui.auth.login.FindPasswordFragment
 import com.example.mindstone.ui.auth.login.LoginActivity2
 import com.example.mindstone.util.LoginDialogUtil
@@ -19,7 +23,8 @@ class FindEmailFragment : Fragment() {
 
     private var _binding: FragmentFindEmailBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: FindEmailViewModel by viewModels()
+
+    private lateinit var viewModel: FindEmailViewModel
 
     private var retryCount = 0
     private lateinit var sharedPreferences: SharedPreferences  // 제한 시간 저장
@@ -30,6 +35,19 @@ class FindEmailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFindEmailBinding.inflate(inflater, container, false)
+
+        // 🔹 ViewModelFactory를 사용하여 ViewModel 생성
+//        val useCase = FindEmailUseCase(FindEmailRepositoryImpl()) // ✅ 의존성 수동 주입
+//        val factory = FindEmailViewModelFactory(useCase)
+//        viewModel = ViewModelProvider(this, factory).get(FindEmailViewModel::class.java)
+
+
+        val repository = FindEmailRepositoryImpl(RetrofitClient.authService)
+        val useCase = FindEmailUseCase(repository)
+        val factory = FindEmailViewModelFactory(useCase)
+
+        viewModel = ViewModelProvider(this, factory).get(FindEmailViewModel::class.java)
+
         return binding.root
     }
 
