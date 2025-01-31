@@ -42,9 +42,6 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-//        // 입력 필드 이벤트 리스너 설정
-//        setupInputListeners()
-
         // 이메일 입력 필드
         binding.loginEmailEt.addTextChangedListener { text ->
             validateEmail(text.toString())
