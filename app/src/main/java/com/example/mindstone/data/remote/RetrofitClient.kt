@@ -14,4 +14,12 @@ object RetrofitClient {
     fun <T> create(service: Class<T>): T {
         return retrofit.create(service)
     }
+
+    val LoginService: LoginService by lazy {
+        retrofit.create(LoginService::class.java)
+    }
+
+    val AuthService: AuthService by lazy {
+        retrofit.create(AuthService::class.java)
+    }
 }
