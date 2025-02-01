@@ -82,8 +82,8 @@ class SignupCodeActivity : AppCompatActivity() {
         }
 
         // 버튼 클릭 이벤트
-        binding.signupCodeNextBtn.setOnClickListener {
-            if (binding.signupCodeNextBtn.isEnabled) {
+        binding.signupCodeNextAbleBtn.setOnClickListener {
+            if (binding.signupCodeNextAbleBtn.isEnabled) {
                 val intent = Intent(this, SignupPasswordActivity::class.java)
                 startActivity(intent)
             }
@@ -106,8 +106,11 @@ class SignupCodeActivity : AppCompatActivity() {
             if (response.isSuccess) {
                 // 성공 처리: 버튼 활성화 및 에러 메시지 숨김
                 binding.signupCodeNextBtn.apply {
+                    visibility = View.GONE
+                }
+                binding.signupCodeNextAbleBtn.apply{
+                    visibility = View.VISIBLE
                     isEnabled = true
-                    background = getDrawable(R.drawable.btn_pink_background)
                 }
                 binding.signupCode1Til.boxStrokeColor = getColor(R.color.black)
                 binding.signupCode2Til.boxStrokeColor = getColor(R.color.black)
@@ -117,8 +120,7 @@ class SignupCodeActivity : AppCompatActivity() {
             } else {
                 // 실패 처리: 버튼 비활성화 및 에러 메시지 표시
                 binding.signupCodeNextBtn.apply {
-                    isEnabled = false
-                    background = getDrawable(R.drawable.btn_disabled)
+                    visibility = View.GONE
                 }
                 binding.signupResendTv.apply{
                     visibility = View.VISIBLE
@@ -129,7 +131,7 @@ class SignupCodeActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this@SignupCodeActivity, "서버와 연결할 수 없습니다.", Toast.LENGTH_SHORT).show()
+
         }
     }
 
