@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.MyApplication
@@ -20,21 +22,22 @@ class SignupEmailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        signupViewModel = (application as MyApplication).signupViewModel
         binding= ActivitySignupEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        signupViewModel = (application as MyApplication).signupViewModel
 
+        // 화면 맞춤
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
+        // 버튼 클릭 동작 총괄
         initClicker()
 
         binding.signupEmailTextTie.addTextChangedListener{ text ->
             validateEmail(text.toString())
-        }
-
-        // 뒤로 가기 버튼 클릭 -> LoginActivity로 이동
-        binding.signupemailBackIv.setOnClickListener {
-            finish() // 현재 액티비티 종료 (LoginActivity로 돌아감)
         }
 
     }
@@ -83,6 +86,11 @@ class SignupEmailActivity : AppCompatActivity() {
             val intent = Intent(this, SignupCodeActivity::class.java)
 
             startActivity(intent)
+        }
+
+        // 뒤로 가기 버튼 클릭 -> LoginActivity로 이동
+        binding.signupemailBackIv.setOnClickListener {
+            finish() // 현재 액티비티 종료 (LoginActivity로 돌아감)
         }
 
     }
