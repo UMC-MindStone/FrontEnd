@@ -33,6 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="서비스 이용 동의"
+        android:fontFamily="@font/pretendard_regular"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/service_register_iv"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,6 +69,7 @@
             android:id="@+id/service_allagree_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard_regular"
             android:text="약관 전체 동의"
             android:textSize="16sp"
             android:layout_gravity="center_vertical"
@@ -114,6 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="(필수) 만 14세 이상입니다."
+            android:fontFamily="@font/pretendard_regular"
             android:textSize="14sp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"/>
@@ -150,6 +153,7 @@
             android:layout_height="wrap_content"
             android:text="(필수) 서비스 이용 약관"
             android:textSize="14sp"
+            android:fontFamily="@font/pretendard_regular"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"/>
 
@@ -178,6 +182,7 @@
             android:id="@+id/service_uncheck4_iv"
             android:layout_width="24dp"
             android:layout_height="24dp"
+
             android:src="@drawable/btn_checked_normal"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="38dp"/>
@@ -197,6 +202,7 @@
             android:layout_height="wrap_content"
             android:text="(필수) 개인정보 수집 및 이용 동의"
             android:textSize="14sp"
+            android:fontFamily="@font/pretendard_regular"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"/>
 
