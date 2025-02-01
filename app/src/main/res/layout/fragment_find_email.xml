@@ -102,16 +102,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="119dp"
+            android:layout_marginTop="175dp"
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/pretendard_regular"
-            android:text="회원가입 시 등록한 \n이메일의 일부 정보를 입력해주세요."
+            android:text="회원가입 시 등록한 이메일을 입력해주세요."
             android:textSize="16sp"
             android:textStyle="bold"
             android:lineSpacingExtra="3dp"
             app:layout_constraintBottom_toTopOf="@+id/findEmail_email_et"
             app:layout_constraintLeft_toLeftOf="@id/findEmail_email_et"
-            app:layout_constraintTop_toBottomOf="@+id/findEmail_find_tv" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/findEmail_iv"
