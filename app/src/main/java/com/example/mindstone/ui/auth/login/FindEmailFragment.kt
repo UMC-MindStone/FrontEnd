@@ -1,5 +1,6 @@
 package com.example.mindstone.ui.auth.login
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -39,6 +40,9 @@ class FindEmailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 초기화
+        sharedPreferences = requireContext().getSharedPreferences("FindEmailPrefs", Context.MODE_PRIVATE)
 
         // "비밀번호 재설정" 클릭 시 -> FindPasswordFragment로 전환
         binding.findPWTabLl.setOnClickListener {
@@ -98,9 +102,11 @@ class FindEmailFragment : Fragment() {
 
     // 이메일 찾기 성공 다이얼로그
     private fun showSuccessDialog(email: String) {
+        val maskedEmail = maskEmail(email)
+
         LoginDialogUtil.showCustomDialog(
             requireContext(),
-            "일치하는 이메일 계정을 찾았습니다.\n$email",
+            "일치하는 이메일 계정을 찾았습니다.\n$maskedEmail",
             "로그인",
             "비밀번호 재설정",
             onPositiveClick = {
@@ -152,6 +158,9 @@ class FindEmailFragment : Fragment() {
 
     // 5분 제한 체크 (현재 시간이 저장된 시간 + 5분을 초과했는지 확인)
     private fun isTimeLimitActive(): Boolean {
+        // sharedPreferences가 초기화되지 않았다면 기본값 반환
+        if (!this::sharedPreferences.isInitialized) return false
+
         val limitStartTime = sharedPreferences.getLong("limit_start_time", 0)
         val currentTime = System.currentTimeMillis()
         return (currentTime - limitStartTime) < (5 * 60 * 1000)  // 5분 제한 (300,000ms)
@@ -172,6 +181,21 @@ class FindEmailFragment : Fragment() {
                 // 고객센터 문의 화면으로 이동
             }
         )
+    }
+
+    // 이메일 일부를 *로 가리는 함수
+    private fun maskEmail(email: String): String {
+        val parts = email.split("@")
+        if (parts.size != 2) return email // 이메일 형식이 잘못된 경우 그대로 반환
+
+        val username = parts[0]
+        val domain = parts[1]
+
+        return if (username.length > 2) {
+            username.take(2) + "*".repeat(username.length - 2) + "@" + domain
+        } else {
+            username + "*".repeat(username.length) + "@" + domain
+        }
     }
 
     private fun navigateToLogin() {
