@@ -4,6 +4,7 @@ import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+
 interface SignupService {
     @POST("api/members")
     suspend fun signup(@Body signupRequest: signupRequest): signupResponse
@@ -50,7 +51,6 @@ data class codeValidateResponse(
     val code: String?,
     val message: String?,
     val result: codeRequest?
-
 )
 
 data class codeRequest(
@@ -63,5 +63,4 @@ data class codeResponse(
     val code: String?,
     val message: String?,
     val result: String?
-
 )

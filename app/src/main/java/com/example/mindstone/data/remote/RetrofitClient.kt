@@ -55,11 +55,11 @@ object RetrofitClient {
     // 여기에 signupService 선언해서 썼는데 그때는 엄청난 오류가 발생했습니다...
     // 만약 하다가 안되면, 각 액티비티에서 retrofit 객체 선언하셔서 사용해보는 것도 방법일 것 같습니다
 
-    val LoginService: LoginService by lazy {
+    val loginService: LoginService by lazy {
         retrofit.create(LoginService::class.java)
     }
 
-    val AuthService: AuthService by lazy {
+    val authService: AuthService by lazy {
         retrofit.create(AuthService::class.java)
     }
 }

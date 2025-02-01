@@ -167,4 +167,3 @@ class SignupCodeActivity : AppCompatActivity() {
         return Instant.now().toString() // 현재 UTC 시간을 ISO 8601 형식으로 반환
     }
 }
-
