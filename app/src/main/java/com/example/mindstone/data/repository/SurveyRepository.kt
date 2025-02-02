@@ -3,14 +3,14 @@ package com.example.mindstone.repository
 import android.util.Log
 import com.example.mindstone.data.model.SurveyRequest
 import com.example.mindstone.data.model.SurveyResponse
-import com.example.mindstone.network.RetrofitClient
+import com.example.mindstone.data.remote.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class SurveyRepository {
     fun submitSurvey(request: SurveyRequest, onResult: (Boolean, String) -> Unit) {
-        RetrofitClient.apiService.submitSurvey(request).enqueue(object : Callback<SurveyResponse> {
+        RetrofitClient.SurveyService.submitSurvey(request).enqueue(object : Callback<SurveyResponse> {
             override fun onResponse(call: Call<SurveyResponse>, response: Response<SurveyResponse>) {
                 if (response.isSuccessful) {
                     onResult(true, response.body()?.message ?: "설문 제출 성공")
