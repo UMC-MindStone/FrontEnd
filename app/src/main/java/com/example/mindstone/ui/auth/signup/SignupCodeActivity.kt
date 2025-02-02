@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -33,6 +35,13 @@ class SignupCodeActivity : AppCompatActivity() {
         signupViewModel = (application as MyApplication).signupViewModel
 
         setContentView(binding.root)
+
+        // 화면 맞춤
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         Log.d("code activity", "${signupViewModel.email.value}")
 
@@ -65,7 +74,7 @@ class SignupCodeActivity : AppCompatActivity() {
                 onTextChanged = { _, _, _, _ ->
                     debounceJob?.cancel() // 기존 요청 취소
                     debounceJob = lifecycleScope.launch {
-                        delay(3000)
+                        delay(300)
                         updateButtonState(inputs) // 버튼 상태 업데이트
                     }
                 }
@@ -73,8 +82,8 @@ class SignupCodeActivity : AppCompatActivity() {
         }
 
         // 버튼 클릭 이벤트
-        binding.signupCodeNextBtn.setOnClickListener {
-            if (binding.signupCodeNextBtn.isEnabled) {
+        binding.signupCodeNextAbleBtn.setOnClickListener {
+            if (binding.signupCodeNextAbleBtn.isEnabled) {
                 val intent = Intent(this, SignupPasswordActivity::class.java)
                 startActivity(intent)
             }
@@ -97,8 +106,11 @@ class SignupCodeActivity : AppCompatActivity() {
             if (response.isSuccess) {
                 // 성공 처리: 버튼 활성화 및 에러 메시지 숨김
                 binding.signupCodeNextBtn.apply {
+                    visibility = View.GONE
+                }
+                binding.signupCodeNextAbleBtn.apply{
+                    visibility = View.VISIBLE
                     isEnabled = true
-                    background = getDrawable(R.drawable.btn_pink_background)
                 }
                 binding.signupCode1Til.boxStrokeColor = getColor(R.color.black)
                 binding.signupCode2Til.boxStrokeColor = getColor(R.color.black)
@@ -108,8 +120,7 @@ class SignupCodeActivity : AppCompatActivity() {
             } else {
                 // 실패 처리: 버튼 비활성화 및 에러 메시지 표시
                 binding.signupCodeNextBtn.apply {
-                    isEnabled = false
-                    background = getDrawable(R.drawable.btn_disabled)
+                    visibility = View.GONE
                 }
                 binding.signupResendTv.apply{
                     visibility = View.VISIBLE
@@ -120,7 +131,7 @@ class SignupCodeActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this@SignupCodeActivity, "서버와 연결할 수 없습니다.", Toast.LENGTH_SHORT).show()
+
         }
     }
 
