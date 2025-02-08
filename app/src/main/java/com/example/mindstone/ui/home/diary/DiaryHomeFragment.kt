@@ -9,6 +9,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentDiaryHomeBinding
 
 class DiaryHomeFragment : Fragment() {
@@ -80,6 +82,16 @@ class DiaryHomeFragment : Fragment() {
 
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryImgCl.layoutParams = paramsImage
+
+
+                // 텍스트 존재하는 컴포넌트의 pen icon
+                binding.diaryTextEditIv.setOnClickListener{
+                    findNavController().navigate(R.id.diaryHome_to_diaryEdit)
+                }
+
+                binding.diaryImgAddTransIv.setOnClickListener{
+                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit)
+                }
             }
 
             // 2. 텍스트 있음 + 이미지 없음
@@ -98,6 +110,13 @@ class DiaryHomeFragment : Fragment() {
 
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
+
+                binding.diaryImgAddBlankIv.setOnClickListener{
+                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit)
+                }
+                binding.diaryTextEditIv.setOnClickListener{
+                    findNavController().navigate(R.id.diaryHome_to_diaryEdit)
+                }
             }
 
             // 3. 텍스트 없음 + 이미지 있음
@@ -116,6 +135,13 @@ class DiaryHomeFragment : Fragment() {
 
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryImgCl.layoutParams = paramsImage
+
+                binding.diaryBlankTextIv.setOnClickListener {
+                    findNavController().navigate(R.id.diaryHome_to_diaryEdit)
+                }
+                binding.diaryImgAddTransIv.setOnClickListener{
+                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit)
+                }
             }
 
             // 4. 텍스트 없음 + 이미지 없음
@@ -134,6 +160,13 @@ class DiaryHomeFragment : Fragment() {
 
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
+
+                binding.diaryBlankTextIv.setOnClickListener {
+                    findNavController().navigate(R.id.diaryHome_to_diaryEdit)
+                }
+                binding.diaryImgAddBlankIv.setOnClickListener {
+                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit)
+                }
             }
         }
     }

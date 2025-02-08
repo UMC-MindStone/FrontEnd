@@ -16,4 +16,25 @@
         android:name="com.example.mindstone.ui.mypage.Account1Fragment"
         android:label="Account1Fragment" />
 
+    <fragment
+        android:id="@+id/diaryHomeFragment"
+        android:name="com.example.mindstone.ui.home.diary.DiaryHomeFragment"
+        >
+        <action
+            android:id="@+id/diaryHome_to_diaryEdit"
+            app:destination="@id/diaryEditFragment" />
+
+        <action
+            android:id="@+id/diaryHome_to_diaryImgEdit"
+            app:destination="@id/diaryImageFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/diaryEditFragment"
+        android:name="com.example.mindstone.ui.home.diary.DiaryEditFragment"/>
+
+    <fragment
+        android:id="@+id/diaryImageFragment"
+        android:name="com.example.mindstone.ui.home.diary.DiaryImgFragment"/>
+
 </navigation>
