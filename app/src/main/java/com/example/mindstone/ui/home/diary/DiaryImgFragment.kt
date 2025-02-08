@@ -1,4 +1,4 @@
-package com.example.mindstone.ui.home
+package com.example.mindstone.ui.home.diary
 
 import android.net.Uri
 import android.os.Bundle
@@ -10,7 +10,6 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import com.example.mindstone.databinding.FragmentDiaryImgBinding
-import com.example.mindstone.DiaryViewModel
 
 
 class DiaryImgFragment : Fragment() {

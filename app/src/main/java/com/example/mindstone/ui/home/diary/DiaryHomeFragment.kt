@@ -1,4 +1,4 @@
-package com.example.mindstone.ui.home
+package com.example.mindstone.ui.home.diary
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import com.example.mindstone.databinding.FragmentDiaryHomeBinding
-import com.example.mindstone.DiaryViewModel
 
 class DiaryHomeFragment : Fragment() {
     private var _binding: FragmentDiaryHomeBinding? = null
@@ -31,6 +32,13 @@ class DiaryHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 화면 맞춤
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
             binding.diaryTextTv.text = text
             changeCompoenent()
@@ -52,7 +60,7 @@ class DiaryHomeFragment : Fragment() {
 
     private fun changeCompoenent() {
         // 텍스트와 이미지 상태 확인
-        val textExist = !binding.diaryTextTv.text.isNullOrBlank()
+        val textExist = !diaryViewModel.diaryText.value.isNullOrBlank()
         val imageExist = diaryViewModel.images.value?.isNotEmpty() == true
 
         when {

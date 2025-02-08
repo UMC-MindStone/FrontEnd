@@ -1,4 +1,4 @@
-package com.example.mindstone
+package com.example.mindstone.ui.home.diary
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.home.DiaryHomeFragment">
+    tools:context=".ui.home.diary.DiaryHomeFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
                 android:id="@+id/diary_complete_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="38dp"
+                android:layout_marginTop="14dp"
                 android:text="자동 일기 제작"
                 android:fontFamily="@font/pretendard_regular"
                 android:textSize="20sp"
@@ -44,6 +44,8 @@
                 app:layout_constraintTop_toTopOf="@id/diary_complete_tv"
                 app:layout_constraintBottom_toBottomOf="@id/diary_complete_tv"
                 app:layout_constraintEnd_toEndOf="parent"/>
+
+<!--            "오늘"에 해당하는 날짜 띄우기-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,9 +63,9 @@
 
             <ImageView
                 android:id="@+id/diary_character_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_happy"
+                android:layout_width="116dp"
+                android:layout_height="96dp"
+                android:src="@drawable/ic_angry"
                 android:layout_marginTop="173dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +85,7 @@
                     android:id="@+id/diary_text_tv"
                     android:layout_width="292dp"
                     android:layout_height="164dp"
-
+                    android:fontFamily="@font/pretendard_regular"
                     android:visibility="visible"
                     android:text=""
                     android:textSize="14sp"
@@ -108,7 +110,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
+<!--            텍스트가 비어있을 때 보여지는 컴포넌트-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/diary_blank_text_cl"
                 android:layout_width="wrap_content"
@@ -143,13 +145,13 @@
 
 
 
-            <!-- 이미지 최대 4장 추가 visibility == gone으로 해두었음-->
+            <!-- 이미지 추가전 visibility == gone으로 해두었음-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/diary_home_Addimg_cl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintTop_toBottomOf="@id/diary_text_cl"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

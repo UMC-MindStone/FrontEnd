@@ -1,4 +1,4 @@
-package com.example.mindstone.ui.home
+package com.example.mindstone.ui.home.diary
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
