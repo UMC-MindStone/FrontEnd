@@ -16,8 +16,14 @@ class DiaryEditFragment : Fragment() {
     private val binding get() = _binding!!
     private val diaryViewModel: DiaryViewModel by activityViewModels()
 
+    private var beforeFragment : String = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let { bundle ->
+            beforeFragment = bundle.getString("fragment", "Unknown")
+        }
 
     }
 
@@ -39,9 +45,17 @@ class DiaryEditFragment : Fragment() {
             insets
         }
 
+        when (beforeFragment) {
+            "today" -> {
+                binding.diaryEditAutoTv.visibility = View.VISIBLE
+                binding.diaryEditDateTv.visibility = View.GONE
+            }
+        }
+
         initClicker()
         changeVisibility()
         setObserver()
+
 
 
     }
