@@ -51,21 +51,27 @@ class DiaryEditFragment : Fragment() {
         _binding = null
     }
 
+    private var tempText: String = "" // 확인 버튼 누르기 전 임시 텍스트
     private fun setObserver(){
         // diaryHome 에 있는 텍스트 가져오기
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
-            binding.diaryEditTextTv.setText(text)
+            tempText = text
+            binding.diaryEditTextTv.text = tempText
         }
 
-        // 수정한 텍스트 업데이트
-        binding.diaryEditCompleteIv.setOnClickListener{
-            val updatedText = binding.diaryEditTextTv.text.toString()
-            diaryViewModel.updateDiaryText(updatedText)
-        }
     }
 
     private fun initClicker(){
+        binding.diaryEditCompleteIv.setOnClickListener{
+            val updatedText = binding.diaryEditTextTv.text.toString()
+            diaryViewModel.updateDiaryText(updatedText)
+            requireActivity().supportFragmentManager.popBackStack()
+        }
 
+        binding.diaryEditCloseIv.setOnClickListener{
+            binding.diaryEditTextTv.text = tempText
+            requireActivity().supportFragmentManager.popBackStack()
+        }
     }
 
     private fun changeVisibility(){

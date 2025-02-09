@@ -37,4 +37,15 @@
         android:id="@+id/diaryImageFragment"
         android:name="com.example.mindstone.ui.home.diary.DiaryImgFragment"/>
 
+    <fragment
+        android:id="@+id/CalendarToDiaryHomeFragment"
+        android:name="com.example.mindstone.ui.home.diary.CalendarToDiaryFragment">
+        <action
+            android:id="@+id/CalendarToDiaryHome_to_diaryEdit"
+            app:destination="@id/diaryEditFragment" />
+        <action
+            android:id="@+id/CalendarToDiaryHome_to_diaryImgEdit"
+            app:destination="@id/diaryImageFragment" />
+    </fragment>
+
 </navigation>

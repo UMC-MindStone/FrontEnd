@@ -12,11 +12,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.mindstone.R
-import com.example.mindstone.databinding.FragmentDiaryHomeBinding
+import com.example.mindstone.databinding.FragmentCalendarToDiaryBinding
 
-class DiaryHomeFragment : Fragment() {
-    private var _binding: FragmentDiaryHomeBinding? = null
-    private val binding get() = _binding!!
+class CalendarToDiaryFragment : Fragment() {
+
+    private var _bindng: FragmentCalendarToDiaryBinding? = null
+    private val binding get() = _bindng!!
     private val diaryViewModel: DiaryViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,15 +25,13 @@ class DiaryHomeFragment : Fragment() {
 
     }
 
-    val bundle = bundleOf(
-        "fragment" to "today"
-    )
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentDiaryHomeBinding.inflate(inflater, container, false)
+        _bindng = FragmentCalendarToDiaryBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,7 +46,7 @@ class DiaryHomeFragment : Fragment() {
 
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
             binding.diaryTextTv.text = text
-            changeCompoenent()
+            changeComponent()
         }
 
         diaryViewModel.images.observe(viewLifecycleOwner){ images ->
@@ -55,17 +54,14 @@ class DiaryHomeFragment : Fragment() {
             binding.diaryImg2Iv.setImageURI(images[1])
             binding.diaryImg3Iv.setImageURI(images[2])
             binding.diaryImg4Iv.setImageURI(images[3])
-            changeCompoenent()
+            changeComponent()
         }
     }
+    val bundle = bundleOf(
+        "fragment" to "today"
+    )
 
-    override fun onDestroy(){
-        super.onDestroy()
-        _binding = null
-    }
-
-
-    private fun changeCompoenent() {
+    private fun changeComponent() {
         // 텍스트와 이미지 상태 확인
         val textExist = !diaryViewModel.diaryText.value.isNullOrBlank()
         val imageExist = diaryViewModel.images.value?.isNotEmpty() == true
@@ -88,14 +84,11 @@ class DiaryHomeFragment : Fragment() {
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryImgCl.layoutParams = paramsImage
 
-
-                // 텍스트 존재하는 컴포넌트의 pen icon
-                binding.diaryTextEditIv.setOnClickListener{
+                binding.diaryEditTextIv.setOnClickListener {
                     findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
                 }
-
-                binding.diaryImgAddTransIv.setOnClickListener{
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit,bundle)
+                binding.diaryGalleryIv.setOnClickListener {
+                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
                 }
             }
 
@@ -116,12 +109,13 @@ class DiaryHomeFragment : Fragment() {
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
 
-                binding.diaryImgAddBlankIv.setOnClickListener{
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
-                }
-                binding.diaryTextEditIv.setOnClickListener{
+                binding.diaryEditTextIv.setOnClickListener {
                     findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
                 }
+                binding.diaryImgAddIv.setOnClickListener {
+                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
+                }
+
             }
 
             // 3. 텍스트 없음 + 이미지 있음
@@ -141,12 +135,13 @@ class DiaryHomeFragment : Fragment() {
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryImgCl.layoutParams = paramsImage
 
-                binding.diaryBlankTextIv.setOnClickListener {
+                binding.diaryEditTextBlankIv.setOnClickListener {
                     findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
                 }
-                binding.diaryImgAddTransIv.setOnClickListener{
+                binding.diaryGalleryIv.setOnClickListener {
                     findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
                 }
+
             }
 
             // 4. 텍스트 없음 + 이미지 없음
@@ -166,17 +161,14 @@ class DiaryHomeFragment : Fragment() {
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
 
-                binding.diaryBlankTextIv.setOnClickListener {
+                binding.diaryEditTextBlankIv.setOnClickListener {
                     findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
                 }
-                binding.diaryImgAddBlankIv.setOnClickListener {
+                binding.diaryImgAddIv.setOnClickListener {
                     findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
                 }
             }
         }
     }
-
-
-
 
 }
