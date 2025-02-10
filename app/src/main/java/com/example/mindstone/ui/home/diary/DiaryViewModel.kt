@@ -1,8 +1,11 @@
 package com.example.mindstone.ui.home.diary
+import android.app.Application
 import android.net.Uri
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.mindstone.MyApplication
 
 class DiaryViewModel : ViewModel() {
 

@@ -50,6 +50,10 @@ class DiaryEditFragment : Fragment() {
                 binding.diaryEditAutoTv.visibility = View.VISIBLE
                 binding.diaryEditDateTv.visibility = View.GONE
             }
+            "calendar" -> {
+                binding.diaryEditAutoTv.visibility = View.GONE
+                binding.diaryEditDateTv.visibility = View.VISIBLE
+            }
         }
 
         initClicker()

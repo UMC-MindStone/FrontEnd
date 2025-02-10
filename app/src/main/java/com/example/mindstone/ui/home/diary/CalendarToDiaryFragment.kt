@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.example.mindstone.ColorPickerFragment
+import com.example.mindstone.MyApplication
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentCalendarToDiaryBinding
 
@@ -18,10 +20,11 @@ class CalendarToDiaryFragment : Fragment() {
 
     private var _bindng: FragmentCalendarToDiaryBinding? = null
     private val binding get() = _bindng!!
-    private val diaryViewModel: DiaryViewModel by activityViewModels()
+    private val diaryViewModel : DiaryViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
     }
 
@@ -56,11 +59,40 @@ class CalendarToDiaryFragment : Fragment() {
             binding.diaryImg4Iv.setImageURI(images[3])
             changeComponent()
         }
+
+
+        //여기에 이전에 따로 감정을 기록하지 않았을 때! 에 라는 조건이 추가 되어야 합니다.
+        binding.diaryCharacterIv.setOnClickListener {
+            setColorPicker()
+        }
+
+
     }
     val bundle = bundleOf(
-        "fragment" to "today"
+        "fragment" to "calendar"
     )
 
+    private fun setColorPicker(){
+        val dialog = ColorPickerFragment().apply{
+            onColorSelected = { colorIndex ->
+                colorIndex?.let{
+                    val iconRes = when(it){
+                        1 -> R.drawable.ic_depression
+                        2 -> R.drawable.ic_angry
+                        3 -> R.drawable.ic_sad
+                        4 -> R.drawable.ic_calm
+                        5 -> R.drawable.ic_joy
+                        6 -> R.drawable.ic_happy
+                        7 -> R.drawable.ic_romance
+                        else -> R.drawable.btn_nothing_normal
+                    }
+                    binding.diaryCharacterIv.setImageResource(iconRes)
+                }
+            }
+        }
+        dialog.show(parentFragmentManager, "ColorPickerFragment")
+
+    }
     private fun changeComponent() {
         // 텍스트와 이미지 상태 확인
         val textExist = !diaryViewModel.diaryText.value.isNullOrBlank()
@@ -170,5 +202,7 @@ class CalendarToDiaryFragment : Fragment() {
             }
         }
     }
+
+
 
 }
