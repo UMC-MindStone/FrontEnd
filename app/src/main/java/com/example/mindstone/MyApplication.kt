@@ -8,7 +8,6 @@ import com.example.mindstone.ui.home.diary.DiaryViewModel
 class MyApplication : Application() {
 
     val signupViewModel: SignupViewModel by lazy { SignupViewModel(this) }
-    val diaryViewModel: DiaryViewModel by lazy { DiaryViewModel(this) }
 
     override fun onCreate() {
 
