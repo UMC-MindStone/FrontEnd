@@ -17,11 +17,17 @@ class DiaryViewModel : ViewModel() {
     private val _images = MutableLiveData<List<Uri>>()
     val images: LiveData<List<Uri>> get() = _images
 
+    private val _emotionIcon = MutableLiveData<Int>()
+    val emotionIcon: LiveData<Int> get() = _emotionIcon
+
     // 텍스트 업데이트
     fun updateDiaryText(newText: String) {
         _diaryText.value = newText
     }
 
+    fun updateEmotionIcon(newIcon: Int) {
+        _emotionIcon.value = newIcon
+    }
     // 이미지 리스트 업데이트
     fun addImages(uri : Uri){
         val currentImages = _images.value?.toMutableList() ?: mutableListOf()

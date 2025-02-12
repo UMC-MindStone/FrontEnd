@@ -64,6 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="80dp"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/diary_character_iv"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -103,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_marginTop="88dp"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/diary_character_iv">
@@ -140,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@id/diary_text_cl"
+                app:layout_constraintTop_toBottomOf="@id/diary_blank_text_cl"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">

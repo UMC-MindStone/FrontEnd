@@ -31,16 +31,18 @@ class MonthDayPickerFragment : DialogFragment() {
         binding.monthNp.maxValue = 12
         binding.monthNp.value = 1
 
-        val selectedMonth = binding.monthNp.value
-        val selectedDay= binding.dayNp.value
+
 
         // day picker 설정
         binding.dayNp.value = 1
-        setDaybyMonth(selectedMonth)
+        binding.dayNp.minValue = 1
+        setDaybyMonth()
 
 
         //확인 버튼 클릭 이벤트
         binding.monthDayCheckTv.setOnClickListener{
+            val selectedMonth = binding.monthNp.value
+            val selectedDay= binding.dayNp.value
             onDateSelected?.invoke(selectedMonth, selectedDay)
             dismiss()
         }
@@ -61,8 +63,12 @@ class MonthDayPickerFragment : DialogFragment() {
         _binding = null
     }
 
-    private fun setDaybyMonth(month : Int){
-        if(month <8 ){
+    private fun setDaybyMonth(){
+        var month = binding.monthNp.value
+        if( month ==2){
+            binding.dayNp.maxValue = 28
+        }
+        else if(month <8 ){
             if( month % 2 ==1){
                 binding.dayNp.maxValue= 31
             } else {

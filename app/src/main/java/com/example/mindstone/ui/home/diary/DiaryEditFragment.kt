@@ -73,8 +73,8 @@ class DiaryEditFragment : Fragment() {
     private fun setObserver(){
         // diaryHome 에 있는 텍스트 가져오기
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
-            tempText = text
-            binding.diaryEditTextTv.text = tempText
+            tempText = text ?: ""
+            binding.diaryEditTextTv.setText(tempText)
         }
 
     }
@@ -87,7 +87,7 @@ class DiaryEditFragment : Fragment() {
         }
 
         binding.diaryEditCloseIv.setOnClickListener{
-            binding.diaryEditTextTv.text = tempText
+            binding.diaryEditTextTv.setText(tempText)
             requireActivity().supportFragmentManager.popBackStack()
         }
     }

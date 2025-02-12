@@ -1,7 +1,6 @@
 package com.example.mindstone.ui.home.diary
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +8,18 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.mindstone.ColorPickerFragment
-import com.example.mindstone.MyApplication
+import com.example.mindstone.MainActivity
+import com.example.mindstone.MonthDayPickerFragment
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentCalendarToDiaryBinding
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 class CalendarToDiaryFragment : Fragment() {
 
@@ -22,12 +27,19 @@ class CalendarToDiaryFragment : Fragment() {
     private val binding get() = _bindng!!
     private val diaryViewModel : DiaryViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    // 일단 캘린더 프래그먼트에서 년, 월, 일 꼭 넘겨줘야 함.
+    private var currentYear = arguments?.getInt("currentYear")?: 2025
+    private var currentMonth = arguments?.getInt("currentMonth")?: 1
+    private var currentDay= arguments?.getInt("currentDay")?: 1
+    private var isRecord = arguments?.getBoolean("isRecord")?: false
 
 
-    }
-
+    val bundle = bundleOf(
+        "currentYear" to currentYear,
+        "currentMonth" to currentMonth,
+        "currentDay" to currentDay,
+        "fragment" to "calendar"
+    )
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,7 +47,13 @@ class CalendarToDiaryFragment : Fragment() {
         _bindng = FragmentCalendarToDiaryBinding.inflate(inflater, container, false)
         return binding.root
 
+
+        // date select down 버튼 클릭시 dialog 호출
+
+
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,6 +69,9 @@ class CalendarToDiaryFragment : Fragment() {
             binding.diaryTextTv.text = text
             changeComponent()
         }
+        diaryViewModel.emotionIcon.observe(viewLifecycleOwner){ iconResId ->
+            binding.diaryCharacterIv.setImageResource(iconResId)
+        }
 
         diaryViewModel.images.observe(viewLifecycleOwner){ images ->
             binding.diaryImg1Iv.setImageURI(images[0])
@@ -60,17 +81,53 @@ class CalendarToDiaryFragment : Fragment() {
             changeComponent()
         }
 
+        binding.diaryDateSelectIv.setOnClickListener {
+            showDateSelector()
+        }
 
-        //여기에 이전에 따로 감정을 기록하지 않았을 때! 에 라는 조건이 추가 되어야 합니다.
-        binding.diaryCharacterIv.setOnClickListener {
-            setColorPicker()
+        if(!isRecord){
+            binding.diaryCharacterIv.setOnClickListener {
+                setColorPicker()
+            }
+        }
+
+        binding.diaryEditTextBlankIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
+        }
+        binding.diaryEditTextIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
+        }
+        binding.diaryImgAddIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
+        }
+        binding.diaryGalleryIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
         }
 
 
+
+
     }
-    val bundle = bundleOf(
-        "fragment" to "calendar"
-    )
+
+    private fun showDateSelector(){
+        val dialog = MonthDayPickerFragment()
+        dialog.onDateSelected = { selectedMonth , selectedDay ->
+            currentMonth = selectedMonth
+            currentDay = selectedDay
+
+            val date = LocalDate.of( currentYear, currentMonth, currentDay)
+            // 요일 가져오기
+            val dayOfWeek = date.dayOfWeek
+            // 요일을 문자열로 변환 (한글 출력 가능)
+            val dayName = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.KOREAN)
+
+            binding.diaryDateTv.text = "${currentMonth}월 ${currentDay}일 $dayName"
+
+            //  여기서 데이터 호출 해야하나?
+        }
+        dialog.show(parentFragmentManager, "MonthDayPickerFragment")
+
+    }
 
     private fun setColorPicker(){
         val dialog = ColorPickerFragment().apply{
@@ -87,6 +144,7 @@ class CalendarToDiaryFragment : Fragment() {
                         else -> R.drawable.btn_nothing_normal
                     }
                     binding.diaryCharacterIv.setImageResource(iconRes)
+                    diaryViewModel.updateEmotionIcon(iconRes)
                 }
             }
         }
@@ -97,6 +155,7 @@ class CalendarToDiaryFragment : Fragment() {
         // 텍스트와 이미지 상태 확인
         val textExist = !diaryViewModel.diaryText.value.isNullOrBlank()
         val imageExist = diaryViewModel.images.value?.isNotEmpty() == true
+        binding.diaryCharacterIv.visibility = View.VISIBLE
 
         when {
             // 1. 텍스트 있음 + 이미지 있음
@@ -110,18 +169,12 @@ class CalendarToDiaryFragment : Fragment() {
                 val paramsText = binding.diaryTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsImage = binding.diaryImgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsText.topToBottom = binding.diaryCharacterIv.id
                 paramsImage.topToBottom = binding.diaryTextCl.id
 
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryImgCl.layoutParams = paramsImage
 
-                binding.diaryEditTextIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
-                }
-                binding.diaryGalleryIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
-                }
             }
 
             // 2. 텍스트 있음 + 이미지 없음
@@ -135,18 +188,12 @@ class CalendarToDiaryFragment : Fragment() {
                 val paramsText = binding.diaryTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsAddImg = binding.diaryHomeAddimgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsText.topToBottom = binding.diaryCharacterIv.id
                 paramsAddImg.topToBottom = binding.diaryTextCl.id
 
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
 
-                binding.diaryEditTextIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
-                }
-                binding.diaryImgAddIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
-                }
 
             }
 
@@ -161,18 +208,12 @@ class CalendarToDiaryFragment : Fragment() {
                 val paramsBlankText = binding.diaryBlankTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsImage = binding.diaryImgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsBlankText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsBlankText.topToBottom = binding.diaryCharacterIv.id
                 paramsImage.topToBottom = binding.diaryBlankTextCl.id
 
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryImgCl.layoutParams = paramsImage
 
-                binding.diaryEditTextBlankIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
-                }
-                binding.diaryGalleryIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
-                }
 
             }
 
@@ -187,22 +228,14 @@ class CalendarToDiaryFragment : Fragment() {
                 val paramsBlankText = binding.diaryBlankTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsAddImg = binding.diaryHomeAddimgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsBlankText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsBlankText.topToBottom = binding.diaryCharacterIv.id
                 paramsAddImg.topToBottom = binding.diaryBlankTextCl.id
 
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
 
-                binding.diaryEditTextBlankIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
-                }
-                binding.diaryImgAddIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
-                }
             }
         }
     }
-
-
 
 }
