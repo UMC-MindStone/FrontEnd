@@ -36,9 +36,9 @@ class ServiceActivity : AppCompatActivity() {
         super.onStart()
 
         //전체 동의 버튼 ON
-    binding.serviceUncheck1Iv.setOnClickListener {
-        binding.serviceUncheck1Iv.visibility = View.GONE
-        binding.serviceChecked1Iv.visibility = View.VISIBLE
+        binding.serviceUncheck1Iv.setOnClickListener {
+            binding.serviceUncheck1Iv.visibility = View.GONE
+            binding.serviceChecked1Iv.visibility = View.VISIBLE
 
             if(binding.serviceUncheck2Iv.visibility == View.VISIBLE){
                 binding.serviceUncheck2Iv.visibility = View.GONE

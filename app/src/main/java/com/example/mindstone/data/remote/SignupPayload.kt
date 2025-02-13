@@ -51,7 +51,6 @@ data class codeValidateResponse(
     val code: String?,
     val message: String?,
     val result: codeRequest?
-
 )
 
 data class codeRequest(
@@ -64,5 +63,4 @@ data class codeResponse(
     val code: String?,
     val message: String?,
     val result: String?
-
 )

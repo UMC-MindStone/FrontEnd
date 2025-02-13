@@ -47,7 +47,6 @@ class Account1Fragment : Fragment() {
                 }
                 "프로필 설정" -> {
                 //    findNavController().navigate(R.id.action_accountSettingFragment_to_profileSettingFragment)
-                }
                 "로그아웃" -> {
                     // 로그아웃 처리
                 }

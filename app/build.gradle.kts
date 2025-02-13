@@ -81,7 +81,7 @@ dependencies {
 
     // OkHttp 네트워크 요청
     implementation ("com.squareup.okhttp3:okhttp:4.10.0")// 최신 버전 확인 가능
-
+    
     // ✅ OkHttp Logging Interceptor (네트워크 요청 로그 확인)
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
 }
