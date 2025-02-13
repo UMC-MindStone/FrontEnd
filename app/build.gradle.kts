@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -67,6 +68,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // ✅ OkHttp 라이브러리 추가
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3") // 로그 인터셉터 추가
+
+    // ✅ Gson 추가
+    implementation("com.google.code.gson:gson:2.8.9")
 
     //retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
