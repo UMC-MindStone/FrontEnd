@@ -10,7 +10,7 @@
     
     <ImageView
         android:id="@+id/loading_calm_iv"
-        android:src="@drawable/ic_calm"
+        android:src="@drawable/ic_calm_charac"
         android:layout_width="112dp"
         android:layout_height="96dp"
         app:layout_constraintTop_toTopOf="parent"

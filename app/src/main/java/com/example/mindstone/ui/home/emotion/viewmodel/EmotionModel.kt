@@ -115,11 +115,11 @@ class EmotionModel : ViewModel() {
             "행복" -> R.drawable.ic_happy
             "설렘" -> R.drawable.ic_excited
             "기쁨" -> R.drawable.ic_joy
-            "평온" -> R.drawable.ic_calm
+            "평온" -> R.drawable.ic_calm_charac
             "화남" -> R.drawable.ic_angry
             "우울" -> R.drawable.ic_depressed
             "슬픔" -> R.drawable.ic_sad
-            else -> R.drawable.ic_calm
+            else -> R.drawable.ic_calm_charac
         }
     }
 

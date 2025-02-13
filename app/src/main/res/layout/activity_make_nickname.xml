@@ -83,7 +83,7 @@
     <ImageView
         android:layout_width="112dp"
         android:layout_height="96dp"
-        android:src="@drawable/ic_calm"
+        android:src="@drawable/ic_calm_charac"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

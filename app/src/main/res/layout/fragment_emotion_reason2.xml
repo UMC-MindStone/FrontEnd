@@ -68,7 +68,7 @@
 
         <ImageView
             android:id="@+id/icon_iv"
-            android:src="@drawable/ic_calm"
+            android:src="@drawable/ic_calm_charac"
             android:layout_width="112dp"
             android:layout_height="96dp"
             android:layout_marginTop="470dp"

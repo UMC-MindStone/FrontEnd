@@ -243,7 +243,7 @@ class HabitCheckFragment : Fragment() {
                                 1 -> R.drawable.ic_depression
                                 2 -> R.drawable.ic_angry
                                 3 -> R.drawable.ic_sad
-                                4 -> R.drawable.ic_calm
+                                4 -> R.drawable.ic_calm_charac
                                 5 -> R.drawable.ic_joy
                                 6 -> R.drawable.ic_happy
                                 7 -> R.drawable.ic_romance
