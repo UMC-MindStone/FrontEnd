@@ -64,6 +64,7 @@ class CalendarToDiaryFragment : Fragment() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        changeComponent()
 
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
             binding.diaryTextTv.text = text
