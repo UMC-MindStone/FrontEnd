@@ -60,4 +60,8 @@ object RetrofitClient {
     val authService: AuthService by lazy {
         retrofit.create(AuthService::class.java)
     }
+
+    val diaryService: DiarySevice by lazy {
+        retrofit.create(DiarySevice::class.java)
+    }
 }
