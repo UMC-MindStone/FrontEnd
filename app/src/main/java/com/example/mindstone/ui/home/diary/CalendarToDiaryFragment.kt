@@ -17,6 +17,7 @@ import com.example.mindstone.MainActivity
 import com.example.mindstone.MonthDayPickerFragment
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentCalendarToDiaryBinding
+import com.example.mindstone.ui.emotion.EmotionCalendarFragment
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -88,6 +89,10 @@ class CalendarToDiaryFragment : Fragment() {
 
         binding.diaryDateSelectIv.setOnClickListener {
             showDateSelector()
+        }
+
+        binding.backIv.setOnClickListener {
+            (activity as MainActivity).replaceFragment(EmotionCalendarFragment())
         }
 
         if(!isRecord){
