@@ -5,7 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mindstone.MyApplication
+import kotlinx.coroutines.launch
 
 class DiaryViewModel : ViewModel() {
 
@@ -28,10 +30,25 @@ class DiaryViewModel : ViewModel() {
     fun updateEmotionIcon(newIcon: Int) {
         _emotionIcon.value = newIcon
     }
+
+    fun updateImages(newImages: List<Uri>){
+        _images.value= newImages
+    }
     // 이미지 리스트 업데이트
     fun addImages(uri : Uri){
         val currentImages = _images.value?.toMutableList() ?: mutableListOf()
         currentImages.add(uri)
         _images.value = currentImages
+    }
+
+    fun fetchDiary(date:String, token:String){
+        viewModelScope.launch{
+            try{
+
+            }
+            catch(e:Exception){
+
+            }
+        }
     }
 }

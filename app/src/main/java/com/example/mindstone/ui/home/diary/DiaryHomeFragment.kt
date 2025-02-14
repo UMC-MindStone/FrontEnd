@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.example.mindstone.MainActivity
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentDiaryHomeBinding
 
@@ -19,10 +20,6 @@ class DiaryHomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val diaryViewModel: DiaryViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     val bundle = bundleOf(
         "fragment" to "today"
@@ -47,16 +44,34 @@ class DiaryHomeFragment : Fragment() {
 
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
             binding.diaryTextTv.text = text
-            changeCompoenent()
+            changeComponent()
         }
 
-        diaryViewModel.images.observe(viewLifecycleOwner){ images ->
-            binding.diaryImg1Iv.setImageURI(images[0])
-            binding.diaryImg2Iv.setImageURI(images[1])
-            binding.diaryImg3Iv.setImageURI(images[2])
-            binding.diaryImg4Iv.setImageURI(images[3])
-            changeCompoenent()
+        diaryViewModel.images.observe(viewLifecycleOwner) { images ->
+            val imageViews = listOf(binding.diaryImg1Iv, binding.diaryImg2Iv, binding.diaryImg3Iv, binding.diaryImg4Iv)
+            for (i in imageViews.indices) {
+                if (i < images.size) {
+                    imageViews[i].setImageURI(images[i])
+                } else {
+                    imageViews[i].setImageDrawable(null)
+                }
+            }
+            changeComponent()
         }
+
+        binding.diaryTextEditIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
+        }
+        binding.diaryBlankTextIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
+        }
+        binding.diaryImgAddTransIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
+        }
+        binding.diaryImgAddBlankIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
+        }
+
     }
 
     override fun onDestroy(){
@@ -65,7 +80,7 @@ class DiaryHomeFragment : Fragment() {
     }
 
 
-    private fun changeCompoenent() {
+    private fun changeComponent() {
         // 텍스트와 이미지 상태 확인
         val textExist = !diaryViewModel.diaryText.value.isNullOrBlank()
         val imageExist = diaryViewModel.images.value?.isNotEmpty() == true
@@ -82,21 +97,12 @@ class DiaryHomeFragment : Fragment() {
                 val paramsText = binding.diaryTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsImage = binding.diaryImgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsText.topToTop = binding.diaryCharacterIv.id
                 paramsImage.topToBottom = binding.diaryTextCl.id
 
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryImgCl.layoutParams = paramsImage
 
-
-                // 텍스트 존재하는 컴포넌트의 pen icon
-                binding.diaryTextEditIv.setOnClickListener{
-                    findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
-                }
-
-                binding.diaryImgAddTransIv.setOnClickListener{
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit,bundle)
-                }
             }
 
             // 2. 텍스트 있음 + 이미지 없음
@@ -110,18 +116,12 @@ class DiaryHomeFragment : Fragment() {
                 val paramsText = binding.diaryTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsAddImg = binding.diaryHomeAddimgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsText.topToTop = binding.diaryCharacterIv.id
                 paramsAddImg.topToBottom = binding.diaryTextCl.id
 
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
 
-                binding.diaryImgAddBlankIv.setOnClickListener{
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
-                }
-                binding.diaryTextEditIv.setOnClickListener{
-                    findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
-                }
             }
 
             // 3. 텍스트 없음 + 이미지 있음
@@ -135,18 +135,12 @@ class DiaryHomeFragment : Fragment() {
                 val paramsBlankText = binding.diaryBlankTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsImage = binding.diaryImgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsBlankText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsBlankText.topToTop = binding.diaryCharacterIv.id
                 paramsImage.topToBottom = binding.diaryBlankTextCl.id
 
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryImgCl.layoutParams = paramsImage
 
-                binding.diaryBlankTextIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
-                }
-                binding.diaryImgAddTransIv.setOnClickListener{
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
-                }
             }
 
             // 4. 텍스트 없음 + 이미지 없음
@@ -160,18 +154,12 @@ class DiaryHomeFragment : Fragment() {
                 val paramsBlankText = binding.diaryBlankTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsAddImg = binding.diaryHomeAddimgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsBlankText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsBlankText.topToTop = binding.diaryCharacterIv.id
                 paramsAddImg.topToBottom = binding.diaryBlankTextCl.id
 
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
 
-                binding.diaryBlankTextIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryEdit, bundle)
-                }
-                binding.diaryImgAddBlankIv.setOnClickListener {
-                    findNavController().navigate(R.id.diaryHome_to_diaryImgEdit, bundle)
-                }
             }
         }
     }

@@ -73,11 +73,15 @@ class CalendarToDiaryFragment : Fragment() {
             binding.diaryCharacterIv.setImageResource(iconResId)
         }
 
-        diaryViewModel.images.observe(viewLifecycleOwner){ images ->
-            binding.diaryImg1Iv.setImageURI(images[0])
-            binding.diaryImg2Iv.setImageURI(images[1])
-            binding.diaryImg3Iv.setImageURI(images[2])
-            binding.diaryImg4Iv.setImageURI(images[3])
+        diaryViewModel.images.observe(viewLifecycleOwner) { images ->
+            val imageViews = listOf(binding.diaryImg1Iv, binding.diaryImg2Iv, binding.diaryImg3Iv, binding.diaryImg4Iv)
+            for (i in imageViews.indices) {
+                if (i < images.size) {
+                    imageViews[i].setImageURI(images[i])
+                } else {
+                    imageViews[i].setImageDrawable(null)
+                }
+            }
             changeComponent()
         }
 

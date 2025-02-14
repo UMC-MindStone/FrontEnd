@@ -205,20 +205,20 @@
                     android:id="@+id/diary_img1_iv"
                     android:layout_width="124dp"
                     android:layout_height="85dp"
-                    android:elevation="4dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="49dp"
-                    android:background="@color/medium_gray"
+                    android:scaleType="centerCrop"
+                    android:background="@color/white"
                     app:layout_constraintTop_toTopOf="@id/diary_img_iv"
                     app:layout_constraintStart_toStartOf="@id/diary_img_iv"/>
                 <ImageView
                     android:id="@+id/diary_img2_iv"
                     android:layout_width="124dp"
                     android:layout_height="85dp"
-                    android:elevation="4dp"
+                    android:scaleType="centerCrop"
                     android:layout_marginEnd="16dp"
                     android:layout_marginTop="49dp"
-                    android:background="@color/medium_gray"
+                    android:background="@color/white"
                     app:layout_constraintTop_toTopOf="@id/diary_img_iv"
                     app:layout_constraintEnd_toEndOf="@id/diary_img_iv"/>
 
@@ -226,10 +226,10 @@
                     android:id="@+id/diary_img3_iv"
                     android:layout_width="124dp"
                     android:layout_height="85dp"
-                    android:elevation="4dp"
+                    android:scaleType="centerCrop"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="12dp"
-                    android:background="@color/medium_gray"
+                    android:background="@color/white"
                     app:layout_constraintTop_toBottomOf="@id/diary_img1_iv"
                     app:layout_constraintStart_toStartOf="@id/diary_img_iv"/>
 
@@ -237,10 +237,10 @@
                     android:id="@+id/diary_img4_iv"
                     android:layout_width="124dp"
                     android:layout_height="85dp"
-                    android:elevation="4dp"
+                    android:scaleType="centerCrop"
                     android:layout_marginEnd="16dp"
                     android:layout_marginTop="12dp"
-                    android:background="@color/medium_gray"
+                    android:background="@color/white"
                     app:layout_constraintTop_toBottomOf="@id/diary_img2_iv"
                     app:layout_constraintEnd_toEndOf="@id/diary_img_iv"/>
 
