@@ -1,11 +1,19 @@
 package com.example.mindstone.data.remote
 import com.example.mindstone.domain.entity.LoginRequest
 import com.example.mindstone.domain.entity.LoginResponse
+import com.example.mindstone.domain.entity.RefreshTokenRequest
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface LoginService {
+
     @POST("/api/auth/login")
+    @Headers("Content-Type: application/json")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
+
+    // Refresh Token 요청 API
+    @POST("/api/auth/refreshToken")
+    fun refreshAccessToken(@Body request: RefreshTokenRequest): Call<LoginResponse>
 }

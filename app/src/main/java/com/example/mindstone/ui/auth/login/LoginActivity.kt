@@ -42,6 +42,9 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        // 자동 로그인 여부 확인 (앱 실행 시)
+        checkAutoLogin()
+
         // 이메일 입력 필드
         binding.loginEmailEt.addTextChangedListener { text ->
             validateEmail(text.toString())
@@ -50,9 +53,6 @@ class LoginActivity : AppCompatActivity() {
         binding.loginPasswordEt.addTextChangedListener { text ->
             validatePassword(text.toString())
         }
-
-        // 자동 로그인 여부 확인 (앱 실행 시)
-        checkAutoLogin()
 
         // "이메일 찾기" 클릭 시 -> LoginActivity2로 이동
         binding.loginFindEmailTv.setOnClickListener {
@@ -83,8 +83,9 @@ class LoginActivity : AppCompatActivity() {
         binding.loginCheckedIv.setOnClickListener { toggleAutoLogin(true) }
 
 
-        // 로그인 결과 옵저빙
+        // 🔹 [수정됨] 로그인 결과 옵저빙 (초기 실행 시 UI 업데이트 방지)
         viewModel.loginResult.observe(this, Observer { result ->
+            if (result.isNullOrEmpty()) return@Observer // 🔹 초기 실행 시 UI 업데이트 안 하도록 예외 처리
             if (result == "로그인 성공") {
                 navigateToAfterLogin()
             } else {
@@ -93,6 +94,17 @@ class LoginActivity : AppCompatActivity() {
                 binding.loginPasswordTil.helperText = "이메일 또는 비밀번호가 일치하지 않습니다."
             }
         })
+
+        // 로그인 결과 옵저빙
+//        viewModel.loginResult.observe(this, Observer { result ->
+//            if (result == "로그인 성공") {
+//                navigateToAfterLogin()
+//            } else {
+//                binding.loginEmailTil.isErrorEnabled = true
+//                binding.loginPasswordTil.isErrorEnabled = true
+//                binding.loginPasswordTil.helperText = "이메일 또는 비밀번호가 일치하지 않습니다."
+//            }
+//        })
     }
 
 
@@ -162,18 +174,22 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    // 자동 로그인 여부 확인 (앱 실행 시)
+    // 앱 실행 시 자동 로그인 여부 확인
     private fun checkAutoLogin() {
-        var isAutoLogin = PreferenceManager.getAutoLogin()
-        // 앱 최초 실행 시 자동 로그인을 기본값으로 활성화 (true)
-        if (!PreferenceManager.contains("autoLogin")) {
-            PreferenceManager.setAutoLogin(true)
-            isAutoLogin = true
+        val isAutoLogin = PreferenceManager.getAutoLogin()
+
+        if (isAutoLogin) {
+            Log.d("LoginActivity", "🟢 자동 로그인 활성화됨 → RefreshToken으로 로그인 시도")
+            viewModel.refreshAccessToken { success ->
+                if (success) {
+                    navigateToAfterLogin()
+                } else {
+                    Log.e("LoginActivity", "🔴 Refresh Token 실패 → 수동 로그인 필요")
+                }
+            }
+        } else {
+            Log.d("LoginActivity", "🔴 자동 로그인 비활성화됨")
         }
-        if (isAutoLogin && PreferenceManager.getAccessToken() != null) {
-            navigateToAfterLogin()
-        }
-        updateAutoLoginUI(isAutoLogin)
     }
 
 
@@ -183,7 +199,7 @@ class LoginActivity : AppCompatActivity() {
         updateAutoLoginUI(enable)
     }
 
-    // UI 업데이트
+    // 자동 로그인 UI 업데이트
     private fun updateAutoLoginUI(isChecked: Boolean) {
         if (isChecked) {
             binding.loginChecked2Iv.visibility = View.VISIBLE
@@ -228,6 +244,46 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
+
+
+//    private fun validateInputs() {
+//        val email = binding.loginEmailEt.text.toString().trim()
+//        val password = binding.loginPasswordEt.text.toString().trim()
+//
+//        // 로그인 진행
+//        viewModel.login(email, password)
+//
+//        // 기존 옵저버가 중복 등록되지 않도록 기존 옵저버 제거 후 다시 등록
+//        viewModel.loginResult.removeObservers(this)
+//        viewModel.loginResult.observe(this, Observer { result ->
+//            if (result == "로그인 성공") {
+//                navigateToAfterLogin()
+//            } else {
+//                showLoginErrorMessage()
+//            }
+//        })
+//    }
+
+    // 로그인 실패 시 UI에 에러 메시지를 표시
+//    private fun showLoginErrorMessage() {
+//
+//        binding.loginEmailTil.apply {
+//            isErrorEnabled = false
+//            isErrorEnabled = true
+//            error = " " // 강제 에러 상태 적용
+//            errorIconDrawable = ContextCompat.getDrawable(this@LoginActivity, R.drawable.ic_emailerror)
+//            boxStrokeColor = getColor(R.color.error)
+//        }
+//        binding.loginPasswordTil.apply {
+//            isErrorEnabled = false
+//            isErrorEnabled = true
+//            error = " "
+//            helperText = "이메일 또는 비밀번호가 일치하지 않습니다."
+//            errorIconDrawable = ContextCompat.getDrawable(this@LoginActivity, R.drawable.ic_emailerror)
+//            boxStrokeColor = getColor(R.color.error)
+//            hintTextColor = getColorStateList(R.color.error)
+//        }
+//    }
 
 
 
