@@ -4,11 +4,13 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import java.time.LocalDate
 
 interface DiarySevice {
+    @Headers("Content-Type: application/json; charset=UTF-8")
     @POST("api/diary/create")
     suspend fun createDiary(@Body request: DiaryCreateRequest): Response<DiaryCreateResponse>
 
@@ -22,9 +24,6 @@ interface DiarySevice {
         @Body request: DiarySaveRequest
     ): Response<DiarySaveResponse>
 }
-
-
-
 
 // 일기 자동 생성 객체들
 
