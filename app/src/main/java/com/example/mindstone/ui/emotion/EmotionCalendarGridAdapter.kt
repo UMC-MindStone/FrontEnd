@@ -63,7 +63,7 @@ class EmotionCalendarGridAdapter(
                     }
 
                     "calm" -> {
-                        dateIcon.setImageResource(R.drawable.ic_calm)
+                        dateIcon.setImageResource(R.drawable.ic_calm_charac)
                         val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
                         dateIcon.layoutParams.width = sizeInPixels
                         dateIcon.layoutParams.height = sizeInPixels
