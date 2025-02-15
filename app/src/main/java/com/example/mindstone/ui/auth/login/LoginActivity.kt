@@ -87,16 +87,19 @@ class LoginActivity : AppCompatActivity() {
         binding.loginCheckedIv.setOnClickListener { toggleAutoLogin(true) }
 
 
-        // 🔹 [수정됨] 로그인 결과 옵저빙 (초기 실행 시 UI 업데이트 방지)
+        // ✅ 로그인 결과 옵저버 (로그인 성공 시 AccessToken & RefreshToken 저장)
         viewModel.loginResult.observe(this, Observer { result ->
-            if (result.isNullOrEmpty()) return@Observer // 🔹 초기 실행 시 UI 업데이트 안 하도록 예외 처리
             if (result == "로그인 성공") {
                 val accessToken = viewModel.accessToken.value ?: ""
-                if (accessToken.isNotEmpty()) {
-                    PreferenceManager.saveAccessToken(accessToken) // ✅ AccessToken 저장
+                val refreshToken = viewModel.refreshToken.value ?: ""
+
+                if (accessToken.isNotEmpty() && refreshToken.isNotEmpty()) {
+                    // ✅ AccessToken & RefreshToken 저장
+                    PreferenceManager.saveAccessToken(accessToken)
+                    PreferenceManager.saveRefreshToken(refreshToken)
                     navigateToAfterLogin()
                 } else {
-                    Log.e("API_AUTH", "로그인 성공했지만 AccessToken 없음!")
+                    Log.e("API_AUTH", "로그인 성공했지만 AccessToken 또는 RefreshToken 없음!")
                 }
             } else {
                 binding.loginEmailTil.isErrorEnabled = true
@@ -105,16 +108,6 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
-        // 로그인 결과 옵저빙
-//        viewModel.loginResult.observe(this, Observer { result ->
-//            if (result == "로그인 성공") {
-//                navigateToAfterLogin()
-//            } else {
-//                binding.loginEmailTil.isErrorEnabled = true
-//                binding.loginPasswordTil.isErrorEnabled = true
-//                binding.loginPasswordTil.helperText = "이메일 또는 비밀번호가 일치하지 않습니다."
-//            }
-//        })
     }
 
 
@@ -183,12 +176,14 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // 앱 실행 시 자동 로그인 여부 확인
+    // 앱 실행 시 자동 로그인 여부 확인 (Refresh Token 사용)
     private fun checkAutoLogin() {
         val isAutoLogin = PreferenceManager.getAutoLogin()
+        val savedRefreshToken = PreferenceManager.getRefreshToken()
 
-        if (isAutoLogin) {
+        if (isAutoLogin && !savedRefreshToken.isNullOrEmpty()) {
             Log.d("LoginActivity", "🟢 자동 로그인 활성화됨 → RefreshToken으로 로그인 시도")
+
             viewModel.refreshAccessToken { success ->
                 if (success) {
                     navigateToAfterLogin()
@@ -197,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         } else {
-            Log.d("LoginActivity", "🔴 자동 로그인 비활성화됨")
+            Log.d("LoginActivity", "🔴 자동 로그인 비활성화됨 또는 RefreshToken 없음")
         }
     }
 
@@ -253,48 +248,6 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
-
-
-//    private fun validateInputs() {
-//        val email = binding.loginEmailEt.text.toString().trim()
-//        val password = binding.loginPasswordEt.text.toString().trim()
-//
-//        // 로그인 진행
-//        viewModel.login(email, password)
-//
-//        // 기존 옵저버가 중복 등록되지 않도록 기존 옵저버 제거 후 다시 등록
-//        viewModel.loginResult.removeObservers(this)
-//        viewModel.loginResult.observe(this, Observer { result ->
-//            if (result == "로그인 성공") {
-//                navigateToAfterLogin()
-//            } else {
-//                showLoginErrorMessage()
-//            }
-//        })
-//    }
-
-    // 로그인 실패 시 UI에 에러 메시지를 표시
-//    private fun showLoginErrorMessage() {
-//
-//        binding.loginEmailTil.apply {
-//            isErrorEnabled = false
-//            isErrorEnabled = true
-//            error = " " // 강제 에러 상태 적용
-//            errorIconDrawable = ContextCompat.getDrawable(this@LoginActivity, R.drawable.ic_emailerror)
-//            boxStrokeColor = getColor(R.color.error)
-//        }
-//        binding.loginPasswordTil.apply {
-//            isErrorEnabled = false
-//            isErrorEnabled = true
-//            error = " "
-//            helperText = "이메일 또는 비밀번호가 일치하지 않습니다."
-//            errorIconDrawable = ContextCompat.getDrawable(this@LoginActivity, R.drawable.ic_emailerror)
-//            boxStrokeColor = getColor(R.color.error)
-//            hintTextColor = getColorStateList(R.color.error)
-//        }
-//    }
-
-
 
     private fun navigateToAfterLogin() {
         val intent = Intent(this, AfterLoginActivity::class.java)

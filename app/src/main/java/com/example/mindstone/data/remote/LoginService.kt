@@ -8,12 +8,6 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface LoginService {
-
     @POST("/api/auth/login")
-    @Headers("Content-Type: application/json")
     fun login(@Body request: LoginRequest): Call<LoginResponse>
-
-    // Refresh Token 요청 API
-    @POST("/api/auth/refreshToken")
-    fun refreshAccessToken(@Body request: RefreshTokenRequest): Call<LoginResponse>
 }
