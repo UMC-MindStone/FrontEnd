@@ -46,15 +46,9 @@ class EmotionManageActionFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
         viewModel2 = ViewModelProvider(this).get(EmotionManageActionViewModel::class.java)
 
-        // 저장된 유저 토큰 가져오기
-        val accessToken = PreferenceManager.getAccessToken()
+        // API 호출을 위한 최신 accessToken 가져오기
+        fetchAndCallAPI()
 
-        if (!accessToken.isNullOrEmpty()) {
-            val authToken = "Bearer $accessToken"
-            viewModel2.fetchStressRecommendations(authToken) // 화면이 보이면 즉시 API 호출
-        } else {
-            Log.e("TOKEN_ERROR", "Access token is null or empty")
-        }
 
         // 상태바 업데이트 (감정 비율 기반)
         viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
@@ -91,6 +85,18 @@ class EmotionManageActionFragment : Fragment() {
             }
         }
 
+
+        // 'AI 추천' 버튼 클릭 이벤트 추가
+        binding.aiAction.setOnClickListener {
+            fetchAndCallGPTAPI() // 최신 토큰으로 AI 추천 API 호출
+        }
+
+        // API 응답을 받아 말풍선 UI 업데이트
+        viewModel2.aiRecommendations.observe(viewLifecycleOwner) { recommendations ->
+            updateAIUI(recommendations)
+        }
+
+
         // 말풍선 클릭 시 EmotionActionTimeFragment로 이동
         listOf(binding.actionBubbleCenter, binding.actionBubbleLeft, binding.actionBubbleRight).forEach { bubble ->
             bubble.setOnClickListener { navigateToFragment(EmotionActionTimeFragment()) }
@@ -98,8 +104,38 @@ class EmotionManageActionFragment : Fragment() {
     }
 
 
-    // 말풍선 - 행동 추천
+    // 최신 토큰을 가져와 API 호출
+    private fun fetchAndCallAPI() {
+        val accessToken = PreferenceManager.getAccessToken()
+        if (!accessToken.isNullOrEmpty()) {
+            val authToken = "Bearer $accessToken"
+            viewModel2.fetchStressRecommendations(authToken)
+        } else {
+            Log.e("TOKEN_ERROR", "Access token is null or empty")
+        }
+    }
+
+    // 최신 토큰을 가져와 AI 추천 API 호출
+    private fun fetchAndCallGPTAPI() {
+        val accessToken = PreferenceManager.getAccessToken()
+        if (!accessToken.isNullOrEmpty()) {
+            val previousRecommand = binding.actionBubbleCenter.text.toString()
+            viewModel2.fetchAIStressRecommendations("Bearer $accessToken", previousRecommand)
+        } else {
+            Log.e("TOKEN_ERROR", "Access token is null or empty")
+        }
+    }
+
+    // 말풍선 - 사용자 관리 행동 추천
     private fun updateUI(recommendations: List<String>) {
+        if (recommendations.size >= 3) {
+            binding.actionBubbleCenter.text = recommendations[0]
+            binding.actionBubbleLeft.text = recommendations[1]
+            binding.actionBubbleRight.text = recommendations[2]
+        }
+    }
+    // 말풍선 - AI 행동 추천 3가지
+    private fun updateAIUI(recommendations: List<String>) {
         if (recommendations.size >= 3) {
             binding.actionBubbleCenter.text = recommendations[0]
             binding.actionBubbleLeft.text = recommendations[1]
@@ -136,5 +172,7 @@ class EmotionManageActionFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        viewModel2.recommendations.removeObservers(viewLifecycleOwner)
+        viewModel2.aiRecommendations.removeObservers(viewLifecycleOwner)
     }
 }
