@@ -11,7 +11,7 @@ class MyApplication : Application() {
         super.onCreate()
 
         // 앱 실행 시 PreferenceManager 초기화 (SharedPreferences 사용 가능하도록 설정)
-        PreferenceManager.init(applicationContext)
-
+        //PreferenceManager.init(applicationContext)
+        PreferenceManager.init(this) // SharedPreferences 초기화
     }
 }

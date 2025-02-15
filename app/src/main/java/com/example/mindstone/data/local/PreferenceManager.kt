@@ -11,19 +11,24 @@ object PreferenceManager {
 
     private var prefs: SharedPreferences? = null
 
+    // ✅ SharedPreferences 초기화
     fun init(context: Context) {
         if (prefs == null) {
-            prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
         }
     }
 
-    // ✅ AccessToken 저장
+    // ✅ SharedPreferences 가져오기
+    private fun getPrefs(): SharedPreferences {
+        return prefs ?: throw IllegalStateException("PreferenceManager.init(context)를 호출하세요.")
+    }
+
+    // ✅ Access Token 저장 & 불러오기
     fun saveAccessToken(token: String) {
         prefs?.edit()?.putString(KEY_ACCESS_TOKEN, token)?.apply()
         Log.d("API_AUTH", "AccessToken 저장 완료: $token")
     }
 
-    // ✅ AccessToken 불러오기
     fun getAccessToken(): String? {
         val token = prefs?.getString(KEY_ACCESS_TOKEN, null)
         Log.d("API_AUTH", "SharedPreferences에서 불러온 AccessToken: $token")
@@ -47,13 +52,36 @@ object PreferenceManager {
         return prefs?.getBoolean(KEY_AUTO_LOGIN, false) ?: false
     }
 
-    fun getRefreshToken(): String? {
-        return prefs?.getString("refreshToken", null)
-    }
-
+    // ✅ Refresh Token 저장 & 불러오기
     fun saveRefreshToken(token: String) {
         prefs?.edit()?.putString("refreshToken", token)?.apply()
         Log.d("API_AUTH", "RefreshToken 저장 완료: $token")
     }
 
+    fun getRefreshToken(): String? {
+        return getPrefs().getString("refreshToken", null)
+    }
+
+    fun clearRefreshToken() {
+        getPrefs().edit().remove("refreshToken").apply()
+    }
+
+    // ✅ 이메일 저장 & 불러오기
+    fun saveEmail(email: String) {
+        getPrefs().edit().putString("email", email).apply()
+    }
+
+    fun getEmail(): String? {
+        return getPrefs().getString("email", null)
+    }
+
+    fun clearEmail() {
+        getPrefs().edit().remove("email").apply()
+    }
+
+
+    // ✅ 특정 키 존재 여부 확인
+    fun contains(key: String): Boolean {
+        return getPrefs().contains(key)
+    }
 }
