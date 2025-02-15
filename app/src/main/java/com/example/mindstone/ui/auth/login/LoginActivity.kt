@@ -92,15 +92,22 @@ class LoginActivity : AppCompatActivity() {
         viewModel.loginResult.observe(this, Observer { result ->
             Log.d("LOGIN_OBSERVER", "로그인 결과 옵저버 실행됨: $result")
 
+            val accessToken = viewModel.accessToken.value ?: ""
+            val refreshToken = viewModel.refreshToken.value ?: ""
+            val userEmail = viewModel.userEmail.value ?: ""
+
+            if (accessToken.isEmpty() || refreshToken.isEmpty() || userEmail.isEmpty()) {
+                Log.e("API_AUTH", "⚠️ LiveData 값이 아직 업데이트되지 않았을 가능성이 있음")
+            }
+
             if (result == "로그인 성공") {
-                val accessToken = viewModel.accessToken.value ?: ""
-                val refreshToken = viewModel.refreshToken.value ?: ""
 
                 if (accessToken.isNotEmpty() && refreshToken.isNotEmpty()) {
-                    // ✅ AccessToken & RefreshToken 저장
                     PreferenceManager.saveAccessToken(accessToken)
                     PreferenceManager.saveRefreshToken(refreshToken)
-                    PreferenceManager.setAutoLogin(true) // ✅ 자동 로그인 활성화
+                    PreferenceManager.saveEmail(userEmail)
+                    PreferenceManager.setAutoLogin(true) // 자동 로그인 활성화
+
                     Log.d("API_AUTH", "✅ 로그인 성공: AccessToken & RefreshToken 저장 완료")
                     navigateToAfterLogin()
                 } else {

@@ -30,6 +30,9 @@ class LoginViewModel : ViewModel() {
     private val _refreshTokenResult = MutableLiveData<Boolean?>() // ✅ Refresh Token 결과
     val refreshTokenResult: LiveData<Boolean?> get() = _refreshTokenResult
 
+    private val _userEmail = MutableLiveData<String>()
+    val userEmail: LiveData<String> get() = _userEmail
+
     private val loginService: LoginService = RetrofitClient.loginService
     private val authService: AuthService = RetrofitClient.authService
 
@@ -100,6 +103,12 @@ class LoginViewModel : ViewModel() {
                     if (body?.isSuccess == true) {
                         val newAccessToken = body.result?.accessToken ?: ""
                         val newRefreshToken = body.result?.refreshToken ?: ""
+                        val userEmail = response.body()?.result?.email ?: ""
+
+                        // LiveData 업데이트
+                        _accessToken.postValue(newAccessToken)
+                        _refreshToken.postValue(newRefreshToken)
+                        _userEmail.postValue(userEmail)
 
                         // ✅ 새롭게 발급된 AccessToken & RefreshToken 저장
                         PreferenceManager.saveAccessToken(newAccessToken)
