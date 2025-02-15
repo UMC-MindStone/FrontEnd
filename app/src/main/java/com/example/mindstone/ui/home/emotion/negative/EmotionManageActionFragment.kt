@@ -2,6 +2,7 @@ package com.example.mindstone.ui.home.emotion.negative
 
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
+import com.example.mindstone.data.local.PreferenceManager
+import com.example.mindstone.data.local.PreferenceManager.getAccessToken
 import com.example.mindstone.databinding.FragmentEmotionManageActionBinding
-import com.example.mindstone.ui.home.emotion.viewmodel.EmotionModel
+import com.example.mindstone.ui.home.emotion.view.EmotionManageActionViewModel
+import com.example.mindstone.ui.home.emotion.view.EmotionModel
 
 class EmotionManageActionFragment : Fragment() {
 
@@ -20,6 +24,9 @@ class EmotionManageActionFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private lateinit var viewModel2: EmotionManageActionViewModel  // API 연동 관련 뷰모델
+
+    private var otherActionClickCount = 0 // '다른 방법 찾기' 버튼 클릭 횟수
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -37,6 +44,17 @@ class EmotionManageActionFragment : Fragment() {
         }
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+        viewModel2 = ViewModelProvider(this).get(EmotionManageActionViewModel::class.java)
+
+        // 저장된 유저 토큰 가져오기
+        val accessToken = PreferenceManager.getAccessToken()
+
+        if (!accessToken.isNullOrEmpty()) {
+            val authToken = "Bearer $accessToken"
+            viewModel2.fetchStressRecommendations(authToken) // 화면이 보이면 즉시 API 호출
+        } else {
+            Log.e("TOKEN_ERROR", "Access token is null or empty")
+        }
 
         // 상태바 업데이트 (감정 비율 기반)
         viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
@@ -52,15 +70,40 @@ class EmotionManageActionFragment : Fragment() {
             binding.actionBubbleRight.backgroundTintList = colorStateList
         }
 
+        // 말풍선 행동 추천 업데이트
+        viewModel2.recommendations.observe(viewLifecycleOwner) { recommendations ->
+            updateUI(recommendations)
+        }
 
-        // '다른 방법 찾기' 클릭 시 EmotionManageActionFragment2로 이동
+        // '다른 방법 찾기' 버튼 클릭 이벤트
         binding.otherAction.setOnClickListener {
-            navigateToFragment(EmotionManageActionFragment2())
+            otherActionClickCount++
+            if (otherActionClickCount >= 4) {
+                navigateToFragment(EmotionManageActionFragment2()) // 4회 클릭 시 이동
+            } else {
+                val newAccessToken = PreferenceManager.getAccessToken() // 새로 가져오기
+                if (!newAccessToken.isNullOrEmpty()) {
+                    val newAuthToken = "Bearer $newAccessToken"
+                    viewModel2.fetchStressRecommendations(newAuthToken) // 1~3회 클릭 시 새로운 추천 요청
+                } else {
+                    Log.e("TOKEN_ERROR", "Access token is null or empty")
+                }
+            }
         }
 
         // 말풍선 클릭 시 EmotionActionTimeFragment로 이동
         listOf(binding.actionBubbleCenter, binding.actionBubbleLeft, binding.actionBubbleRight).forEach { bubble ->
             bubble.setOnClickListener { navigateToFragment(EmotionActionTimeFragment()) }
+        }
+    }
+
+
+    // 말풍선 - 행동 추천
+    private fun updateUI(recommendations: List<String>) {
+        if (recommendations.size >= 3) {
+            binding.actionBubbleCenter.text = recommendations[0]
+            binding.actionBubbleLeft.text = recommendations[1]
+            binding.actionBubbleRight.text = recommendations[2]
         }
     }
 

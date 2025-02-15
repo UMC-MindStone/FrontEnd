@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentHomeBinding
 import com.example.mindstone.ui.home.emotion.EmotionIntensityFragment
-import com.example.mindstone.ui.home.emotion.viewmodel.EmotionModel
+import com.example.mindstone.ui.home.emotion.view.EmotionModel
 
 class HomeFragment : Fragment() {
 

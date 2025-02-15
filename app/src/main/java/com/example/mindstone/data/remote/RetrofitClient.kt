@@ -62,4 +62,8 @@ object RetrofitClient {
     val authService: AuthService by lazy {
         retrofit.create(AuthService::class.java)
     }
+
+    val emotionStressService: EmotionStressService by lazy {
+        retrofit.create(EmotionStressService::class.java)
+    }
 }

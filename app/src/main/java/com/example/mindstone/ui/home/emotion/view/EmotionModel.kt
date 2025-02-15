@@ -1,4 +1,4 @@
-package com.example.mindstone.ui.home.emotion.viewmodel
+package com.example.mindstone.ui.home.emotion.view
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
