@@ -77,7 +77,7 @@ class DiaryViewModel : ViewModel() {
                 diaryDTO = DiaryDTO(
                     date = date,
                     title = title,
-                    emotion = "행복",  // 예제 값
+                    emotion = getEmotionString(emotionIcon.value!!),
                     content = _diaryText.toString(),
                     impressiveThing = "기억에 남는 순간" // 예제 값
                 ),
@@ -96,14 +96,28 @@ class DiaryViewModel : ViewModel() {
     }
     private fun getEmotionIcon(emotion: String): Int {
         return when (emotion) {
-            "우울" -> R.drawable.ic_depression
-            "화남" -> R.drawable.ic_angry
-            "슬픔" -> R.drawable.ic_sad
-            "차분" -> R.drawable.ic_calm
-            "기쁨" -> R.drawable.ic_joy
-            "행복" -> R.drawable.ic_happy
-            "사랑" -> R.drawable.ic_romance
+            "DEPRESSION" -> R.drawable.ic_depression
+            "ANGRY" -> R.drawable.ic_angry
+            "SAD" -> R.drawable.ic_sad
+            "CALM" -> R.drawable.ic_calm
+            "JOY" -> R.drawable.ic_joy
+            "HAPPY" -> R.drawable.ic_happy
+            "ROMANCE" -> R.drawable.ic_romance
             else -> R.drawable.btn_nothing_normal
         }
+    }
+
+    private fun getEmotionString(emotion : Int) : String {
+        return when (emotion) {
+            R.drawable.ic_depression -> "DEPRESSION"
+            R.drawable.ic_angry -> "ANGRY"
+            R.drawable.ic_sad -> "SAD"
+            R.drawable.ic_calm -> "CALM"
+            R.drawable.ic_joy -> "JOY"
+            R.drawable.ic_happy -> "HAPPY"
+            R.drawable.ic_romance -> "ROMANCE"
+            else -> "?"
+        }
+
     }
 }
