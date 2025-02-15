@@ -1,6 +1,6 @@
-package com.example.mindstone.data.model
+package com.example.mindstone.network
 
 data class SurveyResponse(
     val success: Boolean,
-    val message: String
+    val message: String?
 )
