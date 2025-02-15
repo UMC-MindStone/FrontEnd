@@ -28,13 +28,8 @@ class ServiceActivity : AppCompatActivity() {
 
         signupViewModel = (application as MyApplication).signupViewModel
 
-        binding.serviceGo1Iv.setOnClickListener {
-            openFragment(TermFragment())
-        }
-
-        binding.serviceGo2Iv.setOnClickListener {
-            openFragment(PrivacyFragment())
-        }
+        // 초기 설정
+        initClicker()
     }
 
     override fun onStart() {
@@ -161,7 +156,7 @@ class ServiceActivity : AppCompatActivity() {
                 binding.serviceChecked1Iv.visibility = View.GONE
             }
         }
-
+        // CompleteActivity 로 넘어감
         binding.serviceNextIv.setOnClickListener {
             if(binding.serviceChecked1Iv.visibility == View.VISIBLE){
                 lifecycleScope.launch {
@@ -233,6 +228,16 @@ class ServiceActivity : AppCompatActivity() {
 
             binding.serviceUncheck1Iv.visibility = View.GONE
             binding.serviceChecked1Iv.visibility = View.VISIBLE
+        }
+    }
+
+    private fun initClicker(){
+        binding.serviceGo1Iv.setOnClickListener {
+            openFragment(TermFragment())
+        }
+
+        binding.serviceGo2Iv.setOnClickListener {
+            openFragment(PrivacyFragment())
         }
     }
 }

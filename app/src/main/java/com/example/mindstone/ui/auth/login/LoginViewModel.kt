@@ -1,10 +1,9 @@
 package com.example.mindstone.ui.auth.login
 
-import com.example.mindstone.data.local.PreferenceManager
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.mindstone.data.local.PreferenceManager
 import com.example.mindstone.data.remote.LoginService
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.domain.entity.LoginRequest
@@ -13,6 +12,7 @@ import com.example.mindstone.domain.entity.RefreshTokenRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.util.Log
 
 class LoginViewModel : ViewModel() {
 
@@ -22,9 +22,12 @@ class LoginViewModel : ViewModel() {
     private val _refreshTokenResult = MutableLiveData<Boolean?>() // 🔹 Refresh Token 결과
     val refreshTokenResult: LiveData<Boolean?> get() = _refreshTokenResult
 
-    private val loginService = RetrofitClient.loginService
+    private val _accessToken = MutableLiveData<String>() // ✅ AccessToken을 LiveData로 관리
+    val accessToken: LiveData<String> get() = _accessToken
 
-    // 로그인 처리
+    private val loginService: LoginService = RetrofitClient.loginService
+
+    // ✅ 로그인 처리
     fun login(email: String, password: String) {
 
         val request = LoginRequest(email, password)
@@ -33,6 +36,7 @@ class LoginViewModel : ViewModel() {
 
         loginService.login(request).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body?.isSuccess == true) {

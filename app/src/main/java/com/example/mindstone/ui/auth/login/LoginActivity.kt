@@ -1,11 +1,14 @@
 package com.example.mindstone.ui.auth.login
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.telecom.Call
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -14,29 +17,30 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
+import com.example.mindstone.MainActivity
 import com.example.mindstone.R
 import com.example.mindstone.data.local.PreferenceManager
 import com.example.mindstone.databinding.ActivityLoginBinding
+import com.example.mindstone.domain.entity.LoginResponse
 import com.example.mindstone.ui.auth.signup.SignupEmailActivity
 import com.example.mindstone.ui.search.AfterLoginActivity
 import com.google.android.material.textfield.TextInputLayout
+import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-
     private val viewModel: LoginViewModel by viewModels() // ViewModel 초기화
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
 
         // ViewBinding 초기화
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -87,7 +91,13 @@ class LoginActivity : AppCompatActivity() {
         viewModel.loginResult.observe(this, Observer { result ->
             if (result.isNullOrEmpty()) return@Observer // 🔹 초기 실행 시 UI 업데이트 안 하도록 예외 처리
             if (result == "로그인 성공") {
-                navigateToAfterLogin()
+                val accessToken = viewModel.accessToken.value ?: ""
+                if (accessToken.isNotEmpty()) {
+                    PreferenceManager.saveAccessToken(accessToken) // ✅ AccessToken 저장
+                    navigateToAfterLogin()
+                } else {
+                    Log.e("API_AUTH", "로그인 성공했지만 AccessToken 없음!")
+                }
             } else {
                 binding.loginEmailTil.isErrorEnabled = true
                 binding.loginPasswordTil.isErrorEnabled = true
@@ -172,7 +182,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
 
     // 앱 실행 시 자동 로그인 여부 확인
     private fun checkAutoLogin() {
@@ -291,5 +300,14 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, AfterLoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    fun saveAuthToken(context: Context, token: String) {
+        val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("accessToken", token)
+        editor.apply()
+
+        Log.d("API_AUTH", "저장된 AccessToken: $token") // ✅ 저장된 값 확인 로그 추가
     }
 }

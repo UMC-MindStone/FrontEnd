@@ -1,10 +1,10 @@
 package com.example.mindstone.domain.entity
 
 data class LoginResponse(
-    val code: String,
     val isSuccess: Boolean,
+    val code: String,
     val message: String,
-    val result: LoginResult?
+    val result: LoginResult
 )
 
 data class LoginResult(

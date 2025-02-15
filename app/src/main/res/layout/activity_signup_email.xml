@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:fontFamily="@font/pretendard_regular"
         android:layout_marginTop="14dp"
         android:textSize="20sp"
         android:text="회원가입"
@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="34dp"
         android:layout_marginTop="95dp"
+        android:fontFamily="@font/pretendard_regular"
         android:text="이메일 주소를 입력하세요"
         android:textColor="@color/black"
         android:textStyle="bold"
@@ -45,6 +46,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_email_til"
         style="@style/TextInputLayoutStyle"
+        android:fontFamily="@font/pretendard_regular"
         android:hint="이메일*"
         android:textColorHint="@color/black"
         app:boxStrokeColor="@color/black"
@@ -60,16 +62,11 @@
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
+    <ImageView
         android:id="@+id/signup_emailNext_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_pink_background"
-        android:text="다음"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:textAlignment="center"
-        android:paddingVertical="15dp"
+        android:src="@drawable/ic_nextbutton"
         android:layout_marginBottom="27dp"
         android:layout_marginHorizontal="34dp"
         app:layout_constraintBottom_toBottomOf="parent"
