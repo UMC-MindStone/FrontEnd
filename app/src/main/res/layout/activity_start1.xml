@@ -21,7 +21,7 @@
         android:id="@+id/ic_calm_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_calm"
+        app:srcCompat="@drawable/ic_calm_charac"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

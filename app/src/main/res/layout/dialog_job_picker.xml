@@ -15,7 +15,6 @@
         android:rowCount="4"
         android:columnCount="3"
         android:padding="8dp"
-        android:layout_margin="8dp"
         android:background="@drawable/border_shape_dialog">
 
         <!-- 직업 항목 (예시) -->
