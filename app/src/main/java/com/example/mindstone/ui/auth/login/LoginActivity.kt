@@ -89,6 +89,9 @@ class LoginActivity : AppCompatActivity() {
 
         // ✅ 로그인 결과 옵저버 (로그인 성공 시 AccessToken & RefreshToken 저장)
         viewModel.loginResult.observe(this, Observer { result ->
+
+            Log.d("LOGIN_OBSERVER", "로그인 결과 옵저버 실행됨: $result") // ✅ 추가
+
             if (result == "로그인 성공") {
                 val accessToken = viewModel.accessToken.value ?: ""
                 val refreshToken = viewModel.refreshToken.value ?: ""
@@ -220,11 +223,18 @@ class LoginActivity : AppCompatActivity() {
         val email = binding.loginEmailEt.text.toString().trim()
         val password = binding.loginPasswordEt.text.toString().trim()
 
+        Log.d("LOGIN_BUTTON", "로그인 버튼 클릭됨: email=$email, password=$password") // ✅ 추가
+
+
         // 바로 로그인 시도
         viewModel.login(email, password)
 
         // 로그인 결과에 따른 UI 업데이트
         viewModel.loginResult.observe(this, Observer { result ->
+
+            Log.d("LOGIN_RESULT", "로그인 결과: $result") // ✅ 추가
+
+
             if (result == "로그인 성공") {
                 navigateToAfterLogin()
             } else {

@@ -35,6 +35,9 @@ class LoginViewModel : ViewModel() {
 
     // ✅ 로그인 처리
     fun login(email: String, password: String) {
+
+        Log.d("LOGIN_API", "로그인 요청 시작: email=$email, password=$password") // ✅ 추가
+
         val request = LoginRequest(email, password)
 
         loginService.login(request).enqueue(object : Callback<LoginResponse> {
@@ -51,7 +54,7 @@ class LoginViewModel : ViewModel() {
                         PreferenceManager.saveAccessToken(accessToken) // ✅ AccessToken 저장
                         PreferenceManager.saveRefreshToken(refreshToken) // ✅ RefreshToken 저장
                         _loginResult.postValue("로그인 성공")
-                        Log.d("API_AUTH", "로그인 성공: AccessToken 저장됨 ($accessToken)")
+                        Log.d("API_AUTH", "로그인 성공: AccessToken, RefreshToken 저장됨 ($accessToken, $refreshToken)")
                     } else {
                         _loginResult.postValue("로그인 실패: AccessToken이 없습니다.")
                         Log.e("API_AUTH", "로그인 성공했지만 AccessToken 없음!")

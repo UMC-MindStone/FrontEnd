@@ -15,29 +15,49 @@ object RetrofitClient {
     private const val BASE_URL = "http://15.165.241.217:8080/" // 서버 URL
 
     // ✅ AccessToken 자동 추가 Interceptor
+//    private val authInterceptor = Interceptor { chain ->
+//        val token = PreferenceManager.getAccessToken() ?: "" // ✅ SharedPreferences에서 AccessToken 가져오기
+//        val requestBuilder = chain.request().newBuilder()
+//        Log.d("API_AUTH", "사용자 토큰: Bearer $token")
+//
+//        val request = chain.request().newBuilder()
+//            .addHeader("Authorization", "Bearer $token") // ✅ 인증 헤더 추가
+//            .build()
+//        chain.proceed(request)
+//    }
     private val authInterceptor = Interceptor { chain ->
-        val token = PreferenceManager.getAccessToken() ?: "" // ✅ SharedPreferences에서 AccessToken 가져오기
-        val requestBuilder = chain.request().newBuilder()
-        Log.d("API_AUTH", "사용자 토큰: Bearer $token")
+        val original = chain.request()
+        val requestBuilder = original.newBuilder()
 
-        val request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer $token") // ✅ 인증 헤더 추가
-            .build()
+        val noAuthEndpoints = listOf("/api/auth/login", "/api/auth/signup", "/api/auth/forgot-password")
+
+        if (!noAuthEndpoints.any { original.url.encodedPath.contains(it) }) {
+            val accessToken = PreferenceManager.getAccessToken()
+            if (!accessToken.isNullOrEmpty()) {
+                requestBuilder.header("Authorization", "Bearer $accessToken")
+            }
+        }
+
+        val request = requestBuilder.build()
+        Log.d("API_AUTH", "✅ 최종 요청 헤더: ${request.headers}")
+
         chain.proceed(request)
     }
 
+
     // ✅ OkHttpClient 설정
     private val client = OkHttpClient.Builder()
-        .followRedirects(false) // ✅ 자동 리디렉션 비활성화
-        .followSslRedirects(false) // ✅ SSL 리디렉션 비활성화
+        .followRedirects(false)
+        .followSslRedirects(false)
         .addInterceptor(authInterceptor) // ✅ 모든 요청에 AccessToken 추가
         .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.BODY // ✅ 요청 & 응답 Body 전체 로깅
         })
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
+
 
     // ✅ Gson 설정 (JSON 파싱 최적화)
     private val gson = GsonBuilder()
