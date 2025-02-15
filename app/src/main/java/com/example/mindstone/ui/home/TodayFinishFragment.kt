@@ -14,8 +14,6 @@ import com.example.mindstone.ui.home.diary.DiaryLoadingFragment
 
 class TodayFinishFragment : Fragment() {
 
-    private lateinit var viewModel: TodayFinishViewModel
-
     private var _binding: FragmentTodayFinishBinding? = null
     private val binding get() = _binding!!
 

@@ -1,9 +1,11 @@
 package com.example.mindstone.ui.home.diary
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.sourceInformationMarkerEnd
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
@@ -19,6 +21,7 @@ import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentCalendarToDiaryBinding
 import com.example.mindstone.ui.emotion.EmotionCalendarFragment
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -133,7 +136,12 @@ class CalendarToDiaryFragment : Fragment() {
 
             binding.diaryDateTv.text = "${currentMonth}월 ${currentDay}일 $dayName"
 
-            //  여기서 데이터 호출 해야하나?
+            val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            // 날짜 기준 일기 요청
+
+            diaryViewModel.fetchDiary(formattedDate)
+
+
         }
         dialog.show(parentFragmentManager, "MonthDayPickerFragment")
 

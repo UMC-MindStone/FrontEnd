@@ -13,6 +13,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import com.example.mindstone.MainActivity
 import com.example.mindstone.databinding.FragmentDiaryImgBinding
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class DiaryImgFragment : Fragment() {
@@ -23,6 +25,10 @@ class DiaryImgFragment : Fragment() {
     private val imageViews = mutableListOf<ImageView>()
     private var imageCnt = 0
     private var beforeFragment: String? = null
+
+    private var currentYear = arguments?.getInt("currentYear")?: 2025
+    private var currentMonth = arguments?.getInt("currentMonth")?: 1
+    private var currentDay= arguments?.getInt("currentDay")?: 1
 
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -100,8 +106,14 @@ class DiaryImgFragment : Fragment() {
         }
 
         binding.diaryImgCompleteIv.setOnClickListener {
+            val updatedText = binding.diaryImgEditTv.text.toString()
             val selectedImages = imageViews.mapNotNull { it.tag as? Uri }
             diaryViewModel.updateImages(selectedImages)
+            val date = LocalDate.of( currentYear, currentMonth, currentDay)
+            val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+            // 파라미터 수정 필요
+            diaryViewModel.saveDiary(formattedDate, updatedText )
             requireActivity().supportFragmentManager.popBackStack()
         }
     }

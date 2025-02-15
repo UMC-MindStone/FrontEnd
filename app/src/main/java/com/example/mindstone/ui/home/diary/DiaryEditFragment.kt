@@ -9,6 +9,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import com.example.mindstone.databinding.FragmentDiaryEditBinding
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class DiaryEditFragment : Fragment() {
@@ -17,6 +19,9 @@ class DiaryEditFragment : Fragment() {
     private val diaryViewModel: DiaryViewModel by activityViewModels()
 
     private var beforeFragment : String = ""
+    private var currentYear = arguments?.getInt("currentYear")?: 2025
+    private var currentMonth = arguments?.getInt("currentMonth")?: 1
+    private var currentDay= arguments?.getInt("currentDay")?: 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +88,10 @@ class DiaryEditFragment : Fragment() {
         binding.diaryEditCompleteIv.setOnClickListener{
             val updatedText = binding.diaryEditTextTv.text.toString()
             diaryViewModel.updateDiaryText(updatedText)
+
+            val date = LocalDate.of( currentYear, currentMonth, currentDay)
+            val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            diaryViewModel.saveDiary(formattedDate, updatedText)
             requireActivity().supportFragmentManager.popBackStack()
         }
 
