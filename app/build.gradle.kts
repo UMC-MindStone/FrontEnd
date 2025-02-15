@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-parcelize") // ✅ Parcelize 사용을 위한 플러그인 추가
 }
 
 android {
