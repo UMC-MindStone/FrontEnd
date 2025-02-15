@@ -46,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        Log.d("LoginActivity", "✅ onCreate() 실행됨 - 자동 로그인 확인 시작")
         // 자동 로그인 여부 확인 (앱 실행 시)
         checkAutoLogin()
 
@@ -89,8 +90,7 @@ class LoginActivity : AppCompatActivity() {
 
         // ✅ 로그인 결과 옵저버 (로그인 성공 시 AccessToken & RefreshToken 저장)
         viewModel.loginResult.observe(this, Observer { result ->
-
-            Log.d("LOGIN_OBSERVER", "로그인 결과 옵저버 실행됨: $result") // ✅ 추가
+            Log.d("LOGIN_OBSERVER", "로그인 결과 옵저버 실행됨: $result")
 
             if (result == "로그인 성공") {
                 val accessToken = viewModel.accessToken.value ?: ""
@@ -100,9 +100,11 @@ class LoginActivity : AppCompatActivity() {
                     // ✅ AccessToken & RefreshToken 저장
                     PreferenceManager.saveAccessToken(accessToken)
                     PreferenceManager.saveRefreshToken(refreshToken)
+                    PreferenceManager.setAutoLogin(true) // ✅ 자동 로그인 활성화
+                    Log.d("API_AUTH", "✅ 로그인 성공: AccessToken & RefreshToken 저장 완료")
                     navigateToAfterLogin()
                 } else {
-                    Log.e("API_AUTH", "로그인 성공했지만 AccessToken 또는 RefreshToken 없음!")
+                    Log.e("API_AUTH", "❌ 로그인 성공했지만 AccessToken 또는 RefreshToken 없음")
                 }
             } else {
                 binding.loginEmailTil.isErrorEnabled = true
@@ -183,19 +185,27 @@ class LoginActivity : AppCompatActivity() {
     private fun checkAutoLogin() {
         val isAutoLogin = PreferenceManager.getAutoLogin()
         val savedRefreshToken = PreferenceManager.getRefreshToken()
+        val savedAccessToken = PreferenceManager.getAccessToken()
+        val savedEmail = PreferenceManager.getEmail()
 
-        if (isAutoLogin && !savedRefreshToken.isNullOrEmpty()) {
+        Log.d("LoginActivity", "✅ 자동 로그인 설정: $isAutoLogin")
+        Log.d("LoginActivity", "✅ 저장된 RefreshToken: $savedRefreshToken")
+        Log.d("LoginActivity", "✅ 저장된 AccessToken: $savedAccessToken")
+
+        //if (isAutoLogin && !savedRefreshToken.isNullOrEmpty())
+        if (isAutoLogin && !savedRefreshToken.isNullOrEmpty() && !savedEmail.isNullOrEmpty()){
             Log.d("LoginActivity", "🟢 자동 로그인 활성화됨 → RefreshToken으로 로그인 시도")
 
             viewModel.refreshAccessToken { success ->
                 if (success) {
+                    Log.d("LoginActivity", "✅ 자동 로그인 성공 → 홈 화면으로 이동")
                     navigateToAfterLogin()
                 } else {
-                    Log.e("LoginActivity", "🔴 Refresh Token 실패 → 수동 로그인 필요")
+                    Log.e("LoginActivity", "❌ Refresh Token 실패 → 수동 로그인 필요")
                 }
             }
         } else {
-            Log.d("LoginActivity", "🔴 자동 로그인 비활성화됨 또는 RefreshToken 없음")
+            Log.d("LoginActivity", "❌ 자동 로그인 비활성화됨 또는 RefreshToken 없음")
         }
     }
 

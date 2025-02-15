@@ -36,7 +36,7 @@ class LoginViewModel : ViewModel() {
     // ✅ 로그인 처리
     fun login(email: String, password: String) {
 
-        Log.d("LOGIN_API", "로그인 요청 시작: email=$email, password=$password") // ✅ 추가
+        Log.d("LOGIN_API", "로그인 요청 시작: email=$email, password=$password")
 
         val request = LoginRequest(email, password)
 
@@ -50,14 +50,18 @@ class LoginViewModel : ViewModel() {
                     val refreshToken = response.body()?.result?.refreshToken ?: ""
 
                     if (accessToken.isNotEmpty()) {
-                        _accessToken.postValue(accessToken) // ✅ LiveData 업데이트
+                        _accessToken.postValue(accessToken)
+                        _refreshToken.postValue(refreshToken)
+
                         PreferenceManager.saveAccessToken(accessToken) // ✅ AccessToken 저장
                         PreferenceManager.saveRefreshToken(refreshToken) // ✅ RefreshToken 저장
+                        PreferenceManager.saveEmail(email)
+
                         _loginResult.postValue("로그인 성공")
                         Log.d("API_AUTH", "로그인 성공: AccessToken, RefreshToken 저장됨 ($accessToken, $refreshToken)")
                     } else {
-                        _loginResult.postValue("로그인 실패: AccessToken이 없습니다.")
-                        Log.e("API_AUTH", "로그인 성공했지만 AccessToken 없음!")
+                        _loginResult.postValue("로그인 실패: AccessToken 또는 RefreshToken 없음")
+                        Log.e("API_AUTH", "로그인 성공했지만 AccessToken 또는 RefreshToken 없음")
                     }
                 } else {
                     val errorMessage = "로그인 실패: ${response.code()}"
