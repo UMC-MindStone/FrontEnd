@@ -105,7 +105,7 @@ class LoginActivity : AppCompatActivity() {
                 if (accessToken.isNotEmpty() && refreshToken.isNotEmpty()) {
                     PreferenceManager.saveAccessToken(accessToken)
                     PreferenceManager.saveRefreshToken(refreshToken)
-                    PreferenceManager.saveEmail(userEmail)
+//                    PreferenceManager.saveEmail(userEmail)
                     PreferenceManager.setAutoLogin(true) // 자동 로그인 활성화
 
                     Log.d("API_AUTH", "✅ 로그인 성공: AccessToken & RefreshToken 저장 완료")
