@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.home.DiaryEditFragment">
+    tools:context=".ui.home.diary.DiaryEditFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,31 +15,14 @@
             android:id="@+id/diary_edit_auto_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="38dp"
+            android:layout_marginTop="17dp"
             android:fontFamily="@font/pretendard"
             android:text="자동 일기 제작"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/diary_edit_date_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="38dp"
-            android:fontFamily="@font/pretendard"
-            android:text="12월 5일 목요일"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
         <ImageView
             android:id="@+id/diary_edit_close_iv"
             android:layout_width="wrap_content"
@@ -51,14 +34,33 @@
             app:layout_constraintTop_toTopOf="@id/diary_edit_auto_tv" />
 
         <TextView
+            android:id="@+id/diary_edit_date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:fontFamily="@font/pretendard"
+            android:text="12월 5일 목요일"
+            android:visibility="gone"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+
+        <EditText
             android:id="@+id/diary_editText_tv"
             android:layout_width="292dp"
             android:layout_height="352dp"
-            android:layout_marginTop="106dp"
+            android:layout_marginTop="82dp"
             android:paddingHorizontal="16dp"
+            android:gravity="top|start"
+            android:paddingTop="16dp"
             android:paddingBottom="77dp"
             android:background="@drawable/ic_diary_edit_box"
-            android:text=""
             android:textSize="14sp"
             android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"

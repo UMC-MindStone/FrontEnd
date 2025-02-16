@@ -1,16 +1,21 @@
 package com.example.mindstone.ui.search
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.navArgument
 import com.example.mindstone.R
+import com.example.mindstone.data.local.UserData
 import com.example.mindstone.databinding.ActivitySearch1Binding
 
 class Search1Activity : AppCompatActivity() {
     private lateinit var binding: ActivitySearch1Binding
+
+    private var userData: UserData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,12 +24,42 @@ class Search1Activity : AppCompatActivity() {
         binding = ActivitySearch1Binding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 다음 버튼 클릭 리스너
-        binding.ibSearchNext.setOnClickListener {
-            validateInputs()
-        }
 
         Log.d("Activity_Lifecycle", "Search1Activity 실행됨!") // ✅ 실행 확인용 로그 추가
+
+        // 다음 버튼 클릭 리스너
+        binding.ibSearchNext.setOnClickListener {
+            validateInputs() // 입력값 검증
+
+            userData = intent.getParcelableExtra("userData") // 이전 액티비티에서 받은 닉네임
+            Log.d("UserData", "Received UserData: $userData")
+
+            // ✅ 생년월일을 YYYY-MM-DD 형식으로 조합
+            val year = binding.etYearSearch1.text.toString()
+            val month = binding.spinnerMonth.selectedItem.toString().padStart(2, '0') // 1 -> "01" 변환
+            val day = binding.spinnerDay.selectedItem.toString().padStart(2, '0') // 1 -> "01" 변환
+            val birthDate = "$year-$month-$day"
+
+            // ✅ 기타 선택값들 가져오기
+            val job = binding.spinnerJob.selectedItem.toString()
+            val realJob = convertJob(job)
+            val mbti = binding.spinnerMbti.selectedItem.toString()
+
+
+            val updatedUserData = userData?.copy(
+                birthDate = birthDate,
+                job = realJob,
+                mbti = mbti
+            ) ?: UserData(nickname = "Unknown")
+
+            Log.d("UserData", "Updated UserData: $updatedUserData")
+
+            // ✅ Intent에 값 추가해서 전송
+            val intent = Intent(this, Search2Activity::class.java)
+            intent.putExtra("userData", updatedUserData)
+
+            startActivity(intent)
+        }
     }
 
     // 입력값 검증
@@ -41,6 +76,7 @@ class Search1Activity : AppCompatActivity() {
             )
         } else {
             clearDynamicErrorMessage(binding.etYearSearch1)
+            Log.d("YearInput", "Valid Year Input: $year")
         }
 
         // 월 선택 검증
@@ -50,6 +86,7 @@ class Search1Activity : AppCompatActivity() {
             showSpinnerError(binding.spinnerMonth)
         } else {
             clearSpinnerError(binding.spinnerMonth)
+            Log.d("Validation", "Valid Month Input: $month")
         }
 
         // 일 선택 검증
@@ -59,6 +96,7 @@ class Search1Activity : AppCompatActivity() {
             showSpinnerError(binding.spinnerDay)
         } else {
             clearSpinnerError(binding.spinnerDay)
+            Log.d("Validation", "Valid Day Input: $day")
         }
 
         // 직업 선택 검증
@@ -68,6 +106,7 @@ class Search1Activity : AppCompatActivity() {
             showSpinnerError(binding.spinnerJob)
         } else {
             clearSpinnerError(binding.spinnerJob)
+            Log.d("Validation", "Valid Job Input: $job")
         }
 
         // MBTI 선택 검증
@@ -77,9 +116,9 @@ class Search1Activity : AppCompatActivity() {
             showSpinnerError(binding.spinnerMbti)
         } else {
             clearSpinnerError(binding.spinnerMbti)
+            Log.d("Validation", "Valid MBTI Input: $mbti")
         }
     }
-
     private fun showDynamicErrorMessage(targetView: View, errorMessage: String) {
         // 이전에 추가된 오류 메시지 삭제
         clearDynamicErrorMessage(targetView)
@@ -129,4 +168,14 @@ class Search1Activity : AppCompatActivity() {
     private fun clearSpinnerError(spinner: Spinner) {
         spinner.setBackgroundResource(R.drawable.border_shape) // 기본 테두리
     }
+
+    private fun convertJob(job: String): String {
+        return when(job) {
+            "대학생/대학원생" -> "STUDENT"
+            else -> "ENGINEER"
+        }
+    }
 }
+
+
+

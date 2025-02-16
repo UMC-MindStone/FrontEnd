@@ -43,30 +43,32 @@ class Account1Fragment : Fragment() {
         adapter = Account1OptionAdapter(settings) { selectedSetting ->
             when (selectedSetting) {
                 "비밀번호 설정" -> {
-                //    findNavController().navigate(R.id.action_accountSettingFragment_to_passwordSettingFragment)
+                    //    findNavController().navigate(R.id.action_accountSettingFragment_to_passwordSettingFragment)
                 }
+
                 "프로필 설정" -> {
                     //    findNavController().navigate(R.id.action_accountSettingFragment_to_profileSettingFragment)
                 }
-                    "로그아웃" -> {
+                "로그아웃" -> {
                     // 로그아웃 처리
                 }
+
                 "계정 탈퇴" -> {
                     // 계정 탈퇴 처리
                 }
             }
+            }
+
+            // RecyclerView 설정
+            binding.rvAccount1Option.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvAccount1Option.adapter = adapter
+
+            val dividerItemDecoration = DividerItemDecoration(
+                requireContext(),
+                LinearLayoutManager.VERTICAL
+            )
+            binding.rvAccount1Option.addItemDecoration(dividerItemDecoration)
         }
-
-        // RecyclerView 설정
-        binding.rvAccount1Option.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvAccount1Option.adapter = adapter
-
-        val dividerItemDecoration = DividerItemDecoration(
-            requireContext(),
-            LinearLayoutManager.VERTICAL
-        )
-        binding.rvAccount1Option.addItemDecoration(dividerItemDecoration)
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

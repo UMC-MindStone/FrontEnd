@@ -64,6 +64,7 @@
             app:layout_constraintTop_toTopOf="@id/home_question_editText_iv" />
 
         <TextView
+            android:id="@+id/home_complete_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
@@ -77,9 +78,9 @@
 
         <ImageView
             android:id="@+id/home_calm_icon_iv"
-            android:src="@drawable/ic_calm_charac"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:src="@drawable/ic_calm"
+            android:layout_width="112dp"
+            android:layout_height="96dp"
             android:layout_marginTop="26dp"
             android:layout_marginStart="124dp"
             android:layout_marginEnd="124dp"

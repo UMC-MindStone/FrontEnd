@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 🔹 프래그먼트 변경 함수 (ViewBinding 적용)
-    private fun replaceFragment(fragment: Fragment) {
+    fun replaceFragment(fragment: Fragment, bundle: Bundle? =null) {
         supportFragmentManager.beginTransaction()
             .replace(binding.mainContainer.id, fragment)
             .addToBackStack(null)

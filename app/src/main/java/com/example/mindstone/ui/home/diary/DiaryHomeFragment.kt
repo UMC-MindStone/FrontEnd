@@ -1,25 +1,32 @@
-package com.example.mindstone.ui.home
+package com.example.mindstone.ui.home.diary
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.text.intl.Locale
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import com.example.mindstone.MainActivity
+import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentDiaryHomeBinding
-import com.example.mindstone.DiaryViewModel
+import java.time.LocalDate
+import java.time.format.TextStyle
 
 class DiaryHomeFragment : Fragment() {
     private var _binding: FragmentDiaryHomeBinding? = null
     private val binding get() = _binding!!
     private val diaryViewModel: DiaryViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-    }
-
+    val bundle = bundleOf(
+        "fragment" to "today"
+    )
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,18 +38,59 @@ class DiaryHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 화면 맞춤
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+        changeComponent()
+
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
             binding.diaryTextTv.text = text
-            changeCompoenent()
+            changeComponent()
         }
 
-        diaryViewModel.images.observe(viewLifecycleOwner){ images ->
-            binding.diaryImg1Iv.setImageURI(images[0])
-            binding.diaryImg2Iv.setImageURI(images[1])
-            binding.diaryImg3Iv.setImageURI(images[2])
-            binding.diaryImg4Iv.setImageURI(images[3])
-            changeCompoenent()
+        diaryViewModel.images.observe(viewLifecycleOwner) { images ->
+            val imageViews = listOf(binding.diaryImg1Iv, binding.diaryImg2Iv, binding.diaryImg3Iv, binding.diaryImg4Iv)
+            for (i in imageViews.indices) {
+                if (i < images.size) {
+                    imageViews[i].setImageURI(images[i])
+                } else {
+                    imageViews[i].setImageDrawable(null)
+                }
+            }
+            changeComponent()
         }
+
+        binding.diaryTextEditIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
+        }
+        binding.diaryBlankTextIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
+        }
+        binding.diaryImgAddTransIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
+        }
+        binding.diaryImgAddBlankIv.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
+        }
+
+
+        //오늘의 날짜 띄우기
+        val today = LocalDate.now()
+        val year= today.year
+        val month = today.monthValue
+        val day = today.dayOfMonth
+        val date = LocalDate.of( year, month, day)
+        // 요일 가져오기
+        val dayOfWeek = date.dayOfWeek
+        // 요일을 문자열로 변환 (한글 출력 가능)
+        val dayName = dayOfWeek.getDisplayName(TextStyle.FULL, java.util.Locale.KOREAN)
+
+        binding.diaryDateTv.text = "${month}월 ${day}일 $dayName"
+
+
     }
 
     override fun onDestroy(){
@@ -50,9 +98,10 @@ class DiaryHomeFragment : Fragment() {
         _binding = null
     }
 
-    private fun changeCompoenent() {
+
+    private fun changeComponent() {
         // 텍스트와 이미지 상태 확인
-        val textExist = !binding.diaryTextTv.text.isNullOrBlank()
+        val textExist = !diaryViewModel.diaryText.value.isNullOrBlank()
         val imageExist = diaryViewModel.images.value?.isNotEmpty() == true
 
         when {
@@ -67,11 +116,12 @@ class DiaryHomeFragment : Fragment() {
                 val paramsText = binding.diaryTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsImage = binding.diaryImgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsText.topToBottom = binding.diaryCharacterIv.id
                 paramsImage.topToBottom = binding.diaryTextCl.id
 
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryImgCl.layoutParams = paramsImage
+
             }
 
             // 2. 텍스트 있음 + 이미지 없음
@@ -85,11 +135,12 @@ class DiaryHomeFragment : Fragment() {
                 val paramsText = binding.diaryTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsAddImg = binding.diaryHomeAddimgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsText.topToBottom = binding.diaryCharacterIv.id
                 paramsAddImg.topToBottom = binding.diaryTextCl.id
 
                 binding.diaryTextCl.layoutParams = paramsText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
+
             }
 
             // 3. 텍스트 없음 + 이미지 있음
@@ -103,11 +154,12 @@ class DiaryHomeFragment : Fragment() {
                 val paramsBlankText = binding.diaryBlankTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsImage = binding.diaryImgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsBlankText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsBlankText.topToBottom = binding.diaryCharacterIv.id
                 paramsImage.topToBottom = binding.diaryBlankTextCl.id
 
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryImgCl.layoutParams = paramsImage
+
             }
 
             // 4. 텍스트 없음 + 이미지 없음
@@ -121,16 +173,14 @@ class DiaryHomeFragment : Fragment() {
                 val paramsBlankText = binding.diaryBlankTextCl.layoutParams as ConstraintLayout.LayoutParams
                 val paramsAddImg = binding.diaryHomeAddimgCl.layoutParams as ConstraintLayout.LayoutParams
 
-                paramsBlankText.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                paramsBlankText.topToBottom = binding.diaryCharacterIv.id
                 paramsAddImg.topToBottom = binding.diaryBlankTextCl.id
 
                 binding.diaryBlankTextCl.layoutParams = paramsBlankText
                 binding.diaryHomeAddimgCl.layoutParams = paramsAddImg
+
             }
         }
     }
-
-
-
 
 }
