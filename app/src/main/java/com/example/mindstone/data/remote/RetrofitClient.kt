@@ -69,6 +69,10 @@ object RetrofitClient {
     val loginService: LoginService by lazy { retrofit.create(LoginService::class.java) }
     val authService: AuthService by lazy { retrofit.create(AuthService::class.java) }
 
+    val diaryService: DiarySevice by lazy {
+        retrofit.create(DiarySevice::class.java)
+    }
     // ✅ SurveyService 제공 (AccessToken 자동 포함)
     val surveyService: SurveyService by lazy { retrofit.create(SurveyService::class.java) }
+
 }

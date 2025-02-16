@@ -6,10 +6,11 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface SignupService {
+    @Headers("Content-Type: application/json; charset=UTF-8")
     @POST("api/members")
     suspend fun signup(@Body signupRequest: signupRequest): signupResponse
 
-    @Headers("Content-Type: application/json; charset=UTF-8")
+
     @POST("api/auth/send")
     suspend fun codeRequest(@Body codeRequest: codeRequest): codeResponse
 
