@@ -1,12 +1,13 @@
 package com.example.mindstone.data.local
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Habit(
     val title: String,
-    val dayOfWeek: List<String>,
+    val dayOfWeek: String,
     val alarmTime: String,
     val targetTime: Int,
     val isActive: Boolean,
@@ -14,15 +15,26 @@ data class Habit(
 ) : Parcelable
 
 
+//@Parcelize
+//data class UserData(
+//    @SerializedName("nickname") var nickname: String = "",
+//    @SerializedName("birthDate") var birthDate: String = "",
+//    @SerializedName("job") var job: String = "",
+//    @SerializedName("mbti") var mbti: String = "",
+//    @SerializedName("stressManagement") var stressManagement: String = "",
+//    @SerializedName("hobbies") var hobbies: String = "",
+//    @SerializedName("specialSkills") var specialSkills: String = "",
+//    @SerializedName("habits") var habits: ArrayList<Habit>? = null // ✅ null 허용
+//) : Parcelable
 @Parcelize
 data class UserData(
-    var nickname: String = "",
-    var birthDate: String = "",
-    var job: String = "",
-    var mbti: String = "",
-    var stressManagement: ArrayList<String> = arrayListOf(),  // 스트레스 관리법 (Array)
-    var hobbies: ArrayList<String> = arrayListOf(),          // 취미 (Array)
-    var specialSkills: ArrayList<String> = arrayListOf(),    // 특기 (Array)
-    var habits: ArrayList<Habit> = arrayListOf()            // 습관 리스트 (Array)
+    @SerializedName("nickname") var nickname: String = "",
+    @SerializedName("birthDate") var birthDate: String = "",
+    @SerializedName("job") var job: String = "",
+    @SerializedName("mbti") var mbti: String = "",
+    @SerializedName("stressManagement") var stressManagement: List<String> = listOf(),  // ✅ 다시 List로 변경!
+    @SerializedName("hobbies") var hobbies: List<String> = listOf(),  // ✅ 다시 List로 변경!
+    @SerializedName("specialSkills") var specialSkills: List<String> = listOf(),  // ✅ 다시 List로 변경!
+    @SerializedName("habits") var habits: List<Habit>? = null // ✅ null 허용
 ) : Parcelable
 
