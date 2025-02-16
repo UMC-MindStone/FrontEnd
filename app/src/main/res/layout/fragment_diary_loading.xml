@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FFFFFF"
-    tools:context=".ui.home.DiaryLoadingFragment">
+    tools:context=".ui.home.diary.DiaryLoadingFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -32,6 +32,7 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <TextView
+            android:id="@+id/diary_date_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="12월 5일 목요일"

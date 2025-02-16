@@ -1,11 +1,14 @@
 package com.example.mindstone.ui.auth.login
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.telecom.Call
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -14,17 +17,19 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
+import com.example.mindstone.MainActivity
 import com.example.mindstone.R
 import com.example.mindstone.data.local.PreferenceManager
 import com.example.mindstone.databinding.ActivityLoginBinding
+import com.example.mindstone.domain.entity.LoginResponse
 import com.example.mindstone.ui.auth.signup.SignupEmailActivity
 import com.example.mindstone.ui.search.AfterLoginActivity
 import com.google.android.material.textfield.TextInputLayout
+import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-
     private val viewModel: LoginViewModel by viewModels() // ViewModel 초기화
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +46,10 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        Log.d("LoginActivity", "✅ onCreate() 실행됨 - 자동 로그인 확인 시작")
+        // 자동 로그인 여부 확인 (앱 실행 시)
+        checkAutoLogin()
+
         // 이메일 입력 필드
         binding.loginEmailEt.addTextChangedListener { text ->
             validateEmail(text.toString())
@@ -49,9 +58,6 @@ class LoginActivity : AppCompatActivity() {
         binding.loginPasswordEt.addTextChangedListener { text ->
             validatePassword(text.toString())
         }
-
-        // 자동 로그인 여부 확인 (앱 실행 시)
-        checkAutoLogin()
 
         // "이메일 찾기" 클릭 시 -> LoginActivity2로 이동
         binding.loginFindEmailTv.setOnClickListener {
@@ -82,16 +88,38 @@ class LoginActivity : AppCompatActivity() {
         binding.loginCheckedIv.setOnClickListener { toggleAutoLogin(true) }
 
 
-        // 로그인 결과 옵저빙
+        // ✅ 로그인 결과 옵저버 (로그인 성공 시 AccessToken & RefreshToken 저장)
         viewModel.loginResult.observe(this, Observer { result ->
+            Log.d("LOGIN_OBSERVER", "로그인 결과 옵저버 실행됨: $result")
+
+            val accessToken = viewModel.accessToken.value ?: ""
+            val refreshToken = viewModel.refreshToken.value ?: ""
+            val userEmail = viewModel.userEmail.value ?: ""
+
+            if (accessToken.isEmpty() || refreshToken.isEmpty() || userEmail.isEmpty()) {
+                Log.e("API_AUTH", "⚠️ LiveData 값이 아직 업데이트되지 않았을 가능성이 있음")
+            }
+
             if (result == "로그인 성공") {
-                navigateToAfterLogin()
+
+                if (accessToken.isNotEmpty() && refreshToken.isNotEmpty()) {
+                    PreferenceManager.saveAccessToken(accessToken)
+                    PreferenceManager.saveRefreshToken(refreshToken)
+                    PreferenceManager.saveEmail(userEmail)
+                    PreferenceManager.setAutoLogin(true) // 자동 로그인 활성화
+
+                    Log.d("API_AUTH", "✅ 로그인 성공: AccessToken & RefreshToken 저장 완료")
+                    navigateToAfterLogin()
+                } else {
+                    Log.e("API_AUTH", "❌ 로그인 성공했지만 AccessToken 또는 RefreshToken 없음")
+                }
             } else {
                 binding.loginEmailTil.isErrorEnabled = true
                 binding.loginPasswordTil.isErrorEnabled = true
                 binding.loginPasswordTil.helperText = "이메일 또는 비밀번호가 일치하지 않습니다."
             }
         })
+
     }
 
 
@@ -160,19 +188,32 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
-    // 자동 로그인 여부 확인 (앱 실행 시)
+    // 앱 실행 시 자동 로그인 여부 확인 (Refresh Token 사용)
     private fun checkAutoLogin() {
-        var isAutoLogin = PreferenceManager.getAutoLogin()
-        // 앱 최초 실행 시 자동 로그인을 기본값으로 활성화 (true)
-        if (!PreferenceManager.contains("autoLogin")) {
-            PreferenceManager.setAutoLogin(true)
-            isAutoLogin = true
+        val isAutoLogin = PreferenceManager.getAutoLogin()
+        val savedRefreshToken = PreferenceManager.getRefreshToken()
+        val savedAccessToken = PreferenceManager.getAccessToken()
+        val savedEmail = PreferenceManager.getEmail()
+
+        Log.d("LoginActivity", "✅ 자동 로그인 설정: $isAutoLogin")
+        Log.d("LoginActivity", "✅ 저장된 RefreshToken: $savedRefreshToken")
+        Log.d("LoginActivity", "✅ 저장된 AccessToken: $savedAccessToken")
+
+        //if (isAutoLogin && !savedRefreshToken.isNullOrEmpty())
+        if (isAutoLogin && !savedRefreshToken.isNullOrEmpty() && !savedEmail.isNullOrEmpty()){
+            Log.d("LoginActivity", "🟢 자동 로그인 활성화됨 → RefreshToken으로 로그인 시도")
+
+            viewModel.refreshAccessToken { success ->
+                if (success) {
+                    Log.d("LoginActivity", "✅ 자동 로그인 성공 → 홈 화면으로 이동")
+                    navigateToAfterLogin()
+                } else {
+                    Log.e("LoginActivity", "❌ Refresh Token 실패 → 수동 로그인 필요")
+                }
+            }
+        } else {
+            Log.d("LoginActivity", "❌ 자동 로그인 비활성화됨 또는 RefreshToken 없음")
         }
-        if (isAutoLogin && PreferenceManager.getAccessToken() != null) {
-            navigateToAfterLogin()
-        }
-        updateAutoLoginUI(isAutoLogin)
     }
 
 
@@ -182,7 +223,7 @@ class LoginActivity : AppCompatActivity() {
         updateAutoLoginUI(enable)
     }
 
-    // UI 업데이트
+    // 자동 로그인 UI 업데이트
     private fun updateAutoLoginUI(isChecked: Boolean) {
         if (isChecked) {
             binding.loginChecked2Iv.visibility = View.VISIBLE
@@ -199,11 +240,18 @@ class LoginActivity : AppCompatActivity() {
         val email = binding.loginEmailEt.text.toString().trim()
         val password = binding.loginPasswordEt.text.toString().trim()
 
+        Log.d("LOGIN_BUTTON", "로그인 버튼 클릭됨: email=$email, password=$password") // ✅ 추가
+
+
         // 바로 로그인 시도
         viewModel.login(email, password)
 
         // 로그인 결과에 따른 UI 업데이트
         viewModel.loginResult.observe(this, Observer { result ->
+
+            Log.d("LOGIN_RESULT", "로그인 결과: $result") // ✅ 추가
+
+
             if (result == "로그인 성공") {
                 navigateToAfterLogin()
             } else {
@@ -228,11 +276,18 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-
-
     private fun navigateToAfterLogin() {
         val intent = Intent(this, AfterLoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    fun saveAuthToken(context: Context, token: String) {
+        val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("accessToken", token)
+        editor.apply()
+
+        Log.d("API_AUTH", "저장된 AccessToken: $token") // ✅ 저장된 값 확인 로그 추가
     }
 }

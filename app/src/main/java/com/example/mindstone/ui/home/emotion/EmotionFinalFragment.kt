@@ -105,7 +105,7 @@ class EmotionFinalFragment : Fragment() {
 
     // 최근 감정 기반 캐릭터 변경
     private fun updateCharacter(emotion: String) {
-        val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm
+        val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm_charac
         binding.iconIv.setImageResource(characterResId)
     }
 

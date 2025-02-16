@@ -2,13 +2,14 @@ package com.example.mindstone.ui.search
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mindstone.R
 import com.example.mindstone.databinding.ActivitySearch1Binding
 
-class Search1ActivityActivity : AppCompatActivity() {
+class Search1Activity : AppCompatActivity() {
     private lateinit var binding: ActivitySearch1Binding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +23,8 @@ class Search1ActivityActivity : AppCompatActivity() {
         binding.ibSearchNext.setOnClickListener {
             validateInputs()
         }
+
+        Log.d("Activity_Lifecycle", "Search1Activity 실행됨!") // ✅ 실행 확인용 로그 추가
     }
 
     // 입력값 검증
