@@ -68,7 +68,12 @@ object PreferenceManager {
 
     // ✅ 이메일 저장 & 불러오기
     fun saveEmail(email: String) {
+        if (email.isEmpty()) {
+            Log.e("API_AUTH", "❌ 이메일이 빈 문자열이므로 저장하지 않음!")
+            return // ✅ 빈 값이면 저장하지 않도록 방어 코드 추가
+        }
         getPrefs().edit().putString("email", email).apply()
+        Log.d("API_save", "email : $email")
     }
 
     fun getEmail(): String? {
