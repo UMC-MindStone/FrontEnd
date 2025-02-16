@@ -9,7 +9,7 @@ import com.example.mindstone.data.local.PreferenceManager
 import com.example.mindstone.databinding.ActivityMakeNicknameBinding
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.data.remote.SurveyService
-import com.example.mindstone.network.UserData
+import com.example.mindstone.data.local.UserData
 import com.example.mindstone.ui.auth.login.LoginActivity
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,47 +42,79 @@ class MakeNicknameActivity : AppCompatActivity() {
             }
 
             binding.makeNicknameNameTil.error = null // 에러 메시지 초기화
-            sendNicknameToServer(nickname)
+//            sendNicknameToServer(nickname)
+            val userData = UserData(nickname = nickname)
+            val intent = Intent(this, Search1Activity::class.java)
+            intent.putExtra("userData", userData)
+            startActivity(intent)
+            finish()
         }
 
     }
 
-    private fun sendNicknameToServer(nickname: String) {
-        val userData = UserData(nickname = nickname)
-        val token = PreferenceManager.getAccessToken() ?: ""
 
-        Log.d("API_AUTH", "닉네임 저장 요청 시 AccessToken: $token") // ✅ 로그로 AccessToken 확인
+//    private fun sendNicknameToServer(nickname: String) {
+//        val userData = UserData(nickname = nickname)
+//        val token = PreferenceManager.getAccessToken() ?: ""
+//
+//        Log.d("API_AUTH", "when Nickname save request ->  AccessToken: $token") // ✅ 로그로 AccessToken 확인
+//
+//        apiService.sendNickname(userData) //"Bearer $token", userData
+//            .enqueue(object : Callback<UserData> {
+//                override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+//                    Log.d("API_RESPONSE", "Nickname Save Response Code: ${response.code()}")
+//
+//                    if (response.isSuccessful) {
+//                        Log.d("API_SUCCESS", "Nickname Save Finish: ${response.body()?.nickname}")
+//
+//                        val intent = Intent(this@MakeNicknameActivity, Search1Activity::class.java)
+//                        intent.putExtra("userData", userData)
+//                        startActivity(intent)
+//                        finish()
+//                    } else if (response.code() == 302) { // ✅ 서버가 302 리디렉션을 반환하면 로그인 화면으로 이동
+//                        Log.e("API_ERROR", "AccessToken is finished or not auth. Login Again.")
+//
+//                        // ✅ 기존 토큰 삭제
+//                        PreferenceManager.clearAccessToken()
+//
+//                        // ✅ 로그인 화면으로 이동
+//                        val intent = Intent(this@MakeNicknameActivity, LoginActivity::class.java)
+//                        startActivity(intent)
+//                        finish()
+//                    } else {
+//                        Log.e("API_ERROR", "닉네임 저장 실패: ${response.errorBody()?.string()}")
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<UserData>, t: Throwable) {
+//                    Log.e("API_FAILURE", "Network Error: ${t.message}")
+//                }
+//            })
+//    }
+//private fun sendNicknameToServer(nickname: String) {
+//    val userData = UserData(nickname = nickname)
+//
+//    apiService.sendNickname(userData)
+//        .enqueue(object : Callback<UserData> {
+//            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+//                Log.d("API_RESPONSE", "Nickname Save Response Code: ${response.code()}")
+//
+//                if (response.isSuccessful) {
+//                    Log.d("API_SUCCESS", "Nickname Save Finish: ${response.body()?.nickname}")
+//
+//                    val intent = Intent(this@MakeNicknameActivity, Search1Activity::class.java)
+//                    intent.putExtra("userData", userData)
+//                    startActivity(intent)
+//                    finish()
+//                } else {
+//                    Log.e("API_ERROR", "닉네임 저장 실패: ${response.errorBody()?.string()}")
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<UserData>, t: Throwable) {
+//                Log.e("API_FAILURE", "네트워크 오류: ${t.message}")
+//            }
+//        })
+//}
 
-        apiService.sendNickname("Bearer $token", userData)
-            .enqueue(object : Callback<UserData> {
-                override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
-                    Log.d("API_RESPONSE", "닉네임 저장 Response Code: ${response.code()}")
-
-                    if (response.isSuccessful) {
-                        Log.d("API_SUCCESS", "닉네임 저장 완료: ${response.body()?.nickname}")
-
-                        val intent = Intent(this@MakeNicknameActivity, Search1Activity::class.java)
-                        intent.putExtra("userData", userData)
-                        startActivity(intent)
-                        finish()
-                    } else if (response.code() == 302) { // ✅ 서버가 302 리디렉션을 반환하면 로그인 화면으로 이동
-                        Log.e("API_ERROR", "AccessToken이 만료되었거나 인증되지 않음. 로그인 필요.")
-
-                        // ✅ 기존 토큰 삭제
-                        PreferenceManager.clearAccessToken()
-
-                        // ✅ 로그인 화면으로 이동
-                        val intent = Intent(this@MakeNicknameActivity, LoginActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        Log.e("API_ERROR", "닉네임 저장 실패: ${response.errorBody()?.string()}")
-                    }
-                }
-
-                override fun onFailure(call: Call<UserData>, t: Throwable) {
-                    Log.e("API_FAILURE", "네트워크 오류: ${t.message}")
-                }
-            })
-    }
 }
