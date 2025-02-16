@@ -64,4 +64,7 @@ object RetrofitClient {
 
     // ✅ SurveyService 제공 (AccessToken 자동 포함)
     val surveyService: SurveyService by lazy { retrofit.create(SurveyService::class.java) }
+
+    // ✅
+    val habitCalendarService: HabitCalendarService = retrofit.create(HabitCalendarService::class.java)
 }

@@ -12,7 +12,7 @@ import com.example.mindstone.databinding.GridHabitItemBinding
 
 class HabitCalendarGridAdapter(
     private val context: Context,
-    private val dates: List<String>,
+    private val dates: List<Pair<String, Int>>, // 날짜 + 완료한 습관 개수
     private val onDateClick: (String) -> Unit
 ) : BaseAdapter() {
 
@@ -26,71 +26,51 @@ class HabitCalendarGridAdapter(
         val binding = GridHabitItemBinding.inflate(LayoutInflater.from(context), parent, false)
         val dateProgress = binding.datetextFl
         val dateText = binding.dateText
-        val dateProgessBar = binding.dateProgress
+        val dateProgressBar = binding.dateProgress
         val subText = binding.subText
 
-        val text = dates[position]
-        dateText.text = text
+        val (date, completedHabits) = dates[position]
+        dateText.text = date
 
-        if (position < 7) { // 첫 7개는 요일 헤더
+        if (position < 7) { // ✅ 첫 7개는 요일 헤더
             dateText.setTextColor(ContextCompat.getColor(context, R.color.black))
             dateText.setTypeface(null, Typeface.BOLD)
-            dateProgessBar.visibility = View.GONE
+            dateProgressBar.visibility = View.GONE
             subText.visibility = View.GONE // 요일 헤더는 보조 텍스트 없음
         } else {
-            if (text.isEmpty()) {
+            if (date.isEmpty()) { // ✅ 빈 칸 처리
                 dateText.visibility = View.INVISIBLE
                 dateProgress.visibility = View.GONE
                 subText.visibility = View.GONE
             } else {
-                val denominator = getTotalHabit()
-                val numerator = getDoneHabit(text)
+                val totalHabits = getTotalHabit() // ✅ 하루에 해야 할 총 습관 개수
+                val doneHabits = completedHabits // ✅ 완료한 습관 개수
 
-                if (numerator == 0) {
-                    dateProgessBar.visibility = View.GONE
+                if (doneHabits == 0) {
+                    dateProgressBar.visibility = View.GONE
                     subText.visibility = View.VISIBLE
-                    subText.text = "${numerator}/${denominator}"
+                    subText.text = "$doneHabits/$totalHabits"
                 } else {
-                    // float으로 계산
-                    val progress = (numerator.toFloat() / denominator.toFloat()) * 100
-                    dateProgessBar.progress = progress.toInt()
+                    // ✅ 진행률 계산 (float으로 변환 후 %)
+                    val progress = (doneHabits.toFloat() / totalHabits.toFloat()) * 100
+                    dateProgressBar.progress = progress.toInt()
                     subText.visibility = View.VISIBLE
-                    subText.text = "${numerator}/${denominator}"
+                    subText.text = "$doneHabits/$totalHabits"
                 }
             }
         }
+
         binding.root.setOnClickListener {
-            //빈 날짜는 무시
-            if (text.isNotEmpty()) {
-                onDateClick(text)
+            if (date.isNotEmpty()) { // ✅ 빈 날짜 무시
+                onDateClick(date)
             }
         }
 
         return binding.root
     }
 
-    // 총 해야 할 일
+    // ✅ 하루에 해야 할 총 습관 개수 (이 값을 서버에서 가져올 수도 있음)
     fun getTotalHabit(): Int {
-        val denominator = 3 //예시 3
-        return denominator
-    }
-
-    // 해당 날짜에 완료한 일
-    fun getDoneHabit(date: String): Int {
-        val dateNumber = date.padStart(2, '0')
-        val fullDate = "2025-01-$dateNumber"
-
-
-        //예시 데이터
-        return when (fullDate) {
-            "2025-01-01" -> 1
-            "2025-01-02" -> 2
-            "2025-01-03" -> 3
-            "2025-01-04" -> 1
-            "2025-01-05" -> 2
-            "2025-01-06" -> 3
-            "2025-01-07" -> 1
-            else -> 0
-        }
+        return 3 // 예제: 하루 3개의 습관 수행 목표
     }
 }
