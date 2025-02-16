@@ -96,6 +96,11 @@ class LoginActivity : AppCompatActivity() {
             val refreshToken = viewModel.refreshToken.value ?: ""
             val userEmail = viewModel.userEmail.value ?: ""
 
+            Log.d("API_AUTH", "📌 AccessToken 옵저버 실행 - AccessToken: $accessToken")
+            Log.d("API_AUTH", "📌 AccessToken 옵저버 실행 - RefreshToken: $refreshToken")
+            Log.d("API_AUTH", "📌 AccessToken 옵저버 실행 - Email: $userEmail")
+
+
             if (accessToken.isEmpty() || refreshToken.isEmpty() || userEmail.isEmpty()) {
                 Log.e("API_AUTH", "⚠️ LiveData 값이 아직 업데이트되지 않았을 가능성이 있음")
             }

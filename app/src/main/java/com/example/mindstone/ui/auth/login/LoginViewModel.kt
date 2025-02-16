@@ -105,6 +105,11 @@ class LoginViewModel : ViewModel() {
                         val newRefreshToken = body.result?.refreshToken ?: ""
                         val userEmail = response.body()?.result?.email ?: ""
 
+                        Log.d("API_AUTH", "✅ 서버에서 받은 새 AccessToken: $newAccessToken")
+                        Log.d("API_AUTH", "✅ 서버에서 받은 새 RefreshToken: $newRefreshToken")
+                        Log.d("API_AUTH", "✅ 서버에서 받은 Email: $userEmail")
+
+
                         // LiveData 업데이트
                         _accessToken.postValue(newAccessToken)
                         _refreshToken.postValue(newRefreshToken)
