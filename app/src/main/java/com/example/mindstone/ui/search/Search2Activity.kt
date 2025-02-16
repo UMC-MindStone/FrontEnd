@@ -126,7 +126,7 @@ class Search2Activity : AppCompatActivity() {
         }
     }
 
-    // ✅ 선택된 데이터를 UserData에 저장
+
 //    private fun saveSelectionsToUserData() {
 //        userData?.let {
 //            it.stressManagement = selectedStressManagement.joinToString(", ") // ✅ "운동, 독서" 형식으로 변환

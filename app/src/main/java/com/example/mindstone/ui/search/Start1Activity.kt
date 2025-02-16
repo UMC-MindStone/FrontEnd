@@ -35,7 +35,7 @@ class Start1Activity : AppCompatActivity() {
 
     // Mock 데이터로 사용자 이름 반환
     private fun getUserName(): String {
-        val nickname = intent.getStringExtra("nickname").toString()
+        val nickname = intent.getStringExtra("userData").toString()
         return nickname
     }
 }

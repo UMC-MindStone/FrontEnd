@@ -42,12 +42,13 @@ class Search1Activity : AppCompatActivity() {
 
             // ✅ 기타 선택값들 가져오기
             val job = binding.spinnerJob.selectedItem.toString()
+            val realJob = convertJob(job)
             val mbti = binding.spinnerMbti.selectedItem.toString()
 
 
             val updatedUserData = userData?.copy(
                 birthDate = birthDate,
-                job = job,
+                job = realJob,
                 mbti = mbti
             ) ?: UserData(nickname = "Unknown")
 
@@ -166,6 +167,13 @@ class Search1Activity : AppCompatActivity() {
 
     private fun clearSpinnerError(spinner: Spinner) {
         spinner.setBackgroundResource(R.drawable.border_shape) // 기본 테두리
+    }
+
+    private fun convertJob(job: String): String {
+        return when(job) {
+            "대학생/대학원생" -> "STUDENT"
+            else -> "ENGINEER"
+        }
     }
 }
 
