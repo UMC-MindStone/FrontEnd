@@ -65,7 +65,7 @@
             android:id="@+id/ai_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AI 추천 (10회 남음)"
+            android:text="AI 추천 (하루에 10회)"
             android:fontFamily="@font/pretendard_regular"
             android:textSize="13sp"
             android:textColor="#AFAFAF"

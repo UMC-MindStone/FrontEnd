@@ -72,7 +72,7 @@ class EmotionManageActionFragment : Fragment() {
         // '다른 방법 찾기' 버튼 클릭 이벤트
         binding.otherAction.setOnClickListener {
             otherActionClickCount++
-            if (otherActionClickCount >= 4) {
+            if (otherActionClickCount >= 3) {
                 navigateToFragment(EmotionManageActionFragment2()) // 4회 클릭 시 이동
             } else {
                 val newAccessToken = PreferenceManager.getAccessToken() // 새로 가져오기
