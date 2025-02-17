@@ -72,6 +72,10 @@ class HabitCheckFragment : Fragment() {
         binding.habitCheckEditTv.setOnClickListener {
             toggleEditMode()
         }
+
+        binding.habitCheckReportBtnIv.setOnClickListener {
+            updateDateView()
+        }
         return binding.root
     }
 
@@ -82,7 +86,7 @@ class HabitCheckFragment : Fragment() {
         binding.habitCheckDateTv.text = "${selectedMonth}월 ${selectedDay}일 ${selectedDayOfWeek}"
 
         // 기존 뷰들을 초기화하지 않고 유지
-        val count = 3 // 예시: 3개의 FrameLayout 추가
+        val count = 0 // 예시: 3개의 FrameLayout 추가
         for (i in 0 until count) {
             // 이미 뷰가 추가되어 있다면, 해당 뷰를 업데이트하도록 변경
             if (habitCheckContainerLL.childCount > i) {

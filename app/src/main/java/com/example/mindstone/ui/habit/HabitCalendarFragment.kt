@@ -1,6 +1,7 @@
 package com.example.mindstone.ui.habit
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.example.mindstone.R
 import com.example.mindstone.YearMonthPickerDialog
 import com.example.mindstone.databinding.FragmentHabitCalendarBinding
 import com.example.mindstone.domain.entity.DailyRecord
+import com.example.mindstone.domain.entity.HabitCalendarResult
 import com.example.mindstone.ui.habit.viewmodel.HabitCalendarViewModel
 import java.util.Calendar
 
@@ -21,7 +23,6 @@ class HabitCalendarFragment : Fragment() {
 
     private lateinit var viewModel: HabitCalendarViewModel
     private val dailyRecords = mutableListOf<DailyRecord>()
-
 
     private var currentYear = arguments?.getInt("currentYear") ?: 2025
     private var currentMonth = arguments?.getInt("currentMonth") ?: 1
@@ -88,7 +89,25 @@ class HabitCalendarFragment : Fragment() {
         // 날짜 표시: 2025 1월 형식으로 설정
         binding.habitCalendarDateTv.text = "${currentYear} ${currentMonth}월"
 
-        binding.habitCalendarStatTv.text ="${currentMonth}월에는 44% 기록했고/n습관 행동 100%를 9번 달성했어요."
+        viewModel.calendarData.observe(viewLifecycleOwner, { response ->
+            // 응답이 성공적일 때
+            if (response?.isSuccess == true) {
+                val recordPercentage = response.result?.recordPercentage ?: 0
+                val fullAchievementCount = response.result?.fullAchievementCount ?: 0
+
+                // 습관 달성 퍼센트와 100% 달성 횟수를 텍스트에 반영
+                binding.habitCalendarStatTv.text = "${currentMonth}월에는 ${recordPercentage}% 기록했고\n습관 행동 100%를 ${fullAchievementCount}번 달성했어요."
+
+                // 그 외에도 dailyRecords가 있으면 데이터를 처리하거나 UI 갱신을 할 수 있습니다.
+                response.result?.dailyRecords?.let { dailyRecords ->
+                    // 예를 들어, dailyRecords로 달력 데이터를 갱신할 수 있습니다.
+                }
+            } else {
+                // 실패 시 에러 메시지 표시
+                binding.habitCalendarStatTv.text = "${currentMonth}월에는 0% 기록했고\n습관 행동 100%를 0번 달성했어요."
+                Log.e("HabitCalendar", "Data load failed: ${response?.message}")
+            }
+        })
     }
 
     private fun onDateClicked(date: String) {
@@ -133,35 +152,34 @@ class HabitCalendarFragment : Fragment() {
 
 
 
-    private fun generateCalendarData(year: Int, month: Int, dailyRecords: List<DailyRecord>): List<Pair<String, Int>> {
+    private fun generateCalendarData(year: Int, month: Int, dailyRecords: List<DailyRecord>): List<Any> {
         val calendar = Calendar.getInstance().apply {
-            set(year, month - 1, 1) // month는 0부터 시작 (1월 = 0)
+            set(year, month - 1, 1) // month는 0부터 시작
         }
 
         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) // 1: 일요일, 7: 토요일
+        val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
 
-        val calendarData = mutableListOf<Pair<String, Int>>()
+        val calendarData = mutableListOf<Any>()
 
-        // ✅ 요일 헤더 추가 (완료한 습관 개수는 -1로 설정)
-        val daysOfWeek = listOf("일", "월", "화", "수", "목", "금", "토")
-        for (day in daysOfWeek) {
-            calendarData.add(Pair(day, -1))
-        }
+        // ✅ 요일 헤더 추가
+        val weekDays = listOf("일", "월", "화", "수", "목", "금", "토")
+        calendarData.addAll(weekDays)
 
-        // ✅ 빈 칸 추가 (첫 번째 요일 이전)
+        // ✅ 빈 칸 추가 (요일 맞추기)
         for (i in 1 until firstDayOfWeek) {
-            calendarData.add(Pair("", -1)) // 빈 칸
+            calendarData.add("") // 빈 칸
         }
 
-        // ✅ 날짜 추가 + 완료한 습관 개수 매칭
+        // ✅ 실제 날짜 추가
         for (day in 1..daysInMonth) {
-            val completedHabits = dailyRecords.find { it.day == day }?.completedHabits ?: 0
-            calendarData.add(Pair(day.toString(), completedHabits))
+            val record = dailyRecords.find { it.day == day } ?: DailyRecord(day, 0, 0)
+            calendarData.add(record)
         }
 
         return calendarData
     }
+
 
     private fun showYearMonthPickerDialog() {
         val dialog = YearMonthPickerDialog()

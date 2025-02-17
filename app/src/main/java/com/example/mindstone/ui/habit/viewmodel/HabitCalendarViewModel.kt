@@ -33,6 +33,7 @@ class HabitCalendarViewModel : ViewModel() {
                     if (response.isSuccessful && response.body() != null) {
                         _calendarData.postValue(response.body())
                         Log.d("API_SUCCESS", "데이터 로드 성공: ${response.body()}")
+
                     } else {
                         val errorMessage = try {
                             response.errorBody()?.source()?.buffer?.clone()?.readString(Charsets.UTF_8) ?: "알 수 없는 오류 발생"
