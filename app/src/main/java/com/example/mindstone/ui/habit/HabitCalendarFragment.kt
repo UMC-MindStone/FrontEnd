@@ -87,6 +87,8 @@ class HabitCalendarFragment : Fragment() {
 
         // 날짜 표시: 2025 1월 형식으로 설정
         binding.habitCalendarDateTv.text = "${currentYear} ${currentMonth}월"
+
+        binding.habitCalendarStatTv.text ="${currentMonth}월에는 44% 기록했고/n습관 행동 100%를 9번 달성했어요."
     }
 
     private fun onDateClicked(date: String) {
