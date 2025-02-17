@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.domain.entity.EmotionGPTResponse
-import com.example.mindstone.domain.entity.EmotionResponse
+import com.example.mindstone.domain.entity.EmotionStressResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,13 +24,13 @@ class EmotionManageActionViewModel : ViewModel() {
 
     // 사용자가 설정한 관리 행동 추천
     fun fetchStressRecommendations(token: String) {
-        apiService.getStressRecommendations(token).enqueue(object : Callback<EmotionResponse> {
-            override fun onResponse(call: Call<EmotionResponse>, response: Response<EmotionResponse>) {
+        apiService.getStressRecommendations(token).enqueue(object : Callback<EmotionStressResponse> {
+            override fun onResponse(call: Call<EmotionStressResponse>, response: Response<EmotionStressResponse>) {
                 if (response.isSuccessful && response.body() != null) {
                     _recommendations.postValue(response.body()!!.result)
                 }
             }
-            override fun onFailure(call: Call<EmotionResponse>, t: Throwable) {
+            override fun onFailure(call: Call<EmotionStressResponse>, t: Throwable) {
                 Log.e("API_ERROR", "Failed to fetch recommendations", t)
             }
         })

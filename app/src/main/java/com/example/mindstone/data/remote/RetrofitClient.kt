@@ -156,9 +156,8 @@ object RetrofitClient {
         retrofit.create(DiarySevice::class.java)
     }
 
-    val emotionStressService: EmotionStressService by lazy {
-        retrofit.create(EmotionStressService::class.java)
-    }
+    // 부정적 감정 관리 행동 추천
+    val emotionStressService: EmotionStressService by lazy { retrofit.create(EmotionStressService::class.java) }
 
     // ✅ SurveyService 제공 (AccessToken 자동 포함)
     val surveyService: SurveyService by lazy { retrofit.create(SurveyService::class.java) }

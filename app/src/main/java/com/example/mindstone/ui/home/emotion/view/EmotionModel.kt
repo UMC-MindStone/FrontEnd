@@ -98,12 +98,12 @@ class EmotionModel : ViewModel() {
     // 감정에 맞는 색상 반환 함수
     fun getEmotionColor(emotion: String): Int {
         return when (emotion) {
-            "행복" -> R.color.happyColor
-            "설렘" -> R.color.excitedColor
+            "행복" -> R.color.happinessColor
+            "설렘" -> R.color.thrillColor
             "기쁨" -> R.color.joyColor
             "평온" -> R.color.calmColor
-            "화남" -> R.color.angryColor
-            "우울" -> R.color.depressedColor
+            "화남" -> R.color.angerColor
+            "우울" -> R.color.depressionColor
             "슬픔" -> R.color.sadColor
             else -> R.color.calmColor
         }
