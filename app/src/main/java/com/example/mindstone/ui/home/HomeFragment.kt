@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentHomeBinding
 import com.example.mindstone.ui.home.emotion.EmotionIntensityFragment
-import com.example.mindstone.ui.home.emotion.viewmodel.EmotionModel
+import com.example.mindstone.ui.home.emotion.view.EmotionModel
 
 class HomeFragment : Fragment() {
 
@@ -44,13 +44,13 @@ class HomeFragment : Fragment() {
         resetEmotionData()
 
         // 감정 선택 버튼 클릭 이벤트 설정
-        binding.homeHappyIv.setOnClickListener { navigateToIntensity("행복", R.color.happyColor, true) }
-        binding.homeExcitedIv.setOnClickListener { navigateToIntensity("설렘", R.color.excitedColor, true) }
+        binding.homeHappyIv.setOnClickListener { navigateToIntensity("행복", R.color.happinessColor, true) }
+        binding.homeExcitedIv.setOnClickListener { navigateToIntensity("설렘", R.color.thrillColor, true) }
         binding.homeJoyIv.setOnClickListener { navigateToIntensity("기쁨", R.color.joyColor, true) }
         binding.homeCalmIv.setOnClickListener { navigateToIntensity("평온", R.color.calmColor, true) }
 
-        binding.homeAngryIv.setOnClickListener { navigateToIntensity("화남", R.color.angryColor, false) }
-        binding.homeDepressedIv.setOnClickListener { navigateToIntensity("우울", R.color.depressedColor, false) }
+        binding.homeAngryIv.setOnClickListener { navigateToIntensity("화남", R.color.angerColor, false) }
+        binding.homeDepressedIv.setOnClickListener { navigateToIntensity("우울", R.color.depressionColor, false) }
         binding.homeSadIv.setOnClickListener { navigateToIntensity("슬픔", R.color.sadColor, false) }
     }
 

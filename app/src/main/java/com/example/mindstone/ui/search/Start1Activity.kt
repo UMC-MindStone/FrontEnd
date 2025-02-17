@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.MainActivity
+import com.example.mindstone.data.local.PreferenceManager
 import com.example.mindstone.databinding.ActivityStart1Binding
 
 class Start1Activity : AppCompatActivity() {
@@ -30,6 +31,15 @@ class Start1Activity : AppCompatActivity() {
         binding.btnStart1ColoredIb.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+        }
+
+
+        // 기본조사 화면 중복 방지
+        binding.btnStart1ColoredIb.setOnClickListener {
+            PreferenceManager.setSurveyCompleted(this, true) // 기본 조사 완료 저장
+            val intent = Intent(this, MainActivity::class.java) // 홈 화면으로 이동
+            startActivity(intent)
+            finish()
         }
     }
 
