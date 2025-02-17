@@ -276,11 +276,25 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
+//    private fun navigateToAfterLogin2() {
+//        val intent = Intent(this, AfterLoginActivity::class.java)
+//        startActivity(intent)
+//        finish()
+//    }
+
     private fun navigateToAfterLogin() {
-        val intent = Intent(this, AfterLoginActivity::class.java)
+        val isSurveyCompleted = PreferenceManager.isSurveyCompleted(this)
+
+        val nextActivity = if (isSurveyCompleted) {
+            MainActivity::class.java // 기본 조사가 완료된 경우 홈 화면
+        } else {
+            AfterLoginActivity::class.java // 기본 조사가 필요한 경우 기본 조사 화면
+        }
+        val intent = Intent(this, nextActivity)
         startActivity(intent)
         finish()
     }
+
 
     fun saveAuthToken(context: Context, token: String) {
         val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)

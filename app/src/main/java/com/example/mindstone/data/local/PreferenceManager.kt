@@ -8,6 +8,7 @@ object PreferenceManager {
     private const val PREF_NAME = "auth_prefs"
     private const val KEY_ACCESS_TOKEN = "accessToken"
     private const val KEY_AUTO_LOGIN = "autoLogin"
+    private const val KEY_IS_SURVEY_COMPLETED = "is_survey_completed"
 
     private var prefs: SharedPreferences? = null
 
@@ -88,5 +89,17 @@ object PreferenceManager {
     // ✅ 특정 키 존재 여부 확인
     fun contains(key: String): Boolean {
         return getPrefs().contains(key)
+    }
+
+
+    // 기본 조사 화면 중복 방지
+    fun setSurveyCompleted(context: Context, isCompleted: Boolean) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putBoolean(KEY_IS_SURVEY_COMPLETED, isCompleted).apply()
+    }
+
+    fun isSurveyCompleted(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_IS_SURVEY_COMPLETED, false) // 기본값은 false
     }
 }
