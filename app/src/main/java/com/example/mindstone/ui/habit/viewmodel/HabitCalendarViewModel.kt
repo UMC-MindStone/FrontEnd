@@ -34,16 +34,23 @@ class HabitCalendarViewModel : ViewModel() {
                         _calendarData.postValue(response.body())
                         Log.d("API_SUCCESS", "데이터 로드 성공: ${response.body()}")
                     } else {
-                        val error = "오류 발생: ${response.code()}"
+                        val errorMessage = try {
+                            response.errorBody()?.source()?.buffer?.clone()?.readString(Charsets.UTF_8) ?: "알 수 없는 오류 발생"
+                        } catch (e: Exception) {
+                            "에러 메시지 변환 실패"
+                        }
+
+                        val error = "오류 발생: ${response.code()} | 메시지: $errorMessage"
                         _errorMessage.postValue(error)
-                        Log.e("API_ERROR", error)
+                        Log.e("API1_ERROR", error)
                     }
                 }
+
 
                 override fun onFailure(call: Call<HabitCalendarResponse>, t: Throwable) {
                     val error = "네트워크 오류: ${t.message}"
                     _errorMessage.postValue(error)
-                    Log.e("API_FAILURE", error)
+                    Log.e("API1_FAILURE", error)
                 }
             })
     }
