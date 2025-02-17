@@ -4,5 +4,5 @@ data class EmotionStressResponse(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
-    val result: List<String>
+    val result: String
 )

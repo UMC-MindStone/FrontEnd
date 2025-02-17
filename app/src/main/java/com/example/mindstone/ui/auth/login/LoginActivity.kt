@@ -278,6 +278,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun navigateToAfterLogin() {
         val isSurveyCompleted = PreferenceManager.isSurveyCompleted(this)
+        Log.d("DEBUG", "navigateToAfterLogin() 실행 - 기본 조사 완료 여부: $isSurveyCompleted")
 
         val nextActivity = if (isSurveyCompleted) {
             MainActivity::class.java // 기본 조사가 완료된 경우 홈 화면

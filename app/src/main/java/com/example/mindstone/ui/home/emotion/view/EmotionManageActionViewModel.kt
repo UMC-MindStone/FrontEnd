@@ -27,7 +27,9 @@ class EmotionManageActionViewModel : ViewModel() {
         apiService.getStressRecommendations(token).enqueue(object : Callback<EmotionStressResponse> {
             override fun onResponse(call: Call<EmotionStressResponse>, response: Response<EmotionStressResponse>) {
                 if (response.isSuccessful && response.body() != null) {
-                    _recommendations.postValue(response.body()!!.result)
+                    val responseBody = response.body()!!
+                    val recommandList = responseBody.result.split(",").map { it.trim() }
+                    _recommendations.postValue(recommandList)
                 }
             }
             override fun onFailure(call: Call<EmotionStressResponse>, t: Throwable) {
