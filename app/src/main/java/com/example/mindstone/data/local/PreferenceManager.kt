@@ -93,13 +93,15 @@ object PreferenceManager {
 
 
     // 기본 조사 화면 중복 방지
+    private fun getPrefs(context: Context): SharedPreferences {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+    }
+
     fun setSurveyCompleted(context: Context, isCompleted: Boolean) {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putBoolean(KEY_IS_SURVEY_COMPLETED, isCompleted).apply()
+        getPrefs(context).edit().putBoolean(KEY_IS_SURVEY_COMPLETED, isCompleted).apply()
     }
 
     fun isSurveyCompleted(context: Context): Boolean {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        return prefs.getBoolean(KEY_IS_SURVEY_COMPLETED, false) // 기본값은 false
+        return getPrefs(context).getBoolean(KEY_IS_SURVEY_COMPLETED, false)
     }
 }

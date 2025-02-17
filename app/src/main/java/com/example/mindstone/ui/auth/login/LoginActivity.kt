@@ -276,12 +276,6 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-//    private fun navigateToAfterLogin2() {
-//        val intent = Intent(this, AfterLoginActivity::class.java)
-//        startActivity(intent)
-//        finish()
-//    }
-
     private fun navigateToAfterLogin() {
         val isSurveyCompleted = PreferenceManager.isSurveyCompleted(this)
 
