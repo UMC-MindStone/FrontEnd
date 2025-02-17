@@ -66,7 +66,8 @@ dependencies {
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+//    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
 
     // ✅ OkHttp 라이브러리 추가
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
