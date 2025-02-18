@@ -23,16 +23,39 @@ class DiaryHomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val diaryViewModel: DiaryViewModel by activityViewModels()
 
+    private var fragment : String ?= null
+    private var date = "2025-01-01"
+
+    private var currentYear: Int = 2025
+    private var currentMonth: Int = 1
+    private var currentDay: Int = 1
+
 
     val bundle = bundleOf(
         "fragment" to "today"
     )
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            fragment = it.getString("fragment", null)
+            date = it.getString("date", "2025-01-01")
+        }
+
+        val dateParts = date.split("-")
+        if (dateParts.size == 3) {
+            currentYear = dateParts[0].toIntOrNull() ?: 2025
+            currentMonth = dateParts[1].toIntOrNull() ?: 1
+            currentDay = dateParts[2].toIntOrNull() ?: 1
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentDiaryHomeBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,19 +99,30 @@ class DiaryHomeFragment : Fragment() {
             (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
         }
 
+//        if(fragment =="today"){
+//            //오늘의 날짜 띄우기
+//            val today = LocalDate.now()
+//            val year= today.year
+//            val month = today.monthValue
+//            val day = today.dayOfMonth
+//            val date = LocalDate.of( year, month, day)
+//            // 요일 가져오기
+//            val dayOfWeek = date.dayOfWeek
+//            // 요일을 문자열로 변환 (한글 출력 가능)
+//            val dayName = dayOfWeek.getDisplayName(TextStyle.FULL, java.util.Locale.KOREAN)
+//
+//            binding.diaryDateTv.text = "${month}월 ${day}일 $dayName"
+//        } else {
+//
+//        }
 
-        //오늘의 날짜 띄우기
-        val today = LocalDate.now()
-        val year= today.year
-        val month = today.monthValue
-        val day = today.dayOfMonth
-        val date = LocalDate.of( year, month, day)
-        // 요일 가져오기
+        val date = LocalDate.of(currentYear, currentMonth, currentDay)
         val dayOfWeek = date.dayOfWeek
-        // 요일을 문자열로 변환 (한글 출력 가능)
         val dayName = dayOfWeek.getDisplayName(TextStyle.FULL, java.util.Locale.KOREAN)
+        binding.diaryDateTv.text = "${currentMonth}월 ${currentDay}일 $dayName"
 
-        binding.diaryDateTv.text = "${month}월 ${day}일 $dayName"
+
+
 
 
     }
