@@ -17,11 +17,14 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionFinalBinding
+import com.example.mindstone.ui.home.HomeFragment
 import com.example.mindstone.ui.home.emotion.negative.EmotionManageChoiceFragment
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
+import com.example.mindstone.ui.home.emotion.view.EmotionNoteViewModel
 import com.example.mindstone.ui.search.SurveyViewModel
 
 class EmotionFinalFragment : Fragment() {
@@ -30,6 +33,9 @@ class EmotionFinalFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private val emotionNoteViewModel: EmotionNoteViewModel by viewModels()
+
+
     private var userName: String = "사용자"
 
 
@@ -43,6 +49,9 @@ class EmotionFinalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
         // 시스템 바(상태바, 네비게이션바) 공간 자동 조정
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -52,22 +61,38 @@ class EmotionFinalFragment : Fragment() {
 
         // ✅ SharedPreferences에서 사용자 이름 불러오기
         userName = getUserNickname()
-        Log.d("DEBUG", "EmotionFinalFragment에서 받은 닉네임: $userName")
 
 
-        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+        // ✅ saveEmotionData()가 중복 호출되지 않도록 체크 후 실행
+        if (emotionNoteViewModel.emotionNoteResponse.hasActiveObservers().not()) {
+            saveEmotionData()
+        }
+
+        // ✅ API 응답 처리
+        emotionNoteViewModel.emotionNoteResponse.removeObservers(viewLifecycleOwner) // LiveData observer 중복 방지
+        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
+            if (response?.isSuccess == true) {
+                Log.d("EmotionNoteAPI", "✅ 감정 데이터 저장 성공: $response")
+            } else {
+                Log.e("EmotionNoteAPI", "❌ 감정 데이터 저장 실패: ${response?.message}")
+            }
+        }
+
 
         // 상태바 색상 업데이트
+        viewModel.emotionRatios.removeObservers(viewLifecycleOwner)
         viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
             updateStatusBar(emotionRatios)
         }
 
         // 캐릭터 변경 (최근 감정 기준)
+        viewModel.recentEmotion.removeObservers(viewLifecycleOwner)
         viewModel.recentEmotion.observe(viewLifecycleOwner) { recentEmotion ->
             updateCharacter(recentEmotion)
         }
 
         // 감정에 맞는 상태 업데이트
+        viewModel.emotion.removeObservers(viewLifecycleOwner)
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
             binding.finalStatusTv.text = getEmotionStatus(emotion)
         }
@@ -97,6 +122,40 @@ class EmotionFinalFragment : Fragment() {
             "기쁨" -> animateSelectedEmotion(binding.finalJoyIv, binding.finalJoyLl, binding.joyIntensityTv, intensity, true)
             "설렘" -> animateSelectedEmotion(binding.finalExcitedIv, binding.finalExcitedLl, binding.excitedIntensityTv, intensity, true)
         }
+
+    }
+
+    private fun saveEmotionData() {
+        val token = getUserToken() // 사용자 인증 토큰 가져오기
+        val emotionKorean = viewModel.emotion.value ?: return
+        val intensity = viewModel.intensity.value ?: return
+        val reason = viewModel.emotionReason.value ?: ""
+
+        // ✅ 감정 종류를 API에서 요구하는 영어 형식으로 변환
+        val emotionEnglish = convertEmotionToEnglish(emotionKorean)
+
+        // ✅ API 요청 보내기
+        emotionNoteViewModel.postEmotionNote(token, emotionEnglish, intensity, reason)
+    }
+
+    // ✅ 감정 종류 변환 (한글 → 영어)
+    private fun convertEmotionToEnglish(emotion: String): String {
+        return when (emotion) {
+            "화남" -> "ANGER"
+            "우울" -> "DEPRESSION"
+            "슬픔" -> "SAD"
+            "평온" -> "CALM"
+            "기쁨" -> "JOY"
+            "설렘" -> "THRILL"
+            "행복" -> "HAPPINESS"
+            else -> "CALM" // 기본값 (예외 방지)
+        }
+    }
+
+
+    private fun getUserToken(): String {
+        val sharedPreferences = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("auth_token", "") ?: ""
     }
 
 
@@ -148,7 +207,7 @@ class EmotionFinalFragment : Fragment() {
             .setInterpolator(AccelerateDecelerateInterpolator()) // 부드러운 감속
             .withEndAction {
                 imageView.visibility = View.GONE // 애니메이션 종료 후 숨김
-                checkNegativeEmotionAndNavigate() // 부정적 감정이면 Fragment 이동
+                checkEmotionAndNavigate() // 감정에 따라 Fragment 이동
             }
             .start()
         layout.animate()
@@ -158,24 +217,34 @@ class EmotionFinalFragment : Fragment() {
             .setInterpolator(AccelerateDecelerateInterpolator())
             .withEndAction {
                 layout.visibility = View.GONE
-                checkNegativeEmotionAndNavigate()
+                checkEmotionAndNavigate()
             }
             .start()
     }
 
-    // 부정적 감정이면 EmotionManageChoiceFragment로 이동
-    private fun checkNegativeEmotionAndNavigate() {
+
+    // 감정에 따라 적절한 Fragment로 이동
+    private fun checkEmotionAndNavigate() {
         val selectedEmotion = viewModel.emotion.value ?: return
         if (selectedEmotion in listOf("화남", "우울", "슬픔")) {
             navigateToEmotionManageChoiceFragment()
+        } else {
+            navigateToHomeFragment()
         }
     }
-    // EmotionManageChoiceFragment로 이동하는 함수
+    // 부정적 감정이면 EmotionManageChoiceFragment로 이동
     private fun navigateToEmotionManageChoiceFragment() {
         val fragment = EmotionManageChoiceFragment()
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
             .addToBackStack(null)
+            .commit()
+    }
+    // 긍정적 감정이면 HomeFragment로 이동
+    private fun navigateToHomeFragment() {
+        val fragment = HomeFragment()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
             .commit()
     }
 
