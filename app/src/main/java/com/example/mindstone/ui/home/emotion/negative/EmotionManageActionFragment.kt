@@ -97,11 +97,6 @@ class EmotionManageActionFragment : Fragment() {
         }
 
 
-        // 말풍선 클릭 시 EmotionActionTimeFragment로 이동
-//        listOf(binding.actionBubbleCenter, binding.actionBubbleLeft, binding.actionBubbleRight).forEach { bubble ->
-//            bubble.setOnClickListener { navigateToFragment(EmotionActionTimeFragment()) }
-//        }
-
         // 말풍선 클릭 시 선택한 행동을 EmotionActionTimeFragment로 전달, 이동
         listOf(binding.actionBubbleCenter, binding.actionBubbleLeft, binding.actionBubbleRight).forEach { bubble ->
             bubble.setOnClickListener {

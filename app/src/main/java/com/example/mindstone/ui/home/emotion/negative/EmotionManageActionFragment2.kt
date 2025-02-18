@@ -63,14 +63,6 @@ class EmotionManageActionFragment2 : Fragment() {
                 .commit()
         }
 
-//        // '확인' 버튼 클릭 시 -> 행동 저장 후 EmotionManageActionFragment3로 이동
-//        binding.actionConfirmTv.setOnClickListener {
-//            val userAction = binding.actionBubbleEt.text.toString().trim()
-//            if (userAction.isNotEmpty()) {
-//                viewModel.setUserAction(userAction) // 뷰모델에 행동 저장
-//                navigateToEmotionManageActionFragment3()
-//            }
-//        }
 
 
         // '확인' 버튼 클릭 시 -> 입력한 행동을 EmotionActionTimeFragment로 전달 후 이동
@@ -123,7 +115,7 @@ class EmotionManageActionFragment2 : Fragment() {
         }
 
         if (sortedColors.isNotEmpty()) {
-            // 📌 상태바 기존 이미지(src) 유지하면서 색상만 변경
+            // 상태바 기존 이미지(src) 유지하면서 색상만 변경
             val dominantColor = sortedColors.first()
             binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
         }
