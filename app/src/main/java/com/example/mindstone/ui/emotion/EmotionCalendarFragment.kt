@@ -1,10 +1,12 @@
 package com.example.mindstone.ui.emotion
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import com.example.mindstone.R
 import com.example.mindstone.YearMonthPickerDialog
@@ -19,8 +21,8 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
     private val binding get() = _binding!!
 
     private lateinit var viewPagerAdapter: EmotionCalendarVPAdapter
-    private var currentYear = 2025 // 초기 년도 설정
-    private var currentMonth = 1   // 초기 월 설정 (1월)
+    var currentYear = 2025 // 초기 년도 설정
+    var currentMonth = 1   // 초기 월 설정 (1월)
 
     private val diaryViewModel : DiaryViewModel by activityViewModels()
 
@@ -88,6 +90,7 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
                         putString("date", date)
                         putBoolean("isRecord", true)
                     }
+                    Log.d("date", date)
                 }
             } else {
                 // ✅ Fragment 2 (새로운 일기 작성 화면)으로 이동
@@ -96,6 +99,7 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
                         putString("date", date)
                         putBoolean("isRecord", false)
                     }
+                    Log.d("date", date)
                 }
 
             }
