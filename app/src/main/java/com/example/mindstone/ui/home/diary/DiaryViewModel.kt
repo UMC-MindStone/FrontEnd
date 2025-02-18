@@ -1,6 +1,8 @@
 package com.example.mindstone.ui.home.diary
 import android.app.Application
+import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,10 +11,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.mindstone.MyApplication
 import com.example.mindstone.R
 import com.example.mindstone.data.remote.DiaryDTO
-import com.example.mindstone.data.remote.DiaryEditDTO
-import com.example.mindstone.data.remote.DiarySaveRequest
-import com.example.mindstone.data.remote.DiaryUpdateRequest
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 class DiaryViewModel : ViewModel() {
 
@@ -91,42 +96,90 @@ class DiaryViewModel : ViewModel() {
             )
         }
     }
-
-
-    fun saveOrUpdateDiary(date: String, title: String) {
+    fun fetchDiaryById(id: Int) {
         viewModelScope.launch {
-            val imageUrls = _images.value?.map { it.toString() } ?: emptyList()
+            DiaryRepository.getDiaryById(id,
+                onSuccess = { diary ->
+                    _diaryTitle.postValue(diary.title)
+                    _diaryText.postValue(diary.content)
+                    _emotionIcon.postValue(getEmotionIcon(diary.emotion))
+
+                    // ✅ String (URL) 리스트 → Uri 리스트 변환
+                    val uriList = diary.imagePath?.map { Uri.parse(it) } ?: emptyList()
+                    _images.postValue(uriList)
+
+                    // ✅ 기존 일기가 있으면 수정 (0), 없으면 저장 (1)
+                    _diaryStatus.postValue(0)
+                    // ✅ 다이어리가 존재하는 상태로 설정
+                    _diaryExists.postValue(true)
+
+                    Log.d("DiaryViewModel", "✅ 다이어리 불러오기 성공: $diary")
+                },
+                onFailure = { error ->
+                    _errorMessage.postValue(error)
+
+                    // ✅ 다이어리가 없으면 초기 상태로 설정
+                    _diaryTitle.postValue("")  // 제목 초기화
+                    _diaryText.postValue("")   // 내용 초기화
+                    _emotionIcon.postValue(R.drawable.btn_nothing_normal) // 기본 감정 아이콘
+                    _images.postValue(emptyList())
+
+                    // ✅ 다이어리 없음 → 새로운 일기 작성 상태로 변경
+                    _diaryStatus.postValue(1)
+                    _diaryExists.postValue(false)
+
+                    Log.e("DiaryViewModel", "❌ 다이어리 불러오기 실패: $error")
+                }
+            )
+        }
+    }
+
+
+
+    fun saveOrUpdateDiary(context:Context, date: String, title: String) {
+        Log.d("Upload Debug", "✅ saveOrUpdateDiary() 함수 호출됨")
+        viewModelScope.launch {
+            Log.d("UploadDebug", "✅ viewModelScope.launch 실행됨")
             val emotion = getEmotionString(emotionIcon.value ?: R.drawable.btn_nothing_normal)
 
             if (_diaryStatus.value == 1) {
                 // ✅ 새로운 일기 저장 (POST)
-                val request = DiarySaveRequest(
-                    diaryDTO = DiaryDTO(
+                val diaryJson = Gson().toJson(
+                    DiaryDTO(
+                        date = date,
+                        title = title,
+                        emotion = emotion,
+                        content = _diaryText.value.orEmpty(),
+                        impressiveThing = "기억에 남는 순간(임시)"
+                    )
+                )
+                val diaryRequestBody= diaryJson.toRequestBody("application/json".toMediaTypeOrNull())
+
+                val imageParts = _images.value?.map{ prepareFilePart(context, it, "images")} ?: emptyList()
+
+                DiaryRepository.saveDiary(diaryRequestBody, imageParts,
+                    onSuccess = { _diaryStatus.postValue(0)
+                        Log.d("UploadDebug", "✅ 서버 요청 성공!")},
+                    onFailure = { error -> _errorMessage.postValue(error)
+                        Log.d("UploadDebug", "서버 요청 실패")}
+                )
+            } else {
+                // ✅ 기존 일기 수정 (PATCH)
+                val diaryJson = Gson().toJson(
+                    DiaryDTO(
                         date = date,
                         title = title,
                         emotion = emotion,
                         content = _diaryText.value.orEmpty(),
                         impressiveThing = "기억에 남는 순간"
-                    ),
-                    image = imageUrls
+                    )
                 )
 
-                DiaryRepository.saveDiary(request,
-                    onSuccess = { /* 성공 처리 */ },
-                    onFailure = { error -> _errorMessage.postValue(error) }
-                )
-            } else {
-                // ✅ 기존 일기 수정 (PATCH)
-                val request = DiaryUpdateRequest(
-                    diaryDTO = DiaryEditDTO(
-                        date = date,
-                        emotion = emotion,
-                        content = _diaryText.value.orEmpty(),
-                    ),
-                    image = imageUrls
-                )
+                val diaryRequestBody= diaryJson.toRequestBody("application/json".toMediaTypeOrNull())
 
-                DiaryRepository.updateDiary(request,
+                val imageParts = _images.value?.map{ prepareFilePart(context, it, "images")} ?: emptyList()
+
+                DiaryRepository.updateDiary(diaryRequestBody, imageParts,
                     onSuccess = { /* 성공 처리 */ },
                     onFailure = { error -> _errorMessage.postValue(error) }
                 )
@@ -137,7 +190,7 @@ class DiaryViewModel : ViewModel() {
     private fun getEmotionIcon(emotion: String): Int {
         return when (emotion) {
             "DEPRESSION" -> R.drawable.ic_depression
-            "ANGRY" -> R.drawable.ic_angry
+            "ANGER" -> R.drawable.ic_angry
             "SAD" -> R.drawable.ic_sad
             "CALM" -> R.drawable.ic_calm
             "JOY" -> R.drawable.ic_joy
@@ -150,7 +203,7 @@ class DiaryViewModel : ViewModel() {
     private fun getEmotionString(emotion : Int) : String {
         return when (emotion) {
             R.drawable.ic_depression -> "DEPRESSION"
-            R.drawable.ic_angry -> "ANGRY"
+            R.drawable.ic_angry -> "ANGER"
             R.drawable.ic_sad -> "SAD"
             R.drawable.ic_calm -> "CALM"
             R.drawable.ic_joy -> "JOY"
@@ -160,4 +213,21 @@ class DiaryViewModel : ViewModel() {
         }
 
     }
+    fun prepareFilePart(context: Context, uri: Uri, partName: String): MultipartBody.Part {
+        val contentResolver = context.contentResolver
+        val inputStream = contentResolver.openInputStream(uri) ?: return MultipartBody.Part.createFormData(partName, "")
+
+        val file = File(context.cacheDir, "upload_image_${System.currentTimeMillis()}.jpg")
+        file.outputStream().use { output -> inputStream.copyTo(output) }
+
+        Log.d("UploadDebug", "파일 경로: ${file.absolutePath}, 크기: ${file.length()} bytes")
+
+        if (file.length() == 0L) {
+            Log.e("UploadDebug", "파일이 비어있음!")
+        }
+
+        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData("image", file.name, requestFile)
+    }
+
 }

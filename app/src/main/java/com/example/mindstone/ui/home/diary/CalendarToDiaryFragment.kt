@@ -161,6 +161,7 @@ class CalendarToDiaryFragment : Fragment() {
             val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             // 날짜 기준 일기 요청
             diaryViewModel.fetchDiary(formattedDate)
+//            diaryViewModel.fetchDiaryById(6)
 
 
         }
