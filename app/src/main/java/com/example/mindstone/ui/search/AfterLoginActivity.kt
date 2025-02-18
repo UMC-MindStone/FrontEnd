@@ -16,7 +16,6 @@ class AfterLoginActivity : AppCompatActivity() {
         binding.afterLoginNextIv.setOnClickListener {
             val intent = Intent(this, MakeNicknameActivity::class.java)
             startActivity(intent)
-
             finish()
         }
     }

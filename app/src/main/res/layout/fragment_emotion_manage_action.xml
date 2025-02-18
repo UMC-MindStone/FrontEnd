@@ -62,6 +62,19 @@
             app:layout_constraintEnd_toEndOf="@+id/action_question_tv"/>
 
         <TextView
+            android:id="@+id/ai_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI 추천 (하루에 10회)"
+            android:fontFamily="@font/pretendard_regular"
+            android:textSize="13sp"
+            android:textColor="#AFAFAF"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/action_question_tv"
+            app:layout_constraintStart_toStartOf="@+id/action_question_tv"
+            app:layout_constraintEnd_toEndOf="@+id/action_question_tv"/>
+
+        <TextView
             android:id="@+id/action_bubble_center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
