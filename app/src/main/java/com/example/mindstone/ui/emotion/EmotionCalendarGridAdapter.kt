@@ -14,6 +14,11 @@ class EmotionCalendarGridAdapter(
     private val context: Context,
     private val dates: List<String>
 ) : BaseAdapter() {
+    interface onDateClickListener{
+        fun onDateClick(date: String, isRecord: Boolean)
+    }
+
+    var listener: onDateClickListener? = null
 
     override fun getCount(): Int = dates.size
 
@@ -44,6 +49,9 @@ class EmotionCalendarGridAdapter(
 
                 // API에서 해당 날짜에 대한 감정 상태 또는 이미지를 받아와서 아이콘 설정
                 val emotion = getEmotionForDate(text) // API 호출 예시
+                val isRecord = emotion != "neutral"
+
+
 
                 // 감정 상태에 따른 아이콘 설정
                 when (emotion) {
@@ -102,6 +110,12 @@ class EmotionCalendarGridAdapter(
                     }
                 }
                 dateIcon.visibility = View.VISIBLE // 아이콘 표시
+
+                binding.root.setOnClickListener{
+                    val day = text.toInt()
+                    val formattedDate = "2025-${String.format("%02d", 1)}-${String.format("%02d", day)}"
+                    listener?.onDateClick(formattedDate, isRecord)
+                }
             }
         }
 

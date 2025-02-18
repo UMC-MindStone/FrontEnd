@@ -32,11 +32,12 @@ class CalendarToDiaryFragment : Fragment() {
     private val diaryViewModel : DiaryViewModel by activityViewModels()
 
     // 일단 캘린더 프래그먼트에서 년, 월, 일 꼭 넘겨줘야 함.
-    private var currentYear = arguments?.getInt("currentYear")?: 2025
-    private var currentMonth = arguments?.getInt("currentMonth")?: 1
-    private var currentDay= arguments?.getInt("currentDay")?: 1
-    private var isRecord = arguments?.getBoolean("isRecord")?: false
 
+    private var currentYear: Int = 2025
+    private var currentMonth: Int = 1
+    private var currentDay: Int = 1
+    private var isRecord: Boolean = false
+    private var date : String = "2025-01-01"
 
     val bundle = bundleOf(
         "currentYear" to currentYear,
@@ -44,6 +45,25 @@ class CalendarToDiaryFragment : Fragment() {
         "currentDay" to currentDay,
         "fragment" to "calendar"
     )
+
+    override fun onCreate(savedInstanceState: Bundle?){
+        super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            date = it.getString("date", "2025-01-01") // 기본값 설정
+            isRecord = it.getBoolean("isRecord", false)
+
+            // "2025-02-03" → 2025, 2, 3 으로 변환
+            val dateParts = date.split("-")
+            if (dateParts.size == 3) {
+                currentYear = dateParts[0].toIntOrNull() ?: 2025
+                currentMonth = dateParts[1].toIntOrNull() ?: 1
+                currentDay = dateParts[2].toIntOrNull() ?: 1
+            }
+        }
+
+
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,7 +88,9 @@ class CalendarToDiaryFragment : Fragment() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         changeComponent()
+        updateDateUI()
 
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
             binding.diaryTextTv.text = text
@@ -138,7 +160,6 @@ class CalendarToDiaryFragment : Fragment() {
 
             val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             // 날짜 기준 일기 요청
-
             diaryViewModel.fetchDiary(formattedDate)
 
 
@@ -255,5 +276,13 @@ class CalendarToDiaryFragment : Fragment() {
             }
         }
     }
+    private fun updateDateUI() {
+        val date = LocalDate.of(currentYear, currentMonth, currentDay)
+        val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.KOREAN)
+
+        binding.diaryDateTv.text = "${currentMonth}월 ${currentDay}일 $dayOfWeek"
+    }
+
+
 
 }
