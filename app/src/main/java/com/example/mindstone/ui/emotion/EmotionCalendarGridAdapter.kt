@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.example.mindstone.R
 import com.example.mindstone.databinding.GridEmotionItemBinding
 
@@ -19,6 +20,8 @@ class EmotionCalendarGridAdapter(
     }
 
     var listener: onDateClickListener? = null
+    private var currentYear = 2025 // 기본값 설정
+    private var currentMonth = 1
 
     override fun getCount(): Int = dates.size
 
@@ -47,6 +50,8 @@ class EmotionCalendarGridAdapter(
                 dateText.visibility = View.VISIBLE
                 dateText.setTextColor(ContextCompat.getColor(context, R.color.black))
 
+
+                updateCurrentYearMonth(parent)
                 // API에서 해당 날짜에 대한 감정 상태 또는 이미지를 받아와서 아이콘 설정
                 val emotion = getEmotionForDate(text) // API 호출 예시
                 val isRecord = emotion != "neutral"
@@ -111,9 +116,9 @@ class EmotionCalendarGridAdapter(
                 }
                 dateIcon.visibility = View.VISIBLE // 아이콘 표시
 
-                binding.root.setOnClickListener{
+                binding.root.setOnClickListener {
                     val day = text.toInt()
-                    val formattedDate = "2025-${String.format("%02d", 1)}-${String.format("%02d", day)}"
+                    val formattedDate = "$currentYear-${String.format("%02d", currentMonth)}-${String.format("%02d", day)}"
                     listener?.onDateClick(formattedDate, isRecord)
                 }
             }
@@ -139,6 +144,16 @@ class EmotionCalendarGridAdapter(
             else -> "neutral"
         }
         return emotion
+    }
+    private fun updateCurrentYearMonth(parent: ViewGroup?) {
+        val fragment = (parent?.context as? FragmentActivity)?.supportFragmentManager?.fragments?.find {
+            it is EmotionCalendarFragment
+        } as? EmotionCalendarFragment
+
+        fragment?.let {
+            currentYear = it.currentYear
+            currentMonth = it.currentMonth
+        }
     }
 
 
