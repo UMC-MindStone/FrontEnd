@@ -159,6 +159,10 @@ object RetrofitClient {
     // 부정적 감정 관리 행동 추천
     val emotionStressService: EmotionStressService by lazy { retrofit.create(EmotionStressService::class.java) }
 
+    // 감정 일과 기록
+    val emotionNoteService: EmotionNoteService by lazy { retrofit.create(EmotionNoteService::class.java) }
+
+
     // ✅ SurveyService 제공 (AccessToken 자동 포함)
     val surveyService: SurveyService by lazy { retrofit.create(SurveyService::class.java) }
 

@@ -21,6 +21,10 @@ class Search3Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // ViewBinding 초기화
+        binding = ActivitySearch3Binding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         // 시스템 바(상태바, 네비게이션바) 공간 자동 조정
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -29,9 +33,7 @@ class Search3Activity : AppCompatActivity() {
         }
 
         userData = this.intent.getParcelableExtra("userData")
-        // ViewBinding 초기화
-        binding = ActivitySearch3Binding.inflate(layoutInflater)
-        setContentView(binding.root)
+
 
         viewModel = ViewModelProvider(this).get(SurveyViewModel::class.java)
 
