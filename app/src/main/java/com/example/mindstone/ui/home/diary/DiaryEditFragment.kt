@@ -91,7 +91,7 @@ class DiaryEditFragment : Fragment() {
 
             val date = LocalDate.of( currentYear, currentMonth, currentDay)
             val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            diaryViewModel.saveDiary(formattedDate, updatedText)
+            diaryViewModel.saveOrUpdateDiary(formattedDate, updatedText)
             requireActivity().supportFragmentManager.popBackStack()
         }
 
