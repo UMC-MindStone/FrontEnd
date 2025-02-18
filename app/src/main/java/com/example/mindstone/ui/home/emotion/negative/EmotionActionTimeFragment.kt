@@ -20,7 +20,7 @@ class EmotionActionTimeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
-
+    private var selectedAction: String? = null // 선택한 행동 저장
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +41,12 @@ class EmotionActionTimeFragment : Fragment() {
 
         // viewModel 가져오기
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
+        // 이전 Fragment에서 전달받은 선택한 행동 가져오기
+        selectedAction = arguments?.getString("SELECTED_ACTION")
+
+        // 행동을 time_question_tv에 적용
+        selectedAction?.let { binding.timeQuestionTv.text = "$it 을(를) 했어요." }
 
         setupHourPicker()
         setupMinutePicker()
@@ -92,6 +98,7 @@ class EmotionActionTimeFragment : Fragment() {
             arguments = Bundle().apply {
                 putInt("HOUR", selectedHour)
                 putInt("MINUTE", selectedMinute)
+                putString("SELECTED_ACTION", selectedAction)
             }
         }
         requireActivity().supportFragmentManager.beginTransaction()

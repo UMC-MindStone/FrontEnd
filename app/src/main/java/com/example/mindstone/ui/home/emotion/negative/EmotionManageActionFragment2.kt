@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -61,14 +63,20 @@ class EmotionManageActionFragment2 : Fragment() {
                 .commit()
         }
 
-        // '확인' 버튼 클릭 시 -> 행동 저장 후 EmotionManageActionFragment3로 이동
+
+
+        // '확인' 버튼 클릭 시 -> 입력한 행동을 EmotionActionTimeFragment로 전달 후 이동
         binding.actionConfirmTv.setOnClickListener {
             val userAction = binding.actionBubbleEt.text.toString().trim()
             if (userAction.isNotEmpty()) {
                 viewModel.setUserAction(userAction) // 뷰모델에 행동 저장
-                navigateToEmotionManageActionFragment3()
+                navigateToTimeFragment(userAction)
+            } else {
+                Toast.makeText(requireContext(), "행동을 입력해주세요!", Toast.LENGTH_SHORT).show()
             }
         }
+
+
 
         // 글자 수 제한 (최대 10줄까지)
         binding.actionBubbleEt.addTextChangedListener(object : TextWatcher {
@@ -86,6 +94,19 @@ class EmotionManageActionFragment2 : Fragment() {
 
     }
 
+    private fun navigateToTimeFragment(action: String) {
+        val fragment = EmotionActionTimeFragment().apply {
+            arguments = Bundle().apply {
+                putString("SELECTED_ACTION", action) // 직접 입력한 행동 전달
+            }
+        }
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+
     // 상태바 업데이트 (감정 비율에 따른 색상 적용)
     private fun updateStatusBar(emotionRatios: Map<String, Float>) {
         val sortedRatios = viewModel.getSortedEmotionRatios()
@@ -94,7 +115,7 @@ class EmotionManageActionFragment2 : Fragment() {
         }
 
         if (sortedColors.isNotEmpty()) {
-            // 📌 상태바 기존 이미지(src) 유지하면서 색상만 변경
+            // 상태바 기존 이미지(src) 유지하면서 색상만 변경
             val dominantColor = sortedColors.first()
             binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
         }
