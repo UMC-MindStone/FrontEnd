@@ -98,9 +98,29 @@ class EmotionManageActionFragment : Fragment() {
 
 
         // 말풍선 클릭 시 EmotionActionTimeFragment로 이동
+//        listOf(binding.actionBubbleCenter, binding.actionBubbleLeft, binding.actionBubbleRight).forEach { bubble ->
+//            bubble.setOnClickListener { navigateToFragment(EmotionActionTimeFragment()) }
+//        }
+
+        // 말풍선 클릭 시 선택한 행동을 EmotionActionTimeFragment로 전달, 이동
         listOf(binding.actionBubbleCenter, binding.actionBubbleLeft, binding.actionBubbleRight).forEach { bubble ->
-            bubble.setOnClickListener { navigateToFragment(EmotionActionTimeFragment()) }
+            bubble.setOnClickListener {
+                val selectedAction = bubble.text.toString() // 선택한 행동 가져오기
+                navigateToTimeFragment(selectedAction)
+            }
         }
+    }
+
+    private fun navigateToTimeFragment(action: String) {
+        val fragment = EmotionActionTimeFragment().apply {
+            arguments = Bundle().apply {
+                putString("SELECTED_ACTION", action) // 선택한 행동 전달
+            }
+        }
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
 

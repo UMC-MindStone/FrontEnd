@@ -1,9 +1,11 @@
 package com.example.mindstone.ui.home.emotion
 
+import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +22,7 @@ import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionFinalBinding
 import com.example.mindstone.ui.home.emotion.negative.EmotionManageChoiceFragment
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
+import com.example.mindstone.ui.search.SurveyViewModel
 
 class EmotionFinalFragment : Fragment() {
 
@@ -27,6 +30,8 @@ class EmotionFinalFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private var userName: String = "사용자"
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +49,11 @@ class EmotionFinalFragment : Fragment() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // ✅ SharedPreferences에서 사용자 이름 불러오기
+        userName = getUserNickname()
+        Log.d("DEBUG", "EmotionFinalFragment에서 받은 닉네임: $userName")
+
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
@@ -169,16 +179,24 @@ class EmotionFinalFragment : Fragment() {
             .commit()
     }
 
+
+    // ✅ SharedPreferences에서 닉네임 가져오기
+    private fun getUserNickname(): String {
+        val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("user_nickname", "사용자") ?: "사용자"
+    }
+
+
     // 감정에 맞는 상태 메시지를 반환하는 함수
     private fun getEmotionStatus(emotion: String?): String {
         return when (emotion) {
-            "행복" -> "밍돌은 지금 행복한 상태에요!"
-            "설렘" -> "밍돌은 지금 설레는 상태에요!"
-            "기쁨" -> "밍돌은 지금 기쁜 상태에요!"
-            "평온" -> "밍돌은 지금 평온한 상태에요!"
-            "화남" -> "밍돌은 지금 화나는 상태에요."
-            "우울" -> "밍돌은 지금 우울한 상태에요."
-            "슬픔" -> "밍돌은 지금 슬픈 상태에요."
+            "행복" -> "${userName}님은 지금 행복한 상태에요!"
+            "설렘" -> "${userName}님은 지금 설레는 상태에요!"
+            "기쁨" -> "${userName}님은 지금 기쁜 상태에요!"
+            "평온" -> "${userName}님은 지금 평온한 상태에요!"
+            "화남" -> "${userName}님은 지금 화나는 상태에요."
+            "우울" -> "${userName}님은 지금 우울한 상태에요."
+            "슬픔" -> "${userName}님은 지금 슬픈 상태에요."
             else -> ""
         }
     }

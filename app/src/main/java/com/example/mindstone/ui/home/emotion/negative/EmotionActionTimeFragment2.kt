@@ -23,6 +23,8 @@ class EmotionActionTimeFragment2 : Fragment() {
 
     private lateinit var viewModel: EmotionModel
 
+    private var selectedAction: String? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +44,13 @@ class EmotionActionTimeFragment2 : Fragment() {
         }
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
+        // 이전 Fragment에서 전달된 데이터 가져오기
+        selectedAction = arguments?.getString("SELECTED_ACTION")
+
+        // 행동을 time_question_tv에 적용
+        selectedAction?.let { binding.timeQuestionTv.text = "$it 을(를) 했어요." }
+
 
         val hour = arguments?.getInt("HOUR", 0) ?: 0
         val minute = arguments?.getInt("MINUTE", 0) ?: 0
