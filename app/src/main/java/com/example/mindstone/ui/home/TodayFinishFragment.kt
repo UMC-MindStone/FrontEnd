@@ -5,9 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mindstone.MainActivity
+import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentTodayFinishBinding
 import com.example.mindstone.ui.home.diary.DiaryLoadingFragment
 
@@ -37,14 +39,33 @@ class TodayFinishFragment : Fragment() {
 
         initClicker()
     }
+    val bundle = bundleOf(
+        "fragment" to "today"
+    )
 
     private fun initClicker(){
         binding.todayFinishRecordTv.setOnClickListener{
-            (activity as MainActivity).replaceFragment(HomeFragment())
+            val fragment = HomeFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
         }
 
         binding.todayFinishDiaryTv.setOnClickListener{
-            (activity as MainActivity).replaceFragment(DiaryLoadingFragment())
+            val fragment = DiaryLoadingFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
         }
     }
 
