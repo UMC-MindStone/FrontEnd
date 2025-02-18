@@ -5,6 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import java.time.LocalDate
@@ -23,8 +24,32 @@ interface DiarySevice {
     suspend fun saveDiary(
         @Body request: DiarySaveRequest
     ): Response<DiarySaveResponse>
+
+    @PATCH("api/diary")
+    suspend fun updateDiary(
+        @Body request: DiaryUpdateRequest
+    ): Response<DiaryUpdateResponse>
 }
 
+
+// 일기 수정
+data class DiaryUpdateRequest(
+    val diaryDTO: DiaryEditDTO,
+    val image: List<String>
+)
+
+data class DiaryEditDTO(
+    val date : String,
+    val emotion : String,
+    val content: String
+)
+
+data class DiaryUpdateResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: DiaryResult
+)
 // 일기 자동 생성 객체들
 
 data class DiaryCreateRequest(

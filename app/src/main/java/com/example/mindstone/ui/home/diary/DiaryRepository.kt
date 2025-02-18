@@ -3,6 +3,7 @@ package com.example.mindstone.ui.home.diary
 import android.util.Log
 import com.example.mindstone.data.remote.DiaryResult
 import com.example.mindstone.data.remote.DiarySaveRequest
+import com.example.mindstone.data.remote.DiaryUpdateRequest
 import com.example.mindstone.data.remote.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,4 +55,25 @@ object DiaryRepository {
             }
         }
     }
+    fun updateDiary(request: DiaryUpdateRequest, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = diaryService.updateDiary(request)
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    if (body != null && body.isSuccess) {
+                        onSuccess()
+                    } else {
+                        onFailure(body?.message ?: "Unknown error")
+                    }
+                } else {
+                    onFailure("Error: ${response.code()} ${response.message()}")
+                }
+            } catch (e: Exception) {
+                onFailure("Exception: ${e.message}")
+            }
+        }
+    }
+
 }
