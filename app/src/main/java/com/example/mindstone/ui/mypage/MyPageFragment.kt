@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mindstone.databinding.FragmentMypageBinding
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.mindstone.R
 
 class MyPageFragment : Fragment() {
 
@@ -30,19 +31,18 @@ class MyPageFragment : Fragment() {
 
         // RecyclerView 설정
         val adapter = MyPageOptionAdapter(options) { selectedOption ->
-            // 옵션 클릭 시 동작
             when (selectedOption) {
                 "계정 설정" -> {
-                    // 계정 설정 화면 이동
+                    replaceFragment(Account1Fragment()) // ✅ "계정 설정" 클릭 시 이동
                 }
                 "공지사항" -> {
-                    // 공지사항 화면 이동
+                //    replaceFragment(NoticeFragment()) // ✅ "공지사항" 클릭 시 이동
                 }
                 "고객센터" -> {
-                    // 고객센터 화면 이동
+                //    replaceFragment(CustomerServiceFragment()) // ✅ "고객센터" 클릭 시 이동
                 }
                 "정보" -> {
-                    // 정보 화면 이동
+                //    replaceFragment(InfoFragment()) // ✅ "정보" 클릭 시 이동
                 }
             }
         }
@@ -55,6 +55,13 @@ class MyPageFragment : Fragment() {
             LinearLayoutManager.VERTICAL
         )
         binding.rvMypageOptions.addItemDecoration(dividerItemDecoration)
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null) // ✅ 뒤로가기 버튼을 눌렀을 때 이전 화면으로 돌아갈 수 있도록 설정
+            .commit()
     }
 
     override fun onDestroyView() {

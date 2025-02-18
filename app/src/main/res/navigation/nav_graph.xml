@@ -4,19 +4,6 @@
     android:id="@+id/nav_graph">
 
     <fragment
-        android:id="@+id/account2Fragment"
-        android:name="com.example.mindstone.ui.mypage.Account2Fragment"
-        android:label="Account2Fragment">
-        <action
-            android:id="@+id/action_account2Fragment_to_account1Fragment"
-            app:destination="@id/account1Fragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/account1Fragment"
-        android:name="com.example.mindstone.ui.mypage.Account1Fragment"
-        android:label="Account1Fragment" />
-
-    <fragment
         android:id="@+id/diaryHomeFragment"
         android:name="com.example.mindstone.ui.home.diary.DiaryHomeFragment"
         >
@@ -48,4 +35,55 @@
             app:destination="@id/diaryImageFragment" />
     </fragment>
 
+    <!-- ✅ 계정 설정 (Account1Fragment) -->
+    <fragment
+        android:id="@+id/account1Fragment"
+        android:name="com.example.mindstone.ui.mypage.Account1Fragment"
+        android:label="Account Settings">
+
+        <!-- ✅ 비밀번호 설정 Fragment로 이동 -->
+        <action
+            android:id="@+id/action_account1Fragment_to_passwordFragment"
+            app:destination="@id/passwordFragment" />
+
+        <!-- ✅ 프로필 설정 Fragment로 이동 -->
+        <action
+            android:id="@+id/action_account1Fragment_to_account2Fragment"
+            app:destination="@id/account2Fragment" />
+
+        <!-- ✅ 기본 알림 설정 Fragment 추가 -->
+        <action
+            android:id="@+id/action_account1Fragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+
+        <!-- ✅ 감정 관리 방법 설정 Fragment 추가 -->
+        <action
+            android:id="@+id/action_account1Fragment_to_manageFragment"
+            app:destination="@id/manageFragment" />
+
+        <!-- ✅ 습관 설정 Fragment 추가 -->
+        <action
+            android:id="@+id/action_account1Fragment_to_hsettingFragment"
+            app:destination="@id/hsettingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/passwordFragment"
+        android:name="com.example.mindstone.ui.mypage.PasswordFragment"/>
+
+    <fragment
+        android:id="@+id/account2Fragment"
+        android:name="com.example.mindstone.ui.mypage.Account2Fragment"/>
+
+    <fragment
+        android:id="@+id/manageFragment"
+        android:name="com.example.mindstone.ui.mypage.ManageFragment"/>
+
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.mindstone.ui.mypage.SettingFragment"/>
+
+    <fragment
+        android:id="@+id/hsettingFragment"
+        android:name="com.example.mindstone.ui.mypage.HsettingFragment"/>
 </navigation>

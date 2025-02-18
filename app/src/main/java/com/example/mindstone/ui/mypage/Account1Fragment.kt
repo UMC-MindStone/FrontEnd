@@ -35,7 +35,6 @@ class Account1Fragment : Fragment() {
             "기본 알림 설정",
             "감정 관리 방법 설정",
             "습관 설정",
-            "친구 설정",
             "로그아웃",
             "계정 탈퇴"
         )
@@ -43,13 +42,24 @@ class Account1Fragment : Fragment() {
         adapter = Account1OptionAdapter(settings) { selectedSetting ->
             when (selectedSetting) {
                 "비밀번호 설정" -> {
-                    //    findNavController().navigate(R.id.action_accountSettingFragment_to_passwordSettingFragment)
+                    findNavController().navigate(R.id.action_account1Fragment_to_passwordFragment)
                 }
 
                 "프로필 설정" -> {
-                    //    findNavController().navigate(R.id.action_accountSettingFragment_to_profileSettingFragment)
+                    findNavController().navigate(R.id.action_account1Fragment_to_account2Fragment)
                 }
 
+                "기본 알림 설정" -> {
+                    findNavController().navigate(R.id.action_account1Fragment_to_settingFragment)
+                }
+
+                "감정 관리 방법 설정" -> {
+                    findNavController().navigate(R.id.action_account1Fragment_to_manageFragment)
+                }
+
+                "습관 설정" -> {
+                    findNavController().navigate(R.id.action_account1Fragment_to_hsettingFragment)
+                }
                 "로그아웃" -> {
                     // 로그아웃 처리
                 }
