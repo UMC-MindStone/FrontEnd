@@ -99,23 +99,46 @@ class EmotionActionTimeFragment2 : Fragment() {
         val duration = "$selectedHour 시간 $selectedMinute 분"
         val emotionEnglish = convertEmotionToEnglish(originalEmotion)
 
-        // ✅ 저장된 감정 ID 가져오기
+        // ✅ EmotionFinalFragment에서 저장한 감정 ID 가져오기
         val stressReasonId = getStressReasonId()
 
-        Log.d("EmotionActionTimeFragment2", "📩 부정 감정 관리 저장 요청: $emotionEnglish, 강도: $intensity, 행동: $selectedAction, 시간: $duration")
+        Log.d("EmotionActionTimeFragment2", "📩 부정 감정 관리 저장 요청: 감정=$emotionEnglish, 강도=$intensity, 행동=$selectedAction, 시간=$duration, 원인ID=$stressReasonId")
 
-        // ✅ API 호출 (객체가 아니라 개별 요소 전달)
+        // ✅ API 호출 (stressReason_id 포함)
         emotionNoteViewModel.postEmotionNoteStress(
             token = token,
             emotion = emotionEnglish,
             emotionFigure = intensity,
             content = selectedAction ?: "",
             time = duration,
-            stressReasonId = stressReasonId // ✅ 감정 원인 ID 포함
+            stressReason_id = stressReasonId, // ✅ 여기서 사용
+            recommend = true
         )
+
+        // ✅ API 응답 처리
+        emotionNoteViewModel.emotionNoteStressResponse.observe(viewLifecycleOwner) { response ->
+            if (response?.isSuccess == true) {
+                Log.d("EmotionActionTimeFragment2", "✅ 부정 감정 관리 데이터 저장 성공. ID: ${response.result?.id}")
+            } else {
+                Log.e("EmotionActionTimeFragment2", "❌ 부정 감정 관리 저장 실패: ${response?.message}")
+            }
+        }
 
         // ✅ SharedPreferences 초기화
         resetManagedNegativeEmotionFlag()
+    }
+
+    // ✅ 저장된 stressReasonId를 가져오는 함수
+    private fun getStressReasonId(): Int {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1
+    }
+
+
+    // ✅ 부정적 감정 관리 ID 저장
+    private fun saveStressReasonId(id: Int) {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt("stressReason_id", id).apply()
     }
 
 
@@ -123,12 +146,6 @@ class EmotionActionTimeFragment2 : Fragment() {
     private fun getOriginalEmotion(): String {
         val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("original_emotion", "") ?: ""
-    }
-
-    // ✅ 감정 ID를 SharedPreferences에서 불러오기
-    private fun getStressReasonId(): Int {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1 (없을 경우)
     }
 
     // ✅ 부정 감정 관리 플래그 초기화 (기록 유지 필요할 경우 주석 처리 가능)

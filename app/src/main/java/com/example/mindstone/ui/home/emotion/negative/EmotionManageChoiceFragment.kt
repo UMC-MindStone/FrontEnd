@@ -69,28 +69,41 @@ class EmotionManageChoiceFragment : Fragment() {
             val stressReasonId = viewModel.emotionReason.value ?: -1 // 감정을 유발한 원인 ID
 
             // ✅ 사용자가 관리하려는 원래 감정을 저장 (EmotionFinalFragment에서 참조)
-            saveOriginalEmotion(originalEmotion)
-            //saveStressReasonId(stressReasonId)
+//            saveOriginalEmotion(originalEmotion)
+//            saveStressReasonId(stressReasonId)
+
+            // ✅ 관리 행동 O 선택 시 recommend = true 저장
+            saveRecommendChoice(true)
 
             viewModel.setManageChoice("O") // 선택 데이터 저장
             navigateToEmotionManageActionFragment()
         }
 
-        binding.manageBubbleX.setOnClickListener { navigateToQuestion() }
+        binding.manageBubbleX.setOnClickListener {
+            // ✅ 관리 행동 X 선택 시 recommend = false 저장
+            saveRecommendChoice(false)
+            navigateToQuestion()
+        }
 
     }
 
-    // ✅ SharedPreferences에 원래 감정 저장
-    private fun saveOriginalEmotion(emotion: String) {
+    // ✅ SharedPreferences에 recommend 값 저장
+    private fun saveRecommendChoice(isRecommended: Boolean) {
         val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putString("original_emotion", emotion).apply()
+        sharedPreferences.edit().putBoolean("recommend", isRecommended).apply()
     }
 
-    // ✅ 부정 감정 원인 ID 저장
-    private fun saveStressReasonId(reasonId: Int) {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putInt("stress_reason_id", reasonId).apply()
-    }
+//    // ✅ SharedPreferences에 원래 감정 저장
+//    private fun saveOriginalEmotion(emotion: String) {
+//        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+//        sharedPreferences.edit().putString("original_emotion", emotion).apply()
+//    }
+//
+//    // ✅ 부정 감정 원인 ID 저장
+//    private fun saveStressReasonId(reasonId: Int) {
+//        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+//        sharedPreferences.edit().putInt("stress_reason_id", reasonId).apply()
+//    }
 
 
     // 상태바 색상 업데이트 (감정 비율 기반)

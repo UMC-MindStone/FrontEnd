@@ -25,8 +25,7 @@ class EmotionNoteViewModel : ViewModel() {
 
     private val emotionNoteService: EmotionNoteService = RetrofitClient.emotionNoteService
 
-
-    // 감정 일과 기록
+    // ✅ 일반 감정 기록 API
     fun postEmotionNote(token: String, emotion: String, emotionFigure: Int, content: String) {
         val request = EmotionNoteRequest(emotion, emotionFigure, content)
         emotionNoteService.postEmotionNote("Bearer $token", request).enqueue(object :
@@ -45,9 +44,16 @@ class EmotionNoteViewModel : ViewModel() {
         })
     }
 
-
-    // 부정적 감정 관리 기록
-    fun postEmotionNoteStress(token: String, emotion: String, emotionFigure: Int, content: String, time: String, stressReasonId: Int) {
+    // ✅ 부정적 감정 관리 기록 API
+    fun postEmotionNoteStress(
+        token: String,
+        emotion: String,
+        emotionFigure: Int,
+        content: String,
+        time: String,
+        stressReason_id: Int,
+        recommend: Boolean
+    ) {
         viewModelScope.launch {
             try {
                 val request = EmotionNoteStressRequest(
@@ -55,7 +61,8 @@ class EmotionNoteViewModel : ViewModel() {
                     emotionFigure = emotionFigure,
                     content = content,
                     time = time,
-                    stressReasonId = stressReasonId
+                    steressReson_id = stressReason_id,  // 스웨거 오타 변경되면 수정 필요 (stressReson_id)
+                    recommend = recommend
                 )
 
                 val response = RetrofitClient.emotionNoteService.postEmotionNoteStress(token, request)
@@ -75,4 +82,5 @@ class EmotionNoteViewModel : ViewModel() {
         }
     }
 }
+
 

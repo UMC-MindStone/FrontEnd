@@ -61,11 +61,17 @@ class EmotionFinalFragment : Fragment() {
         // SharedPreferences에서 사용자 이름 불러오기
         userName = getUserNickname()
 
-        // ✅ 감정 기록을 저장해야 하는지 확인
-        if (!hasManagedNegativeEmotion()) {
-            saveEmotionData() // 처음 감정을 선택한 경우에만 저장
+        // 최신 감정 데이터를 다시 설정 (업데이트가 보장되도록)
+        val selectedEmotion = viewModel.emotion.value ?: return
+        val intensity = viewModel.intensity.value ?: 0
+        val colorResId = viewModel.colorResId.value ?: R.color.calmColor // 기본 색상 설정
+        val isPositive = viewModel.isPositive.value ?: true
+
+        // ✅ 감정을 처음 선택한 경우 무조건 EmotionNote API 호출
+        if (!isAfterManagingNegativeEmotion()) {
+            saveEmotionData()  // ✅ 감정 저장 실행
         } else {
-            Log.d("EmotionFinalFragment", "🚫 부정적 감정을 관리한 후 선택한 감정은 저장하지 않음.")
+            Log.d("EmotionFinalFragment", "🚫 감정 선택이 아닌, 관리 행동 후 감정 평가 단계이므로 저장하지 않음.")
         }
 
         // ✅ API 응답 처리
@@ -89,12 +95,6 @@ class EmotionFinalFragment : Fragment() {
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
             binding.finalStatusTv.text = getEmotionStatus(emotion)
         }
-
-        // 최신 감정 데이터를 다시 설정 (업데이트가 보장되도록)
-        val selectedEmotion = viewModel.emotion.value ?: return
-        val intensity = viewModel.intensity.value ?: 0
-        val colorResId = viewModel.colorResId.value ?: R.color.calmColor // 기본 색상 설정
-        val isPositive = viewModel.isPositive.value ?: true
 
         viewModel.selectEmotion(selectedEmotion, colorResId, isPositive)
         hideAllEmotionViews()
@@ -252,22 +252,31 @@ class EmotionFinalFragment : Fragment() {
                 val emotionId = response.result?.id ?: return@observe
                 Log.d("EmotionFinalFragment", "✅ 감정 데이터 저장 성공. 저장된 ID: $emotionId")
 
-                // ✅ SharedPreferences에 감정 ID 저장
-                saveEmotionId(emotionId)
+                // ✅ SharedPreferences에 감정 ID 저장 (stressReason_id)
+                saveStressReasonId(emotionId)
             } else {
                 Log.e("EmotionFinalFragment", "❌ 감정 데이터 저장 실패: ${response?.message}")
             }
         }
     }
 
-    // ✅ SharedPreferences에 감정 ID 저장 (기존 함수 그대로 사용)
-    private fun saveEmotionId(id: Int) {
+    // ✅ SharedPreferences에 EmotionNote의 id 저장
+    private fun saveStressReasonId(id: Int) {
         val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
         sharedPreferences.edit().putInt("stress_reason_id", id).apply()
+        Log.d("EmotionFinalFragment", "✅ SharedPreferences에 stress_reason_id 저장됨: $id")
     }
 
-    // ✅ 부정적 감정을 관리한 후 다시 감정을 선택한 경우, EmotionNote API 호출 방지
-    private fun hasManagedNegativeEmotion(): Boolean {
+    // ✅ SharedPreferences에서 EmotionNote의 id 불러오기
+    private fun getStressReasonId(): Int {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1
+    }
+
+
+
+    // ✅ `EmotionNote` API 호출 여부 판단 함수 수정
+    private fun isAfterManagingNegativeEmotion(): Boolean {
         val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.contains("stress_action") && sharedPreferences.contains("stress_duration")
     }
