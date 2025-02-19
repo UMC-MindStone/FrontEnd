@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph">
 
     <fragment
@@ -73,7 +74,11 @@
 
     <fragment
         android:id="@+id/account2Fragment"
-        android:name="com.example.mindstone.ui.mypage.Account2Fragment"/>
+        android:name="com.example.mindstone.ui.mypage.Account2Fragment">
+        <action
+            android:id="@+id/action_account2Fragment_to_account1Fragment"
+            app:destination="@id/account1Fragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/manageFragment"
@@ -86,4 +91,5 @@
     <fragment
         android:id="@+id/hsettingFragment"
         android:name="com.example.mindstone.ui.mypage.HsettingFragment"/>
+
 </navigation>
