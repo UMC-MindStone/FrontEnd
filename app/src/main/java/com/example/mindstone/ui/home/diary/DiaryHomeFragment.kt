@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.ui.text.intl.Locale
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
@@ -14,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.mindstone.MainActivity
 import com.example.mindstone.R
+import com.example.mindstone.data.remote.DiaryCreateRequest
 import com.example.mindstone.databinding.FragmentDiaryHomeBinding
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -87,16 +89,69 @@ class DiaryHomeFragment : Fragment() {
         }
 
         binding.diaryTextEditIv.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
+            val fragment = DiaryEditFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putInt("currentYear", currentYear)
+                    putInt("currentMonth", currentMonth)
+                    putInt("currentDay", currentDay)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
         }
         binding.diaryBlankTextIv.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
+            val fragment = DiaryEditFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putInt("currentYear", currentYear)
+                    putInt("currentMonth", currentMonth)
+                    putInt("currentDay", currentDay)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
         }
         binding.diaryImgAddTransIv.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
+            val fragment = DiaryImgFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putInt("currentYear", currentYear)
+                    putInt("currentMonth", currentMonth)
+                    putInt("currentDay", currentDay)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
         }
         binding.diaryImgAddBlankIv.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
+            val fragment = DiaryImgFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putInt("currentYear", currentYear)
+                    putInt("currentMonth", currentMonth)
+                    putInt("currentDay", currentDay)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
+        }
+
+        binding.diaryRecreateIv.setOnClickListener {
+            val diaryRequest = DiaryCreateRequest(diaryViewModel.diaryText.toString(), date)
+            diaryViewModel.recreateDiary(requireContext(), date, "일기 재생성", diaryRequest,
+                onFailure = { error ->
+                Toast.makeText(requireContext(), "일기 생성 실패: $error", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
 
 //        if(fragment =="today"){
@@ -120,11 +175,6 @@ class DiaryHomeFragment : Fragment() {
         val dayOfWeek = date.dayOfWeek
         val dayName = dayOfWeek.getDisplayName(TextStyle.FULL, java.util.Locale.KOREAN)
         binding.diaryDateTv.text = "${currentMonth}월 ${currentDay}일 $dayName"
-
-
-
-
-
     }
 
     override fun onDestroy(){
