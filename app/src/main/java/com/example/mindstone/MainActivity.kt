@@ -6,29 +6,37 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.databinding.ActivityMainBinding
 import com.example.mindstone.ui.emotion.EmotionCalendarFragment
 import com.example.mindstone.ui.habit.HabitCalendarFragment
 import com.example.mindstone.ui.home.HomeFragment
+import com.example.mindstone.ui.home.TodayFinishFragment
+import com.example.mindstone.ui.home.TodayFinishViewModel
 import com.example.mindstone.ui.mypage.MyPageFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var todayViewModel: TodayFinishViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
         // 🔹 ViewBinding 초기화
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        // 특정 시간에 띄우기
+        todayViewModel = ViewModelProvider(this).get(TodayFinishViewModel::class.java)
+        todayViewModel.scheduleFragmentAtSpecificTime(this, 12, 11) //
+
         // 🔹 시스템 바 인셋 적용 (네비게이션 바 패딩 설정)
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigationView) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.updatePadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
@@ -48,6 +56,14 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+    }
+    fun showTargetFragment() {
+        val fragment = TodayFinishFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
+        Log.d("FragmentScheduler", "Fragment changed successfully!")
     }
 
     // 🔹 프래그먼트 변경 함수 (ViewBinding 적용)
