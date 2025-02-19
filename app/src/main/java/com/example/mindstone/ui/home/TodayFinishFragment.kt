@@ -1,6 +1,7 @@
 package com.example.mindstone.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.example.mindstone.MainActivity
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentTodayFinishBinding
 import com.example.mindstone.ui.home.diary.DiaryLoadingFragment
+import java.time.LocalDate
 
 
 class TodayFinishFragment : Fragment() {
@@ -39,16 +41,17 @@ class TodayFinishFragment : Fragment() {
 
         initClicker()
     }
-    val bundle = bundleOf(
-        "fragment" to "today"
-    )
+
+    private val date = LocalDate.now()
 
     private fun initClicker(){
         binding.todayFinishRecordTv.setOnClickListener{
             val fragment = HomeFragment().apply{
                 arguments = Bundle().apply {
                     putString("fragment", "today")
+                    putString("date", date.toString())
                 }
+                Log.d("TodayFinishFragment", date.toString())
             }
             parentFragmentManager.beginTransaction()
                 .addToBackStack(null)
@@ -60,7 +63,9 @@ class TodayFinishFragment : Fragment() {
             val fragment = DiaryLoadingFragment().apply{
                 arguments = Bundle().apply {
                     putString("fragment", "today")
+                    putString("date", date.toString())
                 }
+                Log.d("TodayFinishFragment", date.toString())
             }
             parentFragmentManager.beginTransaction()
                 .addToBackStack(null)

@@ -1,6 +1,8 @@
 package com.example.mindstone.ui.home.diary
 
 import android.util.Log
+import com.example.mindstone.data.remote.DiaryCreateRequest
+import com.example.mindstone.data.remote.DiaryCreateResponse
 import com.example.mindstone.data.remote.DiaryResult
 import com.example.mindstone.data.remote.DiaryUpdateRequest
 import com.example.mindstone.data.remote.RetrofitClient
@@ -106,6 +108,51 @@ object DiaryRepository {
             } catch (e: Exception) {
                 onFailure("Exception: ${e.message}")
             }
+        }
+    }
+
+    fun createDiary(diaryRequest: DiaryCreateRequest,
+                    onSuccess: (DiaryCreateResponse) -> Unit,
+                    onFailure: (String) -> Unit){
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = diaryService.createDiary(diaryRequest)
+                    if(response.isSuccessful ){
+                        val body= response.body()
+                        if(body != null && body.isSuccess){
+                            onSuccess(body)
+                        } else {
+                            onFailure(body?.message ?: "Unknown error")
+                        }
+                    } else {
+                        onFailure("Error: ${response.code()} ${response.message()}")
+                    }
+                }
+                catch (e: Exception){
+                    onFailure("Exception: ${e.message}")
+                }
+            }
+    }
+
+    suspend fun recreateDiary(
+        diaryRequest: DiaryCreateRequest,
+        onSuccess: (DiaryCreateResponse) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        try {
+            val response = diaryService.recreateDiary(diaryRequest)
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null && body.isSuccess) {
+                    onSuccess(body)
+                } else {
+                    onFailure(body?.message ?: "Unknown error")
+                }
+            } else {
+                onFailure("Error: ${response.code()} ${response.message()}")
+            }
+        } catch (e: Exception) {
+            onFailure("Exception: ${e.message}")
         }
     }
 

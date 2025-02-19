@@ -20,16 +20,20 @@ class DiaryEditFragment : Fragment() {
     private val diaryViewModel: DiaryViewModel by activityViewModels()
 
     private var beforeFragment : String = ""
-    private var currentYear = arguments?.getInt("currentYear")?: 2025
-    private var currentMonth = arguments?.getInt("currentMonth")?: 1
-    private var currentDay= arguments?.getInt("currentDay")?: 1
+    private var currentYear : Int = 2025
+    private var currentMonth :Int = 1
+    private var currentDay : Int = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { bundle ->
             beforeFragment = bundle.getString("fragment", "Unknown")
+            currentYear = bundle.getInt("currentYear")
+            currentMonth = bundle.getInt("currentMonth")
+            currentDay = bundle.getInt("currentDay")
         }
+        Log.d("date", "$currentYear, $currentMonth, $currentDay")
 
     }
 
@@ -63,7 +67,6 @@ class DiaryEditFragment : Fragment() {
         }
 
         initClicker()
-        changeVisibility()
         setObserver()
 
 
@@ -93,6 +96,7 @@ class DiaryEditFragment : Fragment() {
 
             val date = LocalDate.of( currentYear, currentMonth, currentDay)
             val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            Log.d("date", formattedDate)
 
             diaryViewModel.saveOrUpdateDiary(requireContext(),formattedDate, updatedText)
             requireActivity().supportFragmentManager.popBackStack()
@@ -104,8 +108,5 @@ class DiaryEditFragment : Fragment() {
         }
     }
 
-    private fun changeVisibility(){
-        // diary_edit_auto_tv와 diary_edit_date_tv의 visibility를 변경해주시면 됩니다.
-    }
 
 }

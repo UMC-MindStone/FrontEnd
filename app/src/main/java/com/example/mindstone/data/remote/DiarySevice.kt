@@ -20,12 +20,15 @@ interface DiarySevice {
     @POST("api/diary/create")
     suspend fun createDiary(@Body request: DiaryCreateRequest): Response<DiaryCreateResponse>
 
-    @GET("api/diary/{date}")
+    @POST("api/diary/recreate")
+    suspend fun recreateDiary(@Body request: DiaryCreateRequest): Response<DiaryCreateResponse>
+
+    @GET("api/diary/date/{date}")
     suspend fun getDiary(
         @Path("date") date: String
     ): Response<DiaryResponse>
 
-    @GET("api/diary/{diaryId}")
+    @GET("api/diary/id/{diaryId}")
     suspend fun getDiaryById(
         @Path("diaryId") diaryId: Int
     ) : Response<DiaryResponse>
@@ -103,13 +106,6 @@ data class DiaryResult(
     val content : String,
     val imagePath: Array<String>
 )
-
-
-// 일기 저장
-//data class DiarySaveRequest(
-//    val diaryDTO: DiaryDTO,
-//    val image: List<String>
-//)
 
 data class DiarySaveResponse(
     val isSuccess: Boolean,

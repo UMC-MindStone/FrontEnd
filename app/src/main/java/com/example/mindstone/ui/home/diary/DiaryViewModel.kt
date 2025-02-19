@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mindstone.MyApplication
 import com.example.mindstone.R
+import com.example.mindstone.data.remote.DiaryCreateRequest
 import com.example.mindstone.data.remote.DiaryDTO
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -30,6 +31,9 @@ class DiaryViewModel : ViewModel() {
 
     private val _diaryExists = MutableLiveData<Boolean>()
     val diaryExists : LiveData<Boolean> get() = _diaryExists
+
+    private val _diaryCreated = MutableLiveData<Boolean>().apply { value = false }
+    val diaryCreated : LiveData<Boolean> get() = _diaryCreated
 
 
     // 첨부된 이미지 데이터 리스트
@@ -134,8 +138,6 @@ class DiaryViewModel : ViewModel() {
         }
     }
 
-
-
     fun saveOrUpdateDiary(context:Context, date: String, title: String) {
         Log.d("Upload Debug", "✅ saveOrUpdateDiary() 함수 호출됨")
         viewModelScope.launch {
@@ -186,6 +188,56 @@ class DiaryViewModel : ViewModel() {
             }
         }
     }
+
+
+    fun createDiary(
+        context: Context,
+        date: String,
+        title: String,
+        diaryRequest: DiaryCreateRequest,
+        onFailure: (String) -> Unit
+    ) {
+        _diaryCreated.postValue(false)
+        viewModelScope.launch {
+            DiaryRepository.createDiary(diaryRequest,
+                onSuccess = { diary ->
+                    val diaryResult = diary.result
+                    _diaryText.postValue(diaryResult.content)
+                    _diaryCreated.postValue(true)
+
+                    // ✅ 일기 생성 후 자동으로 저장 함수 실행
+                    saveOrUpdateDiary(context, date, title)
+                },
+                onFailure = { error ->
+                    onFailure(error)
+                }
+            )
+        }
+    }
+
+    fun recreateDiary(
+        context: Context,
+        date: String,
+        title: String,
+        diaryRequest: DiaryCreateRequest,
+        onFailure: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            DiaryRepository.recreateDiary(diaryRequest,
+                onSuccess = { diary ->
+                    val diaryResult = diary.result
+                    _diaryText.postValue(diaryResult.content)
+
+                    // ✅ 일기 다시 생성 후 자동으로 저장 함수 실행
+                    saveOrUpdateDiary(context, date, title)
+                },
+                onFailure = { error ->
+                    onFailure(error)
+                }
+            )
+        }
+    }
+
 
     private fun getEmotionIcon(emotion: String): Int {
         return when (emotion) {
