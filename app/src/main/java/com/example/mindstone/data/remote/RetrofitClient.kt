@@ -17,22 +17,6 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     private const val BASE_URL = "http://15.165.241.217:8080/" // 서버 URL
 
-    // ✅ AccessToken 자동 추가 Interceptor
-//    private val authInterceptor = Interceptor { chain ->
-//        val original = chain.request()
-//        val requestBuilder = original.newBuilder()
-//        val noAuthEndpoints = listOf("/api/auth/login", "/api/auth/signup", "/api/auth/forgot-password")
-//
-//        if (!noAuthEndpoints.any { original.url.encodedPath.contains(it) }) {
-//            val accessToken = PreferenceManager.getAccessToken()
-//            if (!accessToken.isNullOrEmpty()) {
-//                requestBuilder.header("Authorization", "Bearer $accessToken")
-//            }
-//        }
-//        val request = requestBuilder.build()
-//        Log.d("API_AUTH", "✅ Final Request Header: ${request.headers}")
-//        chain.proceed(request)
-//    }
     private val authInterceptor = Interceptor { chain ->
         val original = chain.request()
         val requestBuilder = original.newBuilder()
