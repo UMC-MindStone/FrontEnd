@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionFinalBinding
 import com.example.mindstone.ui.home.HomeFragment
@@ -26,6 +27,7 @@ import com.example.mindstone.ui.home.emotion.negative.EmotionManageChoiceFragmen
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
 import com.example.mindstone.ui.home.emotion.view.EmotionNoteViewModel
 import com.example.mindstone.ui.search.SurveyViewModel
+import kotlinx.coroutines.launch
 
 class EmotionFinalFragment : Fragment() {
 
@@ -67,15 +69,37 @@ class EmotionFinalFragment : Fragment() {
         val colorResId = viewModel.colorResId.value ?: R.color.calmColor // 기본 색상 설정
         val isPositive = viewModel.isPositive.value ?: true
 
-        // ✅ 감정을 처음 선택한 경우 무조건 EmotionNote API 호출
-        if (!isAfterManagingNegativeEmotion()) {
-            saveEmotionData()  // ✅ 감정 저장 실행
-        } else {
-            Log.d("EmotionFinalFragment", "🚫 감정 선택이 아닌, 관리 행동 후 감정 평가 단계이므로 저장하지 않음.")
+        // ✅ 기존 옵저버 제거 후 새로 추가
+        emotionNoteViewModel.emotionNoteResponse.removeObservers(viewLifecycleOwner)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
+                Log.d("EmotionFinalFragment", "📥 API 응답 감지됨")
+
+                if (response?.isSuccess == true) {
+                    val emotionId = response.result?.id ?: return@observe
+                    Log.d("EmotionFinalFragment", "✅ 감정 데이터 저장 성공. 저장된 ID: $emotionId")
+
+                    // ✅ SharedPreferences에 감정 ID 저장 (stressReason_id)
+                    saveStressReasonId(emotionId)
+                } else {
+                    Log.e("EmotionFinalFragment", "❌ 감정 데이터 저장 실패: ${response?.message}")
+                }
+            }
         }
+
+
+//        // ✅ 감정을 처음 선택한 경우 무조건 EmotionNote API 호출
+//        if (!isAfterManagingNegativeEmotion()) {
+//            saveEmotionData()  // ✅ 감정 저장 실행
+//        } else {
+//            Log.d("EmotionFinalFragment", "🚫 감정 선택이 아닌, 관리 행동 후 감정 평가 단계이므로 저장하지 않음.")
+//        }
 
         // ✅ API 응답 처리
         observeApiResponse()
+
+        saveEmotionData()
 
 
         // 상태바 색상 업데이트
@@ -115,6 +139,70 @@ class EmotionFinalFragment : Fragment() {
             "설렘" -> animateSelectedEmotion(binding.finalExcitedIv, binding.finalExcitedLl, binding.excitedIntensityTv, intensity, true)
         }
 
+    }
+
+    // ✅ API 응답 처리 (중복 호출 방지)
+    private fun observeApiResponse() {
+        emotionNoteViewModel.emotionNoteResponse.removeObservers(viewLifecycleOwner)
+        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
+            if (response?.isSuccess == true) {
+                Log.d("EmotionNoteAPI", "✅ 감정 데이터 저장 성공: $response")
+            } else {
+                Log.e("EmotionNoteAPI", "❌ 감정 데이터 저장 실패: ${response?.message}")
+            }
+        }
+    }
+
+    // ✅ 일반 감정 저장 (EmotionNote API)
+    private fun saveEmotionData() {
+        val token = getUserToken()
+        val emotionKorean = viewModel.emotion.value ?: return
+        val intensity = viewModel.intensity.value ?: return
+        val reason = viewModel.emotionReason.value ?: ""
+        val emotionEnglish = convertEmotionToEnglish(emotionKorean)
+
+        Log.d("EmotionFinalFragment", "📩 EmotionNote API 호출 시작")
+        Log.d("EmotionFinalFragment", "📨 요청 데이터 - 감정: $emotionEnglish, 강도: $intensity, 이유: $reason")
+
+        emotionNoteViewModel.postEmotionNote(token, emotionEnglish, intensity, reason)
+
+        Log.d("EmotionFinalFragment", "📩 EmotionNote API 호출 완료 후 observe 실행 예정")
+
+//        // ✅ API 응답을 받아 ID 저장
+//        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
+//            Log.d("EmotionFinalFragment", "📥 API 응답 감지됨")
+//
+//            if (response?.isSuccess == true) {
+//                val emotionId = response.result?.id ?: return@observe
+//                Log.d("EmotionFinalFragment", "✅ 감정 데이터 저장 성공. 저장된 ID: $emotionId")
+//
+//                // ✅ SharedPreferences에 감정 ID 저장 (stressReason_id)
+//                saveStressReasonId(emotionId)
+//            } else {
+//                Log.e("EmotionFinalFragment", "❌ 감정 데이터 저장 실패: ${response?.message}")
+//            }
+//        }
+    }
+
+    // ✅ SharedPreferences에 EmotionNote의 id 저장
+    private fun saveStressReasonId(id: Int) {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt("stress_reason_id", id).apply()
+        Log.d("EmotionFinalFragment", "✅ SharedPreferences에 stress_reason_id 저장됨: $id")
+    }
+
+    // ✅ SharedPreferences에서 EmotionNote의 id 불러오기
+    private fun getStressReasonId(): Int {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1
+    }
+
+
+
+    // ✅ `EmotionNote` API 호출 여부 판단 함수 수정
+    private fun isAfterManagingNegativeEmotion(): Boolean {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.contains("stress_action") && sharedPreferences.contains("stress_duration")
     }
 
 
@@ -226,72 +314,6 @@ class EmotionFinalFragment : Fragment() {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
             .commit()
-    }
-
-
-    // ✅ SharedPreferences에서 원래 감정을 가져옴
-    private fun getOriginalEmotion(): String {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("original_emotion", "") ?: ""
-    }
-
-
-    // ✅ 일반 감정 저장 (EmotionNote API)
-    private fun saveEmotionData() {
-        val token = getUserToken()
-        val emotionKorean = viewModel.emotion.value ?: return
-        val intensity = viewModel.intensity.value ?: return
-        val reason = viewModel.emotionReason.value ?: ""
-        val emotionEnglish = convertEmotionToEnglish(emotionKorean)
-
-        emotionNoteViewModel.postEmotionNote(token, emotionEnglish, intensity, reason)
-
-        // ✅ API 응답을 받아 ID 저장
-        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
-            if (response?.isSuccess == true) {
-                val emotionId = response.result?.id ?: return@observe
-                Log.d("EmotionFinalFragment", "✅ 감정 데이터 저장 성공. 저장된 ID: $emotionId")
-
-                // ✅ SharedPreferences에 감정 ID 저장 (stressReason_id)
-                saveStressReasonId(emotionId)
-            } else {
-                Log.e("EmotionFinalFragment", "❌ 감정 데이터 저장 실패: ${response?.message}")
-            }
-        }
-    }
-
-    // ✅ SharedPreferences에 EmotionNote의 id 저장
-    private fun saveStressReasonId(id: Int) {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putInt("stress_reason_id", id).apply()
-        Log.d("EmotionFinalFragment", "✅ SharedPreferences에 stress_reason_id 저장됨: $id")
-    }
-
-    // ✅ SharedPreferences에서 EmotionNote의 id 불러오기
-    private fun getStressReasonId(): Int {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1
-    }
-
-
-
-    // ✅ `EmotionNote` API 호출 여부 판단 함수 수정
-    private fun isAfterManagingNegativeEmotion(): Boolean {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.contains("stress_action") && sharedPreferences.contains("stress_duration")
-    }
-
-
-    // ✅ API 응답 처리 (중복 호출 방지)
-    private fun observeApiResponse() {
-        emotionNoteViewModel.emotionNoteResponse.removeObservers(viewLifecycleOwner)
-        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
-            if (response?.isSuccess == true) {
-                Log.d("EmotionNoteAPI", "✅ 감정 데이터 저장 성공: $response")
-            } else {
-                Log.e("EmotionNoteAPI", "❌ 감정 데이터 저장 실패: ${response?.message}")
-            }
-        }
     }
 
 

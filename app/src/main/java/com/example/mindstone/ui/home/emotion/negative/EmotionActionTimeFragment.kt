@@ -68,17 +68,6 @@ class EmotionActionTimeFragment : Fragment() {
                 ContextCompat.getColorStateList(requireContext(), colorResId)
         }
 
-//        // "확인" 버튼 클릭 시 -> 데이터 저장 + Fragment 이동
-//        binding.timeConfirmTv.setOnClickListener {
-//            val selectedHour = binding.timeHourNp.value
-//            val selectedMinute = binding.timeMinuteNp.displayedValues[binding.timeMinuteNp.value].toInt()
-//            // ✅ 사용자가 선택한 행동 시간 저장
-//            saveStressDuration(formatDuration(selectedHour, selectedMinute))
-//            // ViewModel에 저장
-//            viewModel.setActivityTime(selectedHour, selectedMinute)
-//            // 데이터 전달하면서 Fragment 이동
-//            navigateToTime2(selectedHour, selectedMinute)
-//        }
 
         // ✅ "확인" 버튼 클릭 시 데이터 저장 + Fragment 이동
         binding.timeConfirmTv.setOnClickListener {

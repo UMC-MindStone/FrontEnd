@@ -84,7 +84,6 @@ class EmotionActionTimeFragment2 : Fragment() {
         // 받아온 시간으로 TextView 업데이트
         binding.timeTv.text = String.format("%d시간 %02d분", hour, minute)
 
-
         // 1초간 정지 후 애니메이션 실행
         Handler(Looper.getMainLooper()).postDelayed({
             animateActionBubble()
@@ -94,10 +93,10 @@ class EmotionActionTimeFragment2 : Fragment() {
     // ✅ EmotionNoteStress API 호출 (관리 행동 저장)
     private fun saveEmotionStressData() {
         val token = getUserToken()
-        val originalEmotion = getOriginalEmotion() // 처음 선택한 감정
+        val emotion = viewModel.emotion.value ?: return
         val intensity = viewModel.intensity.value ?: return
         val duration = "$selectedHour 시간 $selectedMinute 분"
-        val emotionEnglish = convertEmotionToEnglish(originalEmotion)
+        val emotionEnglish = convertEmotionToEnglish(emotion)
 
         // ✅ EmotionFinalFragment에서 저장한 감정 ID 가져오기
         val stressReasonId = getStressReasonId()
@@ -111,7 +110,7 @@ class EmotionActionTimeFragment2 : Fragment() {
             emotionFigure = intensity,
             content = selectedAction ?: "",
             time = duration,
-            stressReason_id = stressReasonId, // ✅ 여기서 사용
+            stressReason_id = stressReasonId,
             recommend = true
         )
 
@@ -141,12 +140,6 @@ class EmotionActionTimeFragment2 : Fragment() {
         sharedPreferences.edit().putInt("stressReason_id", id).apply()
     }
 
-
-    // ✅ 원래 감정 가져오기
-    private fun getOriginalEmotion(): String {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("original_emotion", "") ?: ""
-    }
 
     // ✅ 부정 감정 관리 플래그 초기화 (기록 유지 필요할 경우 주석 처리 가능)
     private fun resetManagedNegativeEmotionFlag() {
