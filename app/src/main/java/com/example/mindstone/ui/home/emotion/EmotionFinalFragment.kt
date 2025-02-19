@@ -273,8 +273,9 @@ class EmotionFinalFragment : Fragment() {
     }
 
 
-    // ✅ API 응답 처리
+    // ✅ API 응답 처리 (중복 호출 방지)
     private fun observeApiResponse() {
+        emotionNoteViewModel.emotionNoteResponse.removeObservers(viewLifecycleOwner)
         emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
             if (response?.isSuccess == true) {
                 Log.d("EmotionNoteAPI", "✅ 감정 데이터 저장 성공: $response")
