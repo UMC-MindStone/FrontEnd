@@ -1,5 +1,6 @@
 package com.example.mindstone.ui.home.emotion.negative
 
+import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.Editable
@@ -16,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionManageAction2Binding
+import com.example.mindstone.ui.home.HomeQuestionFragment
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
 
 class EmotionManageActionFragment2 : Fragment() {
@@ -70,12 +72,15 @@ class EmotionManageActionFragment2 : Fragment() {
             val userAction = binding.actionBubbleEt.text.toString().trim()
             if (userAction.isNotEmpty()) {
                 viewModel.setUserAction(userAction) // 뷰모델에 행동 저장
+                saveStressAction(userAction) // ✅ 입력한 행동 저장
                 navigateToTimeFragment(userAction)
             } else {
                 Toast.makeText(requireContext(), "행동을 입력해주세요!", Toast.LENGTH_SHORT).show()
             }
         }
 
+        // '취소' 클릭 -> 행동 질문 화면으로 이동
+        binding.actionCancel.setOnClickListener { navigateToQuestion() }
 
 
         // 글자 수 제한 (최대 10줄까지)
@@ -94,7 +99,19 @@ class EmotionManageActionFragment2 : Fragment() {
 
     }
 
+
+    // ✅ SharedPreferences에 사용자가 입력한 행동 저장
+    private fun saveStressAction(action: String) {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("stress_action", action).apply()
+    }
+
+
     private fun navigateToTimeFragment(action: String) {
+
+        // ✅ 관리 행동을 SharedPreferences에 저장
+        saveStressAction(action)
+
         val fragment = EmotionActionTimeFragment().apply {
             arguments = Bundle().apply {
                 putString("SELECTED_ACTION", action) // 직접 입력한 행동 전달
@@ -135,6 +152,16 @@ class EmotionManageActionFragment2 : Fragment() {
             .addToBackStack(null)
             .commit()
     }
+
+    // 행동 질문 화면으로 이동 (HomeQuestionFragment)
+    private fun navigateToQuestion() {
+        val fragment = HomeQuestionFragment()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

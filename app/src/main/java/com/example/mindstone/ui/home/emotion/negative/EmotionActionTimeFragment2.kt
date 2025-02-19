@@ -1,9 +1,11 @@
 package com.example.mindstone.ui.home.emotion.negative
 
+import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +13,13 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionActionTime2Binding
+import com.example.mindstone.domain.entity.EmotionNoteStressRequest
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
+import com.example.mindstone.ui.home.emotion.view.EmotionNoteViewModel
 
 class EmotionActionTimeFragment2 : Fragment() {
 
@@ -22,8 +27,11 @@ class EmotionActionTimeFragment2 : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private val emotionNoteViewModel: EmotionNoteViewModel by viewModels()
 
     private var selectedAction: String? = null
+    private var selectedHour: Int = 0
+    private var selectedMinute: Int = 0
 
 
     override fun onCreateView(
@@ -45,11 +53,17 @@ class EmotionActionTimeFragment2 : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
-        // 이전 Fragment에서 전달된 데이터 가져오기
+        // 전달받은 데이터 가져오기
         selectedAction = arguments?.getString("SELECTED_ACTION")
+        selectedHour = arguments?.getInt("HOUR", 0) ?: 0
+        selectedMinute = arguments?.getInt("MINUTE", 0) ?: 0
 
         // 행동을 time_question_tv에 적용
         selectedAction?.let { binding.timeQuestionTv.text = "$it 을(를) 했어요." }
+
+        // ✅ EmotionNoteStress API 호출
+        saveEmotionStressData()
+
 
 
         val hour = arguments?.getInt("HOUR", 0) ?: 0
@@ -76,6 +90,77 @@ class EmotionActionTimeFragment2 : Fragment() {
             animateActionBubble()
         }, 1000)
     }
+
+    // ✅ EmotionNoteStress API 호출 (관리 행동 저장)
+    private fun saveEmotionStressData() {
+        val token = getUserToken()
+        val originalEmotion = getOriginalEmotion() // 처음 선택한 감정
+        val intensity = viewModel.intensity.value ?: return
+        val duration = "$selectedHour 시간 $selectedMinute 분"
+        val emotionEnglish = convertEmotionToEnglish(originalEmotion)
+
+        // ✅ 저장된 감정 ID 가져오기
+        val stressReasonId = getStressReasonId()
+
+        Log.d("EmotionActionTimeFragment2", "📩 부정 감정 관리 저장 요청: $emotionEnglish, 강도: $intensity, 행동: $selectedAction, 시간: $duration")
+
+        // ✅ API 호출 (객체가 아니라 개별 요소 전달)
+        emotionNoteViewModel.postEmotionNoteStress(
+            token = token,
+            emotion = emotionEnglish,
+            emotionFigure = intensity,
+            content = selectedAction ?: "",
+            time = duration,
+            stressReasonId = stressReasonId // ✅ 감정 원인 ID 포함
+        )
+
+        // ✅ SharedPreferences 초기화
+        resetManagedNegativeEmotionFlag()
+    }
+
+
+    // ✅ 원래 감정 가져오기
+    private fun getOriginalEmotion(): String {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("original_emotion", "") ?: ""
+    }
+
+    // ✅ 감정 ID를 SharedPreferences에서 불러오기
+    private fun getStressReasonId(): Int {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1 (없을 경우)
+    }
+
+    // ✅ 부정 감정 관리 플래그 초기화 (기록 유지 필요할 경우 주석 처리 가능)
+    private fun resetManagedNegativeEmotionFlag() {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit()
+            .remove("stress_action")
+            .remove("stress_duration")
+            .remove("original_emotion")
+            .remove("stress_reason_id")
+            .apply()
+    }
+
+    private fun getUserToken(): String {
+        val sharedPreferences = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("auth_token", "") ?: ""
+    }
+
+    // 감정 종류 변환 (한글 → 영어)
+    private fun convertEmotionToEnglish(emotion: String): String {
+        return when (emotion) {
+            "화남" -> "ANGER"
+            "우울" -> "DEPRESSION"
+            "슬픔" -> "SAD"
+            "평온" -> "CALM"
+            "기쁨" -> "JOY"
+            "설렘" -> "THRILL"
+            "행복" -> "HAPPINESS"
+            else -> "CALM" // 기본값 (예외 방지)
+        }
+    }
+
 
     // 상태바 업데이트 (감정 비율에 따른 색상 적용)
     private fun updateStatusBar(emotionRatios: Map<String, Float>) {

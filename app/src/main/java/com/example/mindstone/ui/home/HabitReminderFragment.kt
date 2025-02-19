@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentHabitReminderBinding
+import com.example.mindstone.ui.habit.HabitCheckFragment
 
 class HabitReminderFragment : Fragment() {
 
@@ -33,7 +34,19 @@ class HabitReminderFragment : Fragment() {
             insets
         }
 
-        binding.reminderBubbleO.setOnClickListener { navigateToHomeFragment() }
+        binding.reminderBubbleX.setOnClickListener { navigateToHomeFragment() }
+
+        binding.reminderBubbleO.setOnClickListener { navigateToRecord() }
+
+    }
+
+    // 습관 기록 화면으로 이동
+    private fun navigateToRecord() {
+        val fragment = HabitCheckFragment()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null) // 백스택에 추가하여 뒤로 가기 가능
+            .commit()
     }
 
     private fun navigateToHomeFragment() {
