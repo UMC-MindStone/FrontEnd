@@ -1,7 +1,11 @@
 package com.example.mindstone.data.remote
 
+import com.example.mindstone.domain.entity.DeleteAccountRequest
+import com.example.mindstone.domain.entity.DeleteAccountResponse
 import com.example.mindstone.domain.entity.FindEmailRequest
 import com.example.mindstone.domain.entity.FindEmailResponse
+import com.example.mindstone.domain.entity.LogoutRequest
+import com.example.mindstone.domain.entity.LogoutResponse
 import com.example.mindstone.domain.entity.RefreshTokenRequest
 import com.example.mindstone.domain.entity.RefreshTokenResponse
 import com.example.mindstone.domain.entity.TempPasswordRequest
@@ -21,4 +25,12 @@ interface AuthService {
     // Refresh Token 요청 API
     @POST("/api/auth/refreshToken")
     fun refreshAccessToken(@Body request: RefreshTokenRequest): Call<RefreshTokenResponse>
+
+    // 계정 탈퇴 API
+    @POST("/api/members/deactivate")
+    fun deleteAccount(@Body request: DeleteAccountRequest): Call<DeleteAccountResponse>
+
+    // 로그아웃 API
+    @POST("/api/auth/logout")
+    fun logout(@Body request: LogoutRequest): Call<LogoutResponse>
 }
