@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         // 특정 시간에 띄우기
         todayViewModel = ViewModelProvider(this).get(TodayFinishViewModel::class.java)
-        todayViewModel.scheduleFragmentAtSpecificTime(this, 18, 12) //
+        todayViewModel.scheduleFragmentAtSpecificTime(this, 20, 52) //
 
          //🔹 시스템 바 인셋 적용 (네비게이션 바 패딩 설정)
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigationView) { v, insets ->

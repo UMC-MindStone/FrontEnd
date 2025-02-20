@@ -65,8 +65,10 @@ class DiaryLoadingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         if(fragment == "today"){
             //오늘의 날짜 띄우기
+            updateEmotion()
             updateDateUI()
         } else{
             updateDateUI()
@@ -121,6 +123,10 @@ class DiaryLoadingFragment : Fragment() {
             .replace(R.id.main_container, fragment)
             .commit()
 
+    }
+
+    private fun updateEmotion(){
+        // EmotionViewmodel에 있는 actualEmotionRatios 를 diaryViewmodel.fetchEmotion에 넣어주기
     }
 
 }
