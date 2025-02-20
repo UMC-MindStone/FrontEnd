@@ -1,4 +1,4 @@
-package com.example.mindstone.ui.home.emotion.view
+package com.example.mindstone
 
 import android.content.Context
 import android.graphics.Canvas
@@ -28,11 +28,21 @@ class EmotionStatusBar @JvmOverloads constructor(
     // 감정 비율을 저장할 리스트
     private var emotionRatios: List<Float> = emptyList()
 
-    // 감정 데이터를 업데이트하는 함수
+    init {
+        setBackgroundResource(R.drawable.ic_status_bar) // ✅ 배경을 코드에서 강제 적용
+        clipToOutline = true // ✅ 배경 외곽을 유지
+    }
+
+
+    // 감정 데이터를 업데이트하는 함수 (비율 기반으로 조정)
     fun updateEmotions(emotionMap: Map<String, Float>) {
         val total = emotionMap.values.sum()
-        emotionRatios = emotionOrder.map { emotionMap[it] ?: 0f }.map { it / total }
-        invalidate() // 다시 그리기 요청
+        emotionRatios = if (total > 0) {
+            emotionOrder.map { emotionMap[it] ?: 0f }.map { it / total } // ✅ 비율 계산
+        } else {
+            List(emotionOrder.size) { 0f }
+        }
+        invalidate() // UI 다시 그리기 요청
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -42,16 +52,25 @@ class EmotionStatusBar @JvmOverloads constructor(
         val barHeight = height.toFloat()
         var startX = 0f
 
+        // ✅ 정확한 비율을 반영하여 감정 상태바를 그림
         for (i in emotionRatios.indices) {
             val emotion = emotionOrder[i]
-            val paint = Paint().apply {
-                color = emotionColorMap[emotion] ?: Color.BLACK // 감정에 맞는 색상 적용
-                style = Paint.Style.FILL
+            val ratio = emotionRatios[i] // ✅ 감정별 비율 적용
+
+            if (ratio > 0) { // 감정 비율이 0보다 클 때만 그림
+                val paint = Paint().apply {
+                    color = emotionColorMap[emotion] ?: Color.BLACK
+                    style = Paint.Style.FILL
+                    isAntiAlias = true
+                }
+                val widthFraction = barWidth * ratio // ✅ 비율에 맞게 너비 조정
+                canvas.drawRect(startX, 0f, startX + widthFraction, barHeight, paint)
+                startX += widthFraction
             }
-            val widthFraction = barWidth * emotionRatios[i]
-            canvas.drawRect(startX, 0f, startX + widthFraction, barHeight, paint)
-            startX += widthFraction
         }
     }
+
+
 }
+
 

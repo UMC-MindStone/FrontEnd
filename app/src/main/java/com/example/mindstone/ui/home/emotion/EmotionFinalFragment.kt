@@ -19,6 +19,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionFinalBinding
 import com.example.mindstone.ui.home.HomeFragment
@@ -26,15 +28,16 @@ import com.example.mindstone.ui.home.emotion.negative.EmotionManageChoiceFragmen
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
 import com.example.mindstone.ui.home.emotion.view.EmotionNoteViewModel
 import com.example.mindstone.ui.search.SurveyViewModel
+import kotlinx.coroutines.launch
 
 class EmotionFinalFragment : Fragment() {
 
     private var _binding: FragmentEmotionFinalBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var emotionStatusBar: EmotionStatusBar
     private lateinit var viewModel: EmotionModel
     private val emotionNoteViewModel: EmotionNoteViewModel by viewModels()
-
 
     private var userName: String = "사용자"
 
@@ -49,9 +52,6 @@ class EmotionFinalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
-
         // 시스템 바(상태바, 네비게이션바) 공간 자동 조정
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -59,31 +59,58 @@ class EmotionFinalFragment : Fragment() {
             insets
         }
 
-        // ✅ SharedPreferences에서 사용자 이름 불러오기
-        userName = getUserNickname()
+        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
 
-        // ✅ saveEmotionData()가 중복 호출되지 않도록 체크 후 실행
-        if (emotionNoteViewModel.emotionNoteResponse.hasActiveObservers().not()) {
-            saveEmotionData()
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
+            emotionStatusBar.updateEmotions(emotionRatios)
         }
 
-        // ✅ API 응답 처리
-        emotionNoteViewModel.emotionNoteResponse.removeObservers(viewLifecycleOwner) // LiveData observer 중복 방지
-        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
-            if (response?.isSuccess == true) {
-                Log.d("EmotionNoteAPI", "✅ 감정 데이터 저장 성공: $response")
-            } else {
-                Log.e("EmotionNoteAPI", "❌ 감정 데이터 저장 실패: ${response?.message}")
+
+        // SharedPreferences에서 사용자 이름 불러오기
+        userName = getUserNickname()
+
+        // 최신 감정 데이터를 다시 설정 (업데이트가 보장되도록)
+        val selectedEmotion = viewModel.emotion.value ?: return
+        val intensity = viewModel.intensity.value ?: 0
+        val colorResId = viewModel.colorResId.value ?: R.color.calmColor // 기본 색상 설정
+        val isPositive = viewModel.isPositive.value ?: true
+
+        // ✅ 기존 옵저버 제거 후 새로 추가
+        emotionNoteViewModel.emotionNoteResponse.removeObservers(viewLifecycleOwner)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
+                Log.d("EmotionFinalFragment", "📥 API 응답 감지됨")
+
+                if (response?.isSuccess == true) {
+                    val emotionId = response.result?.id ?: return@observe
+                    Log.d("EmotionFinalFragment", "✅ 감정 데이터 저장 성공. 저장된 ID: $emotionId")
+
+                    // ✅ SharedPreferences에 감정 ID 저장 (stressReason_id)
+                    saveStressReasonId(emotionId)
+                } else {
+                    Log.e("EmotionFinalFragment", "❌ 감정 데이터 저장 실패: ${response?.message}")
+                }
             }
         }
 
 
-        // 상태바 색상 업데이트
-        viewModel.emotionRatios.removeObservers(viewLifecycleOwner)
-        viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
-            updateStatusBar(emotionRatios)
-        }
+
+        // ✅ API 응답 처리
+        observeApiResponse()
+
+        saveEmotionData()
+
+
+//        // 상태바 색상 업데이트
+//        viewModel.emotionRatios.removeObservers(viewLifecycleOwner)
+//        viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
+//            updateStatusBar(emotionRatios)
+//        }
 
         // 캐릭터 변경 (최근 감정 기준)
         viewModel.recentEmotion.removeObservers(viewLifecycleOwner)
@@ -97,15 +124,8 @@ class EmotionFinalFragment : Fragment() {
             binding.finalStatusTv.text = getEmotionStatus(emotion)
         }
 
-        // 최신 감정 데이터를 다시 설정 (업데이트가 보장되도록)
-        val selectedEmotion = viewModel.emotion.value ?: return
-        val intensity = viewModel.intensity.value ?: 0
-        val colorResId = viewModel.colorResId.value ?: R.color.calmColor // 기본 색상 설정
-        val isPositive = viewModel.isPositive.value ?: true
-
         viewModel.selectEmotion(selectedEmotion, colorResId, isPositive)
         hideAllEmotionViews()
-
 
         // 부정적 감정이면 finalStatus2Tv 보이기
         if (selectedEmotion in listOf("화남", "우울", "슬픔")) {
@@ -125,20 +145,75 @@ class EmotionFinalFragment : Fragment() {
 
     }
 
+    // ✅ API 응답 처리 (중복 호출 방지)
+    private fun observeApiResponse() {
+        emotionNoteViewModel.emotionNoteResponse.removeObservers(viewLifecycleOwner)
+        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
+            if (response?.isSuccess == true) {
+                Log.d("EmotionNoteAPI", "✅ 감정 데이터 저장 성공: $response")
+                val emotionId = response.result?.id ?: return@observe
+                saveStressReasonId(emotionId)
+            } else {
+                Log.e("EmotionNoteAPI", "❌ 감정 데이터 저장 실패: ${response?.message}")
+            }
+        }
+    }
+
+    // ✅ 일반 감정 저장 (EmotionNote API)
     private fun saveEmotionData() {
-        val token = getUserToken() // 사용자 인증 토큰 가져오기
+        val token = getUserToken()
         val emotionKorean = viewModel.emotion.value ?: return
         val intensity = viewModel.intensity.value ?: return
         val reason = viewModel.emotionReason.value ?: ""
-
-        // ✅ 감정 종류를 API에서 요구하는 영어 형식으로 변환
         val emotionEnglish = convertEmotionToEnglish(emotionKorean)
 
-        // ✅ API 요청 보내기
+        Log.d("EmotionFinalFragment", "📩 EmotionNote API 호출 시작")
+        Log.d("EmotionFinalFragment", "📨 요청 데이터 - 감정: $emotionEnglish, 강도: $intensity, 이유: $reason")
+
         emotionNoteViewModel.postEmotionNote(token, emotionEnglish, intensity, reason)
+
+        Log.d("EmotionFinalFragment", "📩 EmotionNote API 호출 완료 후 observe 실행 예정")
+
+//        // ✅ API 응답을 받아 ID 저장
+//        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
+//            Log.d("EmotionFinalFragment", "📥 API 응답 감지됨")
+//
+//            if (response?.isSuccess == true) {
+//                val emotionId = response.result?.id ?: return@observe
+//                Log.d("EmotionFinalFragment", "✅ 감정 데이터 저장 성공. 저장된 ID: $emotionId")
+//
+//                // ✅ SharedPreferences에 감정 ID 저장 (stressReason_id)
+//                saveStressReasonId(emotionId)
+//            } else {
+//                Log.e("EmotionFinalFragment", "❌ 감정 데이터 저장 실패: ${response?.message}")
+//            }
+//        }
     }
 
-    // ✅ 감정 종류 변환 (한글 → 영어)
+    // ✅ SharedPreferences에 EmotionNote의 id 저장
+    private fun saveStressReasonId(id: Int) {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt("stress_reason_id", id).apply()
+        Log.d("EmotionFinalFragment", "✅ SharedPreferences에 stress_reason_id 저장됨: $id")
+    }
+
+    // ✅ SharedPreferences에서 EmotionNote의 id 불러오기
+    private fun getStressReasonId(): Int {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1
+    }
+
+
+
+    // ✅ `EmotionNote` API 호출 여부 판단 함수 수정
+    private fun isAfterManagingNegativeEmotion(): Boolean {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.contains("stress_action") && sharedPreferences.contains("stress_duration")
+    }
+
+
+
+    // 감정 종류 변환 (한글 → 영어)
     private fun convertEmotionToEnglish(emotion: String): String {
         return when (emotion) {
             "화남" -> "ANGER"
@@ -152,7 +227,6 @@ class EmotionFinalFragment : Fragment() {
         }
     }
 
-
     private fun getUserToken(): String {
         val sharedPreferences = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("auth_token", "") ?: ""
@@ -160,16 +234,16 @@ class EmotionFinalFragment : Fragment() {
 
 
     // 상태바 색상 업데이트 (감정 비율 기반)
-    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
-        val sortedRatios = viewModel.getSortedEmotionRatios()
-        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
-            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
-        }
-        if (sortedColors.isNotEmpty()) {
-            val dominantColor = sortedColors.first()
-            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
-        }
-    }
+//    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
+//        val sortedRatios = viewModel.getSortedEmotionRatios()
+//        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
+//            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
+//        }
+//        if (sortedColors.isNotEmpty()) {
+//            val dominantColor = sortedColors.first()
+//            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
+//        }
+//    }
 
 
     // 최근 감정 기반 캐릭터 변경
@@ -254,6 +328,18 @@ class EmotionFinalFragment : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("user_nickname", "사용자") ?: "사용자"
     }
+
+    // ✅ SharedPreferences 초기화
+    private fun resetManagedNegativeEmotionFlag() {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit()
+            .remove("stress_action")
+            .remove("stress_duration")
+            .remove("original_emotion")
+            .apply()
+    }
+
+
 
 
     // 감정에 맞는 상태 메시지를 반환하는 함수
