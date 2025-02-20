@@ -2,6 +2,7 @@ package com.example.mindstone.domain.entity
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.io.NotActiveException
 
 @Parcelize
 data class Habit(
@@ -30,3 +31,43 @@ data class DailyRecord(
     val completedHabits: Int,
     val totalHabits: Int
 )
+
+data class HabitHistoryResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: List<HabitHistory>
+)
+
+data class HabitHistoryTest(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: Int
+)
+
+data class HabitHistory(
+    var habitId: Long? = null,
+    var comment: String? = null,
+    var startTime: String? = null,
+    var endTime: String? = null,
+    var habitColor: String? = null
+)
+
+data class HabitTotalResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: List<HabitTotal>
+)
+
+data class HabitTotal(
+    val habitId: Long,
+    val title: String,
+    val dayOfWeek: String,
+    val alarmTime: String,
+    val targetTime: Int,
+    val isActive: Boolean,
+    val habitColor: String
+)
+

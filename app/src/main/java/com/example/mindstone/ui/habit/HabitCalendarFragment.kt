@@ -89,14 +89,16 @@ class HabitCalendarFragment : Fragment() {
         // 날짜 표시: 2025 1월 형식으로 설정
         binding.habitCalendarDateTv.text = "${currentYear} ${currentMonth}월"
 
-        viewModel.calendarData.observe(viewLifecycleOwner, { response ->
+
+        viewModel.calendarData.observe(viewLifecycleOwner) { response ->
             // 응답이 성공적일 때
             if (response?.isSuccess == true) {
                 val recordPercentage = response.result?.recordPercentage ?: 0
                 val fullAchievementCount = response.result?.fullAchievementCount ?: 0
 
                 // 습관 달성 퍼센트와 100% 달성 횟수를 텍스트에 반영
-                binding.habitCalendarStatTv.text = "${currentMonth}월에는 ${recordPercentage}% 기록했고\n습관 행동 100%를 ${fullAchievementCount}번 달성했어요."
+                binding.habitCalendarStatTv.text =
+                    "${currentMonth}월에는 ${recordPercentage}% 기록했고\n습관 행동 100%를 ${fullAchievementCount}번 달성했어요."
 
                 // 그 외에도 dailyRecords가 있으면 데이터를 처리하거나 UI 갱신을 할 수 있습니다.
                 response.result?.dailyRecords?.let { dailyRecords ->
@@ -104,10 +106,11 @@ class HabitCalendarFragment : Fragment() {
                 }
             } else {
                 // 실패 시 에러 메시지 표시
-                binding.habitCalendarStatTv.text = "${currentMonth}월에는 0% 기록했고\n습관 행동 100%를 0번 달성했어요."
+                binding.habitCalendarStatTv.text =
+                    "${currentMonth}월에는 0% 기록했고\n습관 행동 100%를 0번 달성했어요."
                 Log.e("HabitCalendar", "Data load failed: ${response?.message}")
             }
-        })
+        }
     }
 
     private fun onDateClicked(date: String) {
