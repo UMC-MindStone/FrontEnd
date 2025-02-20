@@ -344,11 +344,13 @@
 
 
 
-        <com.example.mindstone.EmotionStatusBar
+        <LinearLayout
             android:id="@+id/status_bar"
             android:background="@drawable/ic_status_bar"
-            android:layout_width="300dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
             android:layout_marginTop="55dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"

@@ -50,7 +50,7 @@ class HomeFragment : Fragment() {
         }
 
         // 새로운 감정을 선택할 때 기존 데이터 초기화 (기존 감정 비율 & 최근 감정 유지)
-        resetEmotionData()
+        //resetEmotionData()
 
         // 캐릭터 변경 (최근 감정 기준)
         viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
@@ -66,6 +66,12 @@ class HomeFragment : Fragment() {
         binding.homeSadIv.setOnClickListener { navigateToIntensity("슬픔", R.color.sadColor, false) }
     }
 
+    // 최근 감정 기반 캐릭터 변경
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion)
+        binding.homeIconIv.setImageResource(characterResId)
+    }
+
     // 새로운 감정 선택 시 기존 데이터 초기화 (기존 감정 비율 & 최근 감정 유지)
     private fun resetEmotionData() {
         viewModel.setEmotionData("", 0, false) // 감정 기본값 초기화
@@ -73,13 +79,10 @@ class HomeFragment : Fragment() {
         viewModel.setEmotionReason("") // 감정 이유 초기화
     }
 
-    // 최근 감정 기반 캐릭터 변경
-    private fun updateCharacter(emotion: String) {
-        val characterResId = viewModel.getCharacterForEmotion(emotion)
-        binding.homeIconIv.setImageResource(characterResId)
-    }
-
     private fun navigateToIntensity(emotion: String, colorResId: Int, isPositive: Boolean) {
+        // 감정을 선택할 때만 기존 데이터 초기화
+        resetEmotionData()
+
         // ViewModel에 데이터 저장 (Fragment 간 데이터 공유)
         viewModel.setEmotionData(emotion, colorResId, isPositive)
         viewModel.resetIntensity() // 감정 강도를 기본값(10)으로 초기화

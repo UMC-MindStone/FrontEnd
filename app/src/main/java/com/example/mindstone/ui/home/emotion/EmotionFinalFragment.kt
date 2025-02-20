@@ -62,19 +62,20 @@ class EmotionFinalFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
 
-        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+        //emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
 
         // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
         viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
-            emotionStatusBar.updateEmotions(emotionRatios)
+            updateStatusBar(emotionRatios) // ✅ 감정 상태바 업데이트
         }
+
 
 
         // SharedPreferences에서 사용자 이름 불러오기
         userName = getUserNickname()
 
         // 최신 감정 데이터를 다시 설정 (업데이트가 보장되도록)
-        val selectedEmotion = viewModel.emotion.value ?: return
+        val selectedEmotion = viewModel.recentEmotion.value ?: return
         val intensity = viewModel.intensity.value ?: 0
         val colorResId = viewModel.colorResId.value ?: R.color.calmColor // 기본 색상 설정
         val isPositive = viewModel.isPositive.value ?: true
@@ -124,7 +125,7 @@ class EmotionFinalFragment : Fragment() {
             binding.finalStatusTv.text = getEmotionStatus(emotion)
         }
 
-        viewModel.selectEmotion(selectedEmotion, colorResId, isPositive)
+        viewModel.selectEmotion(selectedEmotion, intensity, colorResId, isPositive)
         hideAllEmotionViews()
 
         // 부정적 감정이면 finalStatus2Tv 보이기
@@ -185,20 +186,6 @@ class EmotionFinalFragment : Fragment() {
         Log.d("EmotionFinalFragment", "✅ SharedPreferences에 stress_reason_id 저장됨: $id")
     }
 
-    // ✅ SharedPreferences에서 EmotionNote의 id 불러오기
-    private fun getStressReasonId(): Int {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1
-    }
-
-
-
-    // ✅ `EmotionNote` API 호출 여부 판단 함수 수정
-    private fun isAfterManagingNegativeEmotion(): Boolean {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.contains("stress_action") && sharedPreferences.contains("stress_duration")
-    }
-
 
 
     // 감정 종류 변환 (한글 → 영어)
@@ -232,6 +219,41 @@ class EmotionFinalFragment : Fragment() {
 //            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
 //        }
 //    }
+
+    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
+        binding.statusBar.removeAllViews() // 기존 뷰 제거
+
+        val totalRatio = emotionRatios.values.sum() // 전체 비율 합산 (100% 기준)
+
+        for ((emotion, value) in emotionRatios) {
+            val ratio = value / totalRatio // ✅ 전체 대비 비율 계산
+
+            val view = View(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    0, // 가로 크기 자동 조절
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    ratio // ✅ 감정 비율을 weight로 설정
+                )
+                setBackgroundColor(getEmotionColor(emotion)) // 감정 색상 적용
+            }
+            binding.statusBar.addView(view)
+        }
+    }
+
+    private fun getEmotionColor(emotion: String): Int {
+        return when (emotion) {
+            "행복" -> ContextCompat.getColor(requireContext(), R.color.happinessColor)
+            "설렘" -> ContextCompat.getColor(requireContext(), R.color.thrillColor)
+            "기쁨" -> ContextCompat.getColor(requireContext(), R.color.joyColor)
+            "평온" -> ContextCompat.getColor(requireContext(), R.color.calmColor)
+            "화남" -> ContextCompat.getColor(requireContext(), R.color.angerColor)
+            "우울" -> ContextCompat.getColor(requireContext(), R.color.depressionColor)
+            "슬픔" -> ContextCompat.getColor(requireContext(), R.color.sadColor)
+            else -> ContextCompat.getColor(requireContext(), R.color.calmColor)
+        }
+    }
+
+
 
 
     // 최근 감정 기반 캐릭터 변경

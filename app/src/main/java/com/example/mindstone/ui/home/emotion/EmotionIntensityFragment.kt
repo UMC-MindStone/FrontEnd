@@ -54,8 +54,7 @@ class EmotionIntensityFragment : Fragment() {
         }
 
 
-        // 상태바 & 캐릭터 업데이트
-        viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
+        // 캐릭터 업데이트
         viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
 
 
@@ -95,23 +94,6 @@ class EmotionIntensityFragment : Fragment() {
         }
     }
 
-
-//    // 새로운 감정 선택 시 감정 강도 초기화 (감정 비율과 최근 감정은 유지)
-//    private fun resetEmotionIntensity() {
-//        viewModel.resetIntensity() // 감정 강도만 초기화 (기존 데이터 유지)
-//    }
-
-    // 상태바 업데이트 (감정 비율에 따른 색상 적용)
-    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
-        val sortedRatios = viewModel.getSortedEmotionRatios()
-        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
-            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
-        }
-        if (sortedColors.isNotEmpty()) {
-            val dominantColor = sortedColors.first()
-            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
-        }
-    }
 
     // 최근 감정 기반 캐릭터 변경
     private fun updateCharacter(emotion: String) {
