@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mindstone.databinding.FragmentMypageBinding
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.mindstone.R
+import com.example.mindstone.data.local.PreferenceManager
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.domain.entity.UserResponse
 import retrofit2.Call
