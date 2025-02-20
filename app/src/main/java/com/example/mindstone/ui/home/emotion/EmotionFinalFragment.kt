@@ -174,20 +174,8 @@ class EmotionFinalFragment : Fragment() {
 
         Log.d("EmotionFinalFragment", "📩 EmotionNote API 호출 완료 후 observe 실행 예정")
 
-//        // ✅ API 응답을 받아 ID 저장
-//        emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
-//            Log.d("EmotionFinalFragment", "📥 API 응답 감지됨")
-//
-//            if (response?.isSuccess == true) {
-//                val emotionId = response.result?.id ?: return@observe
-//                Log.d("EmotionFinalFragment", "✅ 감정 데이터 저장 성공. 저장된 ID: $emotionId")
-//
-//                // ✅ SharedPreferences에 감정 ID 저장 (stressReason_id)
-//                saveStressReasonId(emotionId)
-//            } else {
-//                Log.e("EmotionFinalFragment", "❌ 감정 데이터 저장 실패: ${response?.message}")
-//            }
-//        }
+        // 저장 후 이유 초기화
+        viewModel.setEmotionReason(".")
     }
 
     // ✅ SharedPreferences에 EmotionNote의 id 저장
