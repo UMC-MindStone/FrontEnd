@@ -5,28 +5,6 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Habit(
-    val title: String,
-    val dayOfWeek: String,
-    val alarmTime: String,
-    val targetTime: Int,
-    val isActive: Boolean,
-    val habitColor: String
-) : Parcelable
-
-
-//@Parcelize
-//data class UserData(
-//    @SerializedName("nickname") var nickname: String = "",
-//    @SerializedName("birthDate") var birthDate: String = "",
-//    @SerializedName("job") var job: String = "",
-//    @SerializedName("mbti") var mbti: String = "",
-//    @SerializedName("stressManagement") var stressManagement: String = "",
-//    @SerializedName("hobbies") var hobbies: String = "",
-//    @SerializedName("specialSkills") var specialSkills: String = "",
-//    @SerializedName("habits") var habits: ArrayList<Habit>? = null // ✅ null 허용
-//) : Parcelable
-@Parcelize
 data class UserData(
     @SerializedName("nickname") var nickname: String = "",
     @SerializedName("birthDate") var birthDate: String = "",
@@ -36,5 +14,17 @@ data class UserData(
     @SerializedName("hobbies") var hobbies: List<String> = listOf(),  // ✅ 다시 List로 변경!
     @SerializedName("specialSkills") var specialSkills: List<String> = listOf(),  // ✅ 다시 List로 변경!
     @SerializedName("habits") var habits: List<Habit>? = null // ✅ null 허용
-) : Parcelable
+) : Parcelable {
+
+    @Parcelize
+    data class Habit(
+        val title: String,
+        val dayOfWeek: String,
+        val alarmTime: String,
+        val targetTime: Int,
+        val isActive: Boolean,
+        val habitColor: String
+    ) : Parcelable
+
+}
 
