@@ -157,4 +157,8 @@ object RetrofitClient {
     val habitCalendarService: HabitCalendarService = retrofit.create(HabitCalendarService::class.java)
 
     val emotionCalendarService: EmotionCalendarService = retrofit.create(EmotionCalendarService::class.java)
+
+    // ✅ MyPageService 추가
+    val myPageService: MyPageService by lazy { retrofit.create(MyPageService::class.java) }
+
 }
