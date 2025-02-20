@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionManageAction2Binding
 import com.example.mindstone.ui.home.HomeQuestionFragment
@@ -26,6 +27,7 @@ class EmotionManageActionFragment2 : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private lateinit var emotionStatusBar: EmotionStatusBar
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -44,11 +46,17 @@ class EmotionManageActionFragment2 : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
-        // 상태바 업데이트 (감정 비율 기반)
-        viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
 
-        // 캐릭터 업데이트 (최근 감정 기반)
-        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
+            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+        }
+
+        // 캐릭터 업데이트
+        viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
+            updateCharacter(dominantEmotion)
+        }
 
         // 감정에 따라 말풍선 배경 색 변경
         viewModel.colorResId.observe(viewLifecycleOwner) { colorResId ->
@@ -99,6 +107,11 @@ class EmotionManageActionFragment2 : Fragment() {
 
     }
 
+    // 감정 캐릭터 업데이트
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm_charac
+        binding.iconIv.setImageResource(characterResId)
+    }
 
     // ✅ SharedPreferences에 사용자가 입력한 행동 저장
     private fun saveStressAction(action: String) {
@@ -121,27 +134,6 @@ class EmotionManageActionFragment2 : Fragment() {
             .replace(R.id.main_container, fragment)
             .addToBackStack(null)
             .commit()
-    }
-
-
-    // 상태바 업데이트 (감정 비율에 따른 색상 적용)
-    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
-        val sortedRatios = viewModel.getSortedEmotionRatios()
-        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
-            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
-        }
-
-        if (sortedColors.isNotEmpty()) {
-            // 상태바 기존 이미지(src) 유지하면서 색상만 변경
-            val dominantColor = sortedColors.first()
-            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
-        }
-    }
-
-    // 최근 감정 기반 캐릭터 변경
-    private fun updateCharacter(emotion: String) {
-        val characterResId = viewModel.getCharacterForEmotion(emotion)
-        binding.iconIv.setImageResource(characterResId)
     }
 
     // EmotionManageActionFragment3로 이동하는 함수

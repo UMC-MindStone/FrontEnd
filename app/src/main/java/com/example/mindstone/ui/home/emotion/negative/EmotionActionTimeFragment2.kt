@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionActionTime2Binding
 import com.example.mindstone.domain.entity.EmotionNoteStressRequest
@@ -27,6 +28,7 @@ class EmotionActionTimeFragment2 : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private lateinit var emotionStatusBar: EmotionStatusBar
     private val emotionNoteViewModel: EmotionNoteViewModel by viewModels()
 
     private var selectedAction: String? = null
@@ -53,6 +55,18 @@ class EmotionActionTimeFragment2 : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
+            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+        }
+
+        // 캐릭터 업데이트
+        viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
+            updateCharacter(dominantEmotion)
+        }
+
         // 전달받은 데이터 가져오기
         selectedAction = arguments?.getString("SELECTED_ACTION")
         selectedHour = arguments?.getInt("HOUR", 0) ?: 0
@@ -68,12 +82,6 @@ class EmotionActionTimeFragment2 : Fragment() {
 
         val hour = arguments?.getInt("HOUR", 0) ?: 0
         val minute = arguments?.getInt("MINUTE", 0) ?: 0
-
-        // 상태바 업데이트 (감정 비율 기반)
-        viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
-
-        // 캐릭터 업데이트 (최근 감정 기반)
-        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
 
         // 감정에 따른 말풍선 색상 적용
         viewModel.colorResId.observe(viewLifecycleOwner) { colorResId ->
@@ -127,6 +135,13 @@ class EmotionActionTimeFragment2 : Fragment() {
         resetManagedNegativeEmotionFlag()
     }
 
+
+    // 감정 캐릭터 업데이트
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm_charac
+        binding.iconIv.setImageResource(characterResId)
+    }
+
     // ✅ 저장된 stressReasonId를 가져오는 함수
     private fun getStressReasonId(): Int {
         val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
@@ -171,24 +186,6 @@ class EmotionActionTimeFragment2 : Fragment() {
         }
     }
 
-
-    // 상태바 업데이트 (감정 비율에 따른 색상 적용)
-    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
-        val sortedRatios = viewModel.getSortedEmotionRatios()
-        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
-            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
-        }
-        if (sortedColors.isNotEmpty()) {
-            val dominantColor = sortedColors.first()
-            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
-        }
-    }
-
-    // 최근 감정 기반 캐릭터 변경
-    private fun updateCharacter(emotion: String) {
-        val characterResId = viewModel.getCharacterForEmotion(emotion)
-        binding.iconIv.setImageResource(characterResId)
-    }
 
     private fun animateActionBubble() {
         binding.timeTv.animate()

@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionIntensity2Binding
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
@@ -24,6 +25,7 @@ class EmotionIntensityFragment2 : Fragment() {
 
     private var isAfterAction = false
 
+    private lateinit var emotionStatusBar: EmotionStatusBar
     private lateinit var viewModel: EmotionModel
 
     override fun onCreateView(
@@ -43,15 +45,23 @@ class EmotionIntensityFragment2 : Fragment() {
             insets
         }
 
+        // ViewModel을 Activity 범위에서 가져옴 (여러 Fragment에서 공유 가능)
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
+            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+        }
+
+        // 캐릭터 업데이트
+        viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
+            updateCharacter(dominantEmotion)
+        }
 
         // `isAfterAction` 여부 확인
         isAfterAction = arguments?.getBoolean("isAfterAction", false) ?: false
-
-        // 상태바 & 캐릭터 업데이트
-        viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
-        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
-
 
         // 감정에 맞는 질문 업데이트
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
@@ -77,18 +87,6 @@ class EmotionIntensityFragment2 : Fragment() {
     }
 
 
-
-    // 상태바 업데이트 (감정 비율에 따른 색상 적용)
-    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
-        val sortedRatios = viewModel.getSortedEmotionRatios()
-        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
-            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
-        }
-        if (sortedColors.isNotEmpty()) {
-            val dominantColor = sortedColors.first()
-            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
-        }
-    }
 
     // 최근 감정 기반 캐릭터 변경
     private fun updateCharacter(emotion: String) {

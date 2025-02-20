@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.data.local.PreferenceManager
 import com.example.mindstone.data.local.PreferenceManager.getAccessToken
@@ -25,6 +26,7 @@ class EmotionManageActionFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private lateinit var emotionStatusBar: EmotionStatusBar
     private lateinit var viewModel2: EmotionManageActionViewModel  // API 연동 관련 뷰모델
 
     private var otherActionClickCount = 0 // '다른 방법 찾기' 버튼 클릭 횟수
@@ -47,14 +49,22 @@ class EmotionManageActionFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
         viewModel2 = ViewModelProvider(this).get(EmotionManageActionViewModel::class.java)
 
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
+            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+        }
+
+        // 캐릭터 업데이트
+        viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
+            updateCharacter(dominantEmotion)
+        }
+
         // API 호출을 위한 최신 accessToken 가져오기
         fetchAndCallAPI()
 
 
-        // 상태바 업데이트 (감정 비율 기반)
-        viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
-        // 캐릭터 업데이트 (최근 감정 기반)
-        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
         // 감정에 따라 말풍선 배경 색 변경
         viewModel.colorResId.observe(viewLifecycleOwner) { colorResId ->
             val colorStateList = ContextCompat.getColorStateList(requireContext(), colorResId)
@@ -105,6 +115,13 @@ class EmotionManageActionFragment : Fragment() {
             }
         }
 
+    }
+
+
+    // 감정 캐릭터 업데이트
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm_charac
+        binding.iconIv.setImageResource(characterResId)
     }
 
     // ✅ SharedPreferences에 사용자가 선택한 행동 저장
@@ -168,24 +185,6 @@ class EmotionManageActionFragment : Fragment() {
             binding.actionBubbleLeft.text = recommendations[1]
             binding.actionBubbleRight.text = recommendations[2]
         }
-    }
-
-    // 상태바 업데이트 (감정 비율에 따른 색상 적용)
-    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
-        val sortedRatios = viewModel.getSortedEmotionRatios()
-        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
-            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
-        }
-        if (sortedColors.isNotEmpty()) {
-            val dominantColor = sortedColors.first()
-            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
-        }
-    }
-
-    // 최근 감정 기반 캐릭터 변경
-    private fun updateCharacter(emotion: String) {
-        val characterResId = viewModel.getCharacterForEmotion(emotion)
-        binding.iconIv.setImageResource(characterResId)
     }
 
     // Fragment 전환 함수

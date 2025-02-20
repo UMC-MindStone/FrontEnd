@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionReasonBinding
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
@@ -21,6 +22,7 @@ class EmotionReasonFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private lateinit var emotionStatusBar: EmotionStatusBar
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -37,11 +39,20 @@ class EmotionReasonFragment : Fragment() {
             insets
         }
 
+        // ViewModel을 Activity 범위에서 가져옴 (여러 Fragment에서 공유 가능)
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
-        // 캐릭터 변경 (최근 감정 기준)
-        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
 
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
+            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+        }
+
+        // 캐릭터 업데이트
+        viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
+            updateCharacter(dominantEmotion)
+        }
 
         // 감정에 따라 말풍선 배경 색 변경
         viewModel.colorResId.observe(viewLifecycleOwner) { colorResId ->
@@ -78,9 +89,11 @@ class EmotionReasonFragment : Fragment() {
         }
     }
 
-    // 최근 감정 기반 캐릭터 변경
+
+    // 감정 캐릭터 업데이트
     private fun updateCharacter(emotion: String) {
-        val characterResId = viewModel.getCharacterForEmotion(emotion)
+        val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm_charac
         binding.iconIv.setImageResource(characterResId)
     }
+
 }
