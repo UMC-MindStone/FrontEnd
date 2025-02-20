@@ -7,9 +7,6 @@ import com.example.mindstone.R
 
 class EmotionModel : ViewModel() {
 
-    // 감정 비율 (상태바 업데이트용)
-    private val _emotionRatios = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
-    val emotionRatios: LiveData<MutableMap<String, Float>> get() = _emotionRatios
 
     // 최근 선택한 감정 (캐릭터 상태 변경을 위해)
     private val _recentEmotion = MutableLiveData<String>()
@@ -55,6 +52,11 @@ class EmotionModel : ViewModel() {
     val afterActionEmotion: LiveData<String> get() = _afterActionEmotion
 
 
+    // 커스텀뷰 이용
+    // 감정 비율 (상태바 업데이트용)
+    private val _emotionRatios = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
+    val emotionRatios: LiveData<MutableMap<String, Float>> get() = _emotionRatios
+
 
     // 감정 데이터 저장
     fun setEmotionData(emotion: String, colorResId: Int, isPositive: Boolean) {
@@ -63,31 +65,79 @@ class EmotionModel : ViewModel() {
         _isPositive.value = isPositive
     }
 
-    // 감정 선택 (감정이 추가될 때마다 비율 조정 - 상태바, 캐릭터 변경)
+//    // 감정 선택 (감정이 추가될 때마다 비율 조정 - 상태바, 캐릭터 변경)
+//    fun selectEmotion(emotion: String, colorResId: Int, isPositive: Boolean) {
+//        _recentEmotion.value = emotion
+//        _colorResId.value = colorResId
+//        _isPositive.value = isPositive
+//
+//        updateEmotionRatios(emotion)
+//    }
+
     fun selectEmotion(emotion: String, colorResId: Int, isPositive: Boolean) {
-        _recentEmotion.value = emotion
+        _emotion.value = emotion
         _colorResId.value = colorResId
         _isPositive.value = isPositive
 
-        updateEmotionRatios(emotion)
+        // 선택된 감정을 상태바 비율에 반영 (Float 변환 추가)
+        addEmotion(emotion, (_intensity.value ?: 10).toFloat())
     }
 
     // 감정 비율 업데이트
-    private fun updateEmotionRatios(newEmotion: String) {
+//    fun addEmotion(emotion: String, value: Float) {
+//        val currentRatios = _emotionRatios.value ?: mutableMapOf()
+//
+//        // ✅ 기존 감정 값이 있으면 누적, 없으면 새로 추가
+//        currentRatios[emotion] = (currentRatios[emotion] ?: 0f) + value
+//
+//        // ✅ 전체 합을 계산 (감정의 총합)
+//        val total = currentRatios.values.sum()
+//
+//        // ✅ 감정 값이 계속 누적된 상태에서, 전체 합 대비 비율을 유지
+//        val emotionProportions = if (total > 0) {
+//            currentRatios.mapValues { it.value / total } // 전체 합 대비 비율 변환
+//        } else {
+//            currentRatios
+//        }
+//
+//        _emotionRatios.value = emotionProportions.toMutableMap() // ✅ 변경된 비율 적용
+//    }
+
+    fun addEmotion(emotion: String, value: Float) {
         val currentRatios = _emotionRatios.value ?: mutableMapOf()
 
-        // 새로운 감정을 추가하거나 기존 감정을 증가
-        currentRatios[newEmotion] = (currentRatios[newEmotion] ?: 0f) + _intensity.value!!
+        // 기존 감정 값이 있으면 누적, 없으면 새로 추가
+        currentRatios[emotion] = (currentRatios[emotion] ?: 0f) + value
 
-        // 전체 합이 100이 되도록 정규화
+        // 전체 합 계산 (모든 감정의 총합)
         val total = currentRatios.values.sum()
-        if (total > 0) {
-            currentRatios.forEach { (key, value) ->
-                currentRatios[key] = (value / total) * 100
-            }
-        }
-        _emotionRatios.value = currentRatios
+
+        // ✅ 정확한 비율 계산 (각 감정을 전체 합 대비 비율로 변환)
+        val normalizedRatios = currentRatios.mapValues { it.value / total }
+
+        _emotionRatios.value = normalizedRatios.toMutableMap() // ✅ 변경된 비율 적용
     }
+
+
+
+
+
+//    // 감정 비율 업데이트
+//    private fun updateEmotionRatios(newEmotion: String) {
+//        val currentRatios = _emotionRatios.value ?: mutableMapOf()
+//
+//        // 새로운 감정을 추가하거나 기존 감정을 증가
+//        currentRatios[newEmotion] = (currentRatios[newEmotion] ?: 0f) + _intensity.value!!
+//
+//        // 전체 합이 100이 되도록 정규화
+//        val total = currentRatios.values.sum()
+//        if (total > 0) {
+//            currentRatios.forEach { (key, value) ->
+//                currentRatios[key] = (value / total) * 100
+//            }
+//        }
+//        _emotionRatios.value = currentRatios
+//    }
 
     // 상태바를 위한 감정 리스트 (부정→긍정 순서)
     fun getSortedEmotionRatios(): List<Pair<String, Float>> {

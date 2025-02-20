@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionFinalBinding
 import com.example.mindstone.ui.home.HomeFragment
@@ -34,6 +35,7 @@ class EmotionFinalFragment : Fragment() {
     private var _binding: FragmentEmotionFinalBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var emotionStatusBar: EmotionStatusBar
     private lateinit var viewModel: EmotionModel
     private val emotionNoteViewModel: EmotionNoteViewModel by viewModels()
 
@@ -50,15 +52,23 @@ class EmotionFinalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
-
         // 시스템 바(상태바, 네비게이션바) 공간 자동 조정
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
+
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
+            emotionStatusBar.updateEmotions(emotionRatios)
+        }
+
 
         // SharedPreferences에서 사용자 이름 불러오기
         userName = getUserNickname()
@@ -89,12 +99,6 @@ class EmotionFinalFragment : Fragment() {
         }
 
 
-//        // ✅ 감정을 처음 선택한 경우 무조건 EmotionNote API 호출
-//        if (!isAfterManagingNegativeEmotion()) {
-//            saveEmotionData()  // ✅ 감정 저장 실행
-//        } else {
-//            Log.d("EmotionFinalFragment", "🚫 감정 선택이 아닌, 관리 행동 후 감정 평가 단계이므로 저장하지 않음.")
-//        }
 
         // ✅ API 응답 처리
         observeApiResponse()
@@ -102,11 +106,11 @@ class EmotionFinalFragment : Fragment() {
         saveEmotionData()
 
 
-        // 상태바 색상 업데이트
-        viewModel.emotionRatios.removeObservers(viewLifecycleOwner)
-        viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
-            updateStatusBar(emotionRatios)
-        }
+//        // 상태바 색상 업데이트
+//        viewModel.emotionRatios.removeObservers(viewLifecycleOwner)
+//        viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
+//            updateStatusBar(emotionRatios)
+//        }
 
         // 캐릭터 변경 (최근 감정 기준)
         viewModel.recentEmotion.removeObservers(viewLifecycleOwner)
@@ -230,16 +234,16 @@ class EmotionFinalFragment : Fragment() {
 
 
     // 상태바 색상 업데이트 (감정 비율 기반)
-    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
-        val sortedRatios = viewModel.getSortedEmotionRatios()
-        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
-            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
-        }
-        if (sortedColors.isNotEmpty()) {
-            val dominantColor = sortedColors.first()
-            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
-        }
-    }
+//    private fun updateStatusBar(emotionRatios: Map<String, Float>) {
+//        val sortedRatios = viewModel.getSortedEmotionRatios()
+//        val sortedColors = sortedRatios.mapNotNull { (emotion, _) ->
+//            viewModel.getEmotionColor(emotion)?.let { ContextCompat.getColor(requireContext(), it) }
+//        }
+//        if (sortedColors.isNotEmpty()) {
+//            val dominantColor = sortedColors.first()
+//            binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
+//        }
+//    }
 
 
     // 최근 감정 기반 캐릭터 변경

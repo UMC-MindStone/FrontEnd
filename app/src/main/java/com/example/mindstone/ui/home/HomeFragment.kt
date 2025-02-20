@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentHomeBinding
 import com.example.mindstone.ui.home.emotion.EmotionIntensityFragment
@@ -19,6 +20,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private lateinit var emotionStatusBar: EmotionStatusBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,8 +42,18 @@ class HomeFragment : Fragment() {
         // ViewModel을 Activity 범위에서 가져옴 (여러 Fragment에서 공유 가능)
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
+            emotionStatusBar.updateEmotions(emotionRatios)
+        }
+
         // 새로운 감정을 선택할 때 기존 데이터 초기화 (기존 감정 비율 & 최근 감정 유지)
         resetEmotionData()
+
+        // 캐릭터 변경 (최근 감정 기준)
+        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
 
         // 감정 선택 버튼 클릭 이벤트 설정
         binding.homeHappyIv.setOnClickListener { navigateToIntensity("행복", R.color.happinessColor, true) }
@@ -61,9 +73,11 @@ class HomeFragment : Fragment() {
         viewModel.setEmotionReason("") // 감정 이유 초기화
     }
 
-//    private fun resetEmotionIntensity() {
-//        viewModel.resetIntensity() // 감정 강도 초기화
-//    }
+    // 최근 감정 기반 캐릭터 변경
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion)
+        binding.homeIconIv.setImageResource(characterResId)
+    }
 
     private fun navigateToIntensity(emotion: String, colorResId: Int, isPositive: Boolean) {
         // ViewModel에 데이터 저장 (Fragment 간 데이터 공유)
