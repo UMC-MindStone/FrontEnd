@@ -113,7 +113,7 @@ class DiaryImgFragment : Fragment() {
             val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
             // 파라미터 수정 필요
-            diaryViewModel.saveDiary(formattedDate, updatedText )
+            diaryViewModel.saveOrUpdateDiary(requireContext(),formattedDate, updatedText)
             requireActivity().supportFragmentManager.popBackStack()
         }
     }

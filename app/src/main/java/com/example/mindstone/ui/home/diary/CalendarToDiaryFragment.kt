@@ -32,18 +32,34 @@ class CalendarToDiaryFragment : Fragment() {
     private val diaryViewModel : DiaryViewModel by activityViewModels()
 
     // 일단 캘린더 프래그먼트에서 년, 월, 일 꼭 넘겨줘야 함.
-    private var currentYear = arguments?.getInt("currentYear")?: 2025
-    private var currentMonth = arguments?.getInt("currentMonth")?: 1
-    private var currentDay= arguments?.getInt("currentDay")?: 1
-    private var isRecord = arguments?.getBoolean("isRecord")?: false
+
+    private var currentYear: Int = 2025
+    private var currentMonth: Int = 1
+    private var currentDay: Int = 1
+    private var isRecord: Boolean = false
+    private var date : String = "2025-01-01"
 
 
-    val bundle = bundleOf(
-        "currentYear" to currentYear,
-        "currentMonth" to currentMonth,
-        "currentDay" to currentDay,
-        "fragment" to "calendar"
-    )
+
+    override fun onCreate(savedInstanceState: Bundle?){
+        super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            date = it.getString("date", "2025-01-01") // 기본값 설정
+            isRecord = it.getBoolean("isRecord", false)
+
+            // "2025-02-03" → 2025, 2, 3 으로 변환
+            val dateParts = date.split("-")
+            if (dateParts.size == 3) {
+                currentYear = dateParts[0].toIntOrNull() ?: 2025
+                currentMonth = dateParts[1].toIntOrNull() ?: 1
+                currentDay = dateParts[2].toIntOrNull() ?: 1
+            }
+            Log.d("CalendarDiary Home", date)
+        }
+
+
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,8 +73,6 @@ class CalendarToDiaryFragment : Fragment() {
 
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -68,7 +82,9 @@ class CalendarToDiaryFragment : Fragment() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         changeComponent()
+        updateDateUI()
 
         diaryViewModel.diaryText.observe(viewLifecycleOwner){ text ->
             binding.diaryTextTv.text = text
@@ -90,37 +106,11 @@ class CalendarToDiaryFragment : Fragment() {
             changeComponent()
         }
 
-        binding.diaryDateSelectIv.setOnClickListener {
-            showDateSelector()
-        }
-
-        binding.backIv.setOnClickListener {
-            (activity as MainActivity).replaceFragment(EmotionCalendarFragment())
-        }
-
-        if(!isRecord){
-            binding.diaryCharacterIv.setOnClickListener {
-                setColorPicker()
-            }
-        }
-
-        binding.diaryEditTextBlankIv.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
-        }
-        binding.diaryEditTextIv.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(DiaryEditFragment(), bundle)
-        }
-        binding.diaryImgAddIv.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
-        }
-        binding.diaryGalleryIv.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(DiaryImgFragment(), bundle)
-        }
-
-
-
+        // binding 및 클릭 설정 초기화
+        initClicker()
 
     }
+
 
     private fun showDateSelector(){
         val dialog = MonthDayPickerFragment()
@@ -138,8 +128,8 @@ class CalendarToDiaryFragment : Fragment() {
 
             val formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             // 날짜 기준 일기 요청
-
             diaryViewModel.fetchDiary(formattedDate)
+//            diaryViewModel.fetchDiaryById(6)
 
 
         }
@@ -255,5 +245,87 @@ class CalendarToDiaryFragment : Fragment() {
             }
         }
     }
+    private fun updateDateUI() {
+        val date = LocalDate.of(currentYear, currentMonth, currentDay)
+        val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.KOREAN)
+
+        binding.diaryDateTv.text = "${currentMonth}월 ${currentDay}일 $dayOfWeek"
+    }
+
+
+    private fun initClicker(){
+        binding.diaryDateSelectIv.setOnClickListener {
+            showDateSelector()
+        }
+
+        binding.backIv.setOnClickListener {
+            (activity as MainActivity).replaceFragment(EmotionCalendarFragment())
+        }
+
+        if(!isRecord){
+            binding.diaryCharacterIv.setOnClickListener {
+                setColorPicker()
+            }
+        }
+
+        binding.diaryEditTextBlankIv.setOnClickListener {
+            val fragment = DiaryEditFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putInt("currentYear", currentYear)
+                    putInt("currentMonth", currentMonth)
+                    putInt("currentDay", currentDay)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
+
+        }
+        binding.diaryEditTextIv.setOnClickListener {
+            val fragment = DiaryEditFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putInt("currentYear", currentYear)
+                    putInt("currentMonth", currentMonth)
+                    putInt("currentDay", currentDay)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
+        }
+        binding.diaryImgAddIv.setOnClickListener {
+            val fragment = DiaryImgFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putInt("currentYear", currentYear)
+                    putInt("currentMonth", currentMonth)
+                    putInt("currentDay", currentDay)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
+        }
+        binding.diaryGalleryIv.setOnClickListener {
+            val fragment = DiaryImgFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putInt("currentYear", currentYear)
+                    putInt("currentMonth", currentMonth)
+                    putInt("currentDay", currentDay)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
+        }
+    }
+
 
 }

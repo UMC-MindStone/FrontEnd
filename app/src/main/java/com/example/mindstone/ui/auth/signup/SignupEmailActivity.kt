@@ -36,6 +36,13 @@ class SignupEmailActivity : AppCompatActivity() {
         // 버튼 클릭 동작 총괄
         initClicker()
 
+        if (binding.signupEmailNextBtn.isEnabled){
+            binding.signupEmailNextBtn.setOnClickListener {
+                val intent = Intent(this, SignupCodeActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
         binding.signupEmailTextTie.addTextChangedListener{ text ->
             validateEmail(text.toString())
         }
@@ -53,6 +60,7 @@ class SignupEmailActivity : AppCompatActivity() {
                 )
                 boxStrokeColor = getColor(R.color.error)
             }
+            binding.signupEmailNextBtn.isEnabled = false
         } else if(!input.matches(emailPattern.toRegex())){
             binding.signupEmailTil.apply{
                 hintTextColor= getColorStateList(R.color.black)
@@ -63,6 +71,7 @@ class SignupEmailActivity : AppCompatActivity() {
                 boxStrokeColor = getColor(R.color.error)
 
             }
+            binding.signupEmailNextBtn.isEnabled = false
         }
 //        else if( // 여기에 이미 등록된 이메일 일 때 ){
 //        }
@@ -78,15 +87,11 @@ class SignupEmailActivity : AppCompatActivity() {
                 Log.d("email viewmodel", "${signupViewModel.email.value}")
 
             }
+            binding.signupEmailNextBtn.isEnabled = true
         }
     }
 
     private fun initClicker(){
-        binding.signupEmailNextBtn.setOnClickListener{
-            val intent = Intent(this, SignupCodeActivity::class.java)
-
-            startActivity(intent)
-        }
 
         // 뒤로 가기 버튼 클릭 -> LoginActivity로 이동
         binding.signupemailBackIv.setOnClickListener {

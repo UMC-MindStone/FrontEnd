@@ -1,22 +1,30 @@
 package com.example.mindstone.ui.emotion
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
+import com.example.mindstone.R
 import com.example.mindstone.YearMonthPickerDialog
 import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
+import com.example.mindstone.ui.home.diary.CalendarToDiaryFragment
+import com.example.mindstone.ui.home.diary.DiaryViewModel
 import java.util.Calendar
 
-class EmotionCalendarFragment : Fragment() {
+class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateClickListener{
 
     private var _binding: FragmentEmotionCalendarBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewPagerAdapter: EmotionCalendarVPAdapter
-    private var currentYear = 2025 // 초기 년도 설정
-    private var currentMonth = 1   // 초기 월 설정 (1월)
+    var currentYear = 2025 // 초기 년도 설정
+    var currentMonth = 1   // 초기 월 설정 (1월)
+
+    private val diaryViewModel : DiaryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,9 +74,41 @@ class EmotionCalendarFragment : Fragment() {
         // GridView와 어댑터 연결
         val adapter = EmotionCalendarGridAdapter(requireContext(), calendarData)
         binding.emotionCalendarCalendarGv.adapter = adapter
-
+        adapter.listener = this
         // 날짜 표시: 2025 1월 형식으로 설정
         binding.emotionCalendarDateTv.text = "${currentYear} ${currentMonth}월"
+    }
+
+    override fun onDateClick(date: String, isRecord: Boolean) {
+        diaryViewModel.fetchDiary(date)
+
+        diaryViewModel.diaryExists.observe(viewLifecycleOwner) { exists ->
+            val fragment = if (exists) {
+                // CalendarToDiaryFragment 로 이동
+                CalendarToDiaryFragment().apply{
+                    arguments = Bundle().apply{
+                        putString("date", date)
+                        putBoolean("isRecord", true)
+                    }
+                    Log.d("date", date)
+                }
+            } else {
+                // ✅ Fragment 2 (새로운 일기 작성 화면)으로 이동
+                BeforeDiaryFragment().apply{
+                    arguments = Bundle().apply{
+                        putString("date", date)
+                        putBoolean("isRecord", false)
+                    }
+                    Log.d("date", date)
+                }
+
+            }
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     // 캘린더 데이터를 생성하는 유틸리티 함수

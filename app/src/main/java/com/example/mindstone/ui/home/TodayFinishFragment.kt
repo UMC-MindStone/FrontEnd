@@ -1,15 +1,19 @@
 package com.example.mindstone.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mindstone.MainActivity
+import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentTodayFinishBinding
 import com.example.mindstone.ui.home.diary.DiaryLoadingFragment
+import java.time.LocalDate
 
 
 class TodayFinishFragment : Fragment() {
@@ -38,13 +42,35 @@ class TodayFinishFragment : Fragment() {
         initClicker()
     }
 
+    private val date = LocalDate.now()
+
     private fun initClicker(){
         binding.todayFinishRecordTv.setOnClickListener{
-            (activity as MainActivity).replaceFragment(HomeFragment())
+            val fragment = HomeFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putString("date", date.toString())
+                }
+                Log.d("TodayFinishFragment", date.toString())
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
         }
 
         binding.todayFinishDiaryTv.setOnClickListener{
-            (activity as MainActivity).replaceFragment(DiaryLoadingFragment())
+            val fragment = DiaryLoadingFragment().apply{
+                arguments = Bundle().apply {
+                    putString("fragment", "today")
+                    putString("date", date.toString())
+                }
+                Log.d("TodayFinishFragment", date.toString())
+            }
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_container, fragment)
+                .commit()
         }
     }
 
