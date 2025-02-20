@@ -1,5 +1,6 @@
 package com.example.mindstone.ui.home.emotion.negative
 
+import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.Editable
@@ -8,12 +9,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentEmotionManageAction2Binding
+import com.example.mindstone.ui.home.HomeQuestionFragment
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
 
 class EmotionManageActionFragment2 : Fragment() {
@@ -61,14 +65,23 @@ class EmotionManageActionFragment2 : Fragment() {
                 .commit()
         }
 
-        // '확인' 버튼 클릭 시 -> 행동 저장 후 EmotionManageActionFragment3로 이동
+
+
+        // '확인' 버튼 클릭 시 -> 입력한 행동을 EmotionActionTimeFragment로 전달 후 이동
         binding.actionConfirmTv.setOnClickListener {
             val userAction = binding.actionBubbleEt.text.toString().trim()
             if (userAction.isNotEmpty()) {
                 viewModel.setUserAction(userAction) // 뷰모델에 행동 저장
-                navigateToEmotionManageActionFragment3()
+                saveStressAction(userAction) // ✅ 입력한 행동 저장
+                navigateToTimeFragment(userAction)
+            } else {
+                Toast.makeText(requireContext(), "행동을 입력해주세요!", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // '취소' 클릭 -> 행동 질문 화면으로 이동
+        binding.actionCancel.setOnClickListener { navigateToQuestion() }
+
 
         // 글자 수 제한 (최대 10줄까지)
         binding.actionBubbleEt.addTextChangedListener(object : TextWatcher {
@@ -86,6 +99,31 @@ class EmotionManageActionFragment2 : Fragment() {
 
     }
 
+
+    // ✅ SharedPreferences에 사용자가 입력한 행동 저장
+    private fun saveStressAction(action: String) {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("stress_action", action).apply()
+    }
+
+
+    private fun navigateToTimeFragment(action: String) {
+
+        // ✅ 관리 행동을 SharedPreferences에 저장
+        saveStressAction(action)
+
+        val fragment = EmotionActionTimeFragment().apply {
+            arguments = Bundle().apply {
+                putString("SELECTED_ACTION", action) // 직접 입력한 행동 전달
+            }
+        }
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+
     // 상태바 업데이트 (감정 비율에 따른 색상 적용)
     private fun updateStatusBar(emotionRatios: Map<String, Float>) {
         val sortedRatios = viewModel.getSortedEmotionRatios()
@@ -94,7 +132,7 @@ class EmotionManageActionFragment2 : Fragment() {
         }
 
         if (sortedColors.isNotEmpty()) {
-            // 📌 상태바 기존 이미지(src) 유지하면서 색상만 변경
+            // 상태바 기존 이미지(src) 유지하면서 색상만 변경
             val dominantColor = sortedColors.first()
             binding.statusBar.setColorFilter(dominantColor, PorterDuff.Mode.SRC_IN)
         }
@@ -114,6 +152,16 @@ class EmotionManageActionFragment2 : Fragment() {
             .addToBackStack(null)
             .commit()
     }
+
+    // 행동 질문 화면으로 이동 (HomeQuestionFragment)
+    private fun navigateToQuestion() {
+        val fragment = HomeQuestionFragment()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

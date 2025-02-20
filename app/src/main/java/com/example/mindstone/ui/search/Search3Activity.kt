@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.data.local.UserData
@@ -19,11 +21,19 @@ class Search3Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        userData = this.intent.getParcelableExtra("userData")
         // ViewBinding 초기화
         binding = ActivitySearch3Binding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // 시스템 바(상태바, 네비게이션바) 공간 자동 조정
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        userData = this.intent.getParcelableExtra("userData")
+
 
         viewModel = ViewModelProvider(this).get(SurveyViewModel::class.java)
 

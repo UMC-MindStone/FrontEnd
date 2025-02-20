@@ -1,5 +1,6 @@
 package com.example.mindstone.ui.home.emotion.negative
 
+import android.content.Context
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
@@ -52,10 +53,8 @@ class EmotionManageActionFragment : Fragment() {
 
         // 상태바 업데이트 (감정 비율 기반)
         viewModel.emotionRatios.observe(viewLifecycleOwner) { updateStatusBar(it) }
-
         // 캐릭터 업데이트 (최근 감정 기반)
         viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
-
         // 감정에 따라 말풍선 배경 색 변경
         viewModel.colorResId.observe(viewLifecycleOwner) { colorResId ->
             val colorStateList = ContextCompat.getColorStateList(requireContext(), colorResId)
@@ -97,10 +96,38 @@ class EmotionManageActionFragment : Fragment() {
         }
 
 
-        // 말풍선 클릭 시 EmotionActionTimeFragment로 이동
+        // 말풍선 클릭 시 선택한 행동을 EmotionActionTimeFragment로 전달, 이동
         listOf(binding.actionBubbleCenter, binding.actionBubbleLeft, binding.actionBubbleRight).forEach { bubble ->
-            bubble.setOnClickListener { navigateToFragment(EmotionActionTimeFragment()) }
+            bubble.setOnClickListener {
+                val selectedAction = bubble.text.toString() // 선택한 행동 가져오기
+                saveStressAction(selectedAction) // ✅ 선택한 행동을 저장
+                navigateToTimeFragment(selectedAction)
+            }
         }
+
+    }
+
+    // ✅ SharedPreferences에 사용자가 선택한 행동 저장
+    private fun saveStressAction(action: String) {
+        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("stress_action", action).apply()
+    }
+
+
+    private fun navigateToTimeFragment(action: String) {
+
+        // ✅ 관리 행동을 SharedPreferences에 저장
+        saveStressAction(action)
+
+        val fragment = EmotionActionTimeFragment().apply {
+            arguments = Bundle().apply {
+                putString("SELECTED_ACTION", action) // 선택한 행동 전달
+            }
+        }
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
 

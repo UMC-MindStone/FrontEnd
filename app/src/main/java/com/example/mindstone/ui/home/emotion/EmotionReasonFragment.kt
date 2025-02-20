@@ -39,6 +39,10 @@ class EmotionReasonFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
+        // 캐릭터 변경 (최근 감정 기준)
+        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
+
+
         // 감정에 따라 말풍선 배경 색 변경
         viewModel.colorResId.observe(viewLifecycleOwner) { colorResId ->
             binding.reasonContainer.backgroundTintList =
@@ -72,5 +76,11 @@ class EmotionReasonFragment : Fragment() {
                 transaction.commit()
             }
         }
+    }
+
+    // 최근 감정 기반 캐릭터 변경
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion)
+        binding.iconIv.setImageResource(characterResId)
     }
 }

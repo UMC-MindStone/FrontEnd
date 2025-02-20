@@ -1,5 +1,6 @@
 package com.example.mindstone.ui.search
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -43,13 +44,24 @@ class MakeNicknameActivity : AppCompatActivity() {
 
             binding.makeNicknameNameTil.error = null // 에러 메시지 초기화
 //            sendNicknameToServer(nickname)
+
+            // ✅ SharedPreferences에 닉네임 저장
+            saveUserNickname(nickname)
+
             val userData = UserData(nickname = nickname)
             val intent = Intent(this, Search1Activity::class.java)
             intent.putExtra("userData", userData)
             startActivity(intent)
             finish()
         }
+    }
 
+    // ✅ SharedPreferences에 닉네임 저장
+    private fun saveUserNickname(nickname: String) {
+        val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("user_nickname", nickname)
+        editor.apply()
     }
 
 

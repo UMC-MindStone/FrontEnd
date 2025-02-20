@@ -17,22 +17,6 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     private const val BASE_URL = "http://15.165.241.217:8080/" // 서버 URL
 
-    // ✅ AccessToken 자동 추가 Interceptor
-//    private val authInterceptor = Interceptor { chain ->
-//        val original = chain.request()
-//        val requestBuilder = original.newBuilder()
-//        val noAuthEndpoints = listOf("/api/auth/login", "/api/auth/signup", "/api/auth/forgot-password")
-//
-//        if (!noAuthEndpoints.any { original.url.encodedPath.contains(it) }) {
-//            val accessToken = PreferenceManager.getAccessToken()
-//            if (!accessToken.isNullOrEmpty()) {
-//                requestBuilder.header("Authorization", "Bearer $accessToken")
-//            }
-//        }
-//        val request = requestBuilder.build()
-//        Log.d("API_AUTH", "✅ Final Request Header: ${request.headers}")
-//        chain.proceed(request)
-//    }
     private val authInterceptor = Interceptor { chain ->
         val original = chain.request()
         val requestBuilder = original.newBuilder()
@@ -158,6 +142,11 @@ object RetrofitClient {
 
     // 부정적 감정 관리 행동 추천
     val emotionStressService: EmotionStressService by lazy { retrofit.create(EmotionStressService::class.java) }
+
+    // EmotionNoteService (일반 감정 기록 + 부정적 감정 관리 API 포함)
+    val emotionNoteService: EmotionNoteService by lazy { retrofit.create(EmotionNoteService::class.java) }
+
+
 
     // ✅ SurveyService 제공 (AccessToken 자동 포함)
     val surveyService: SurveyService by lazy { retrofit.create(SurveyService::class.java) }

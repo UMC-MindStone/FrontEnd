@@ -26,7 +26,7 @@ class Start1Activity : AppCompatActivity() {
         val userName = getUserName()
 
         // ViewBinding을 사용해 TextView에 텍스트 설정
-        binding.start1Tv.text = "${userName}님. 마인드 스톤에 오신 걸 환영합니다."
+        binding.start1Tv.text = "안녕하세요. ${userName}님.\n마인드 스톤에 오신 걸 환영합니다.\n\n오늘부터 하루하루\n기록을 시작해볼까요?"
 
         binding.btnStart1ColoredIb.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
