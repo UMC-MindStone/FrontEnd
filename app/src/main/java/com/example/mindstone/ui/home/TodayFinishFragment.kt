@@ -9,10 +9,13 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.MainActivity
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentTodayFinishBinding
 import com.example.mindstone.ui.home.diary.DiaryLoadingFragment
+import com.example.mindstone.ui.home.emotion.view.EmotionModel
 import java.time.LocalDate
 
 
@@ -20,6 +23,9 @@ class TodayFinishFragment : Fragment() {
 
     private var _binding: FragmentTodayFinishBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var emotionStatusBar: EmotionStatusBar
+    private lateinit var viewModel: EmotionModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +43,21 @@ class TodayFinishFragment : Fragment() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        // viewModel 가져오기
+        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
+            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+        }
+
+        // 캐릭터 업데이트
+        viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
+            updateCharacter(dominantEmotion)
         }
 
         initClicker()
@@ -72,6 +93,12 @@ class TodayFinishFragment : Fragment() {
                 .replace(R.id.main_container, fragment)
                 .commit()
         }
+    }
+
+    // 감정 캐릭터 업데이트
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm_charac
+        binding.iconIv.setImageResource(characterResId)
     }
 
 

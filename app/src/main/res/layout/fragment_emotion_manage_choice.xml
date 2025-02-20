@@ -92,11 +92,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <ImageView
+        <com.example.mindstone.EmotionStatusBar
             android:id="@+id/status_bar"
-            android:src="@drawable/ic_status_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:background="@drawable/ic_status_bar"
+            android:layout_width="300dp"
+            android:layout_height="25dp"
             android:layout_marginTop="55dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"

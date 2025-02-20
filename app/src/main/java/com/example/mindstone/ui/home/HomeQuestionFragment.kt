@@ -12,13 +12,20 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.MainActivity
+import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentHomeQuestionBinding
+import com.example.mindstone.ui.home.emotion.view.EmotionModel
 
 class HomeQuestionFragment : Fragment() {
 
     private var _binding: FragmentHomeQuestionBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var emotionStatusBar: EmotionStatusBar
+    private lateinit var viewModel: EmotionModel
 
     private var questionIndex = 0 // 현재 질문 인덱스
     private val questions = listOf(
@@ -38,6 +45,21 @@ class HomeQuestionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // viewModel 가져오기
+        viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
+
+        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
+
+        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
+            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+        }
+
+        // 캐릭터 업데이트
+        viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
+            updateCharacter(dominantEmotion)
+        }
 
         resetUI() // 초기 상태 설정
 
@@ -84,6 +106,12 @@ class HomeQuestionFragment : Fragment() {
                 binding.homeStatusTv.text = questions[questionIndex]
             }
         }
+    }
+
+    // 감정 캐릭터 업데이트
+    private fun updateCharacter(emotion: String) {
+        val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm_charac
+        binding.iconIv.setImageResource(characterResId)
     }
 
     override fun onDestroyView() {

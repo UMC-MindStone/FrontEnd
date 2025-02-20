@@ -8,11 +8,6 @@ import com.example.mindstone.R
 
 class EmotionModel : ViewModel() {
 
-
-    // 최근 선택한 감정 (캐릭터 상태 변경을 위해)
-    private val _recentEmotion = MutableLiveData<String>()
-    val recentEmotion: LiveData<String> get() = _recentEmotion
-
     // 감정 이름
     private val _emotion = MutableLiveData<String>()
     val emotion: LiveData<String> get() = _emotion
@@ -53,12 +48,6 @@ class EmotionModel : ViewModel() {
     val afterActionEmotion: LiveData<String> get() = _afterActionEmotion
 
 
-    // 커스텀뷰 이용
-    // 감정 비율 (상태바 업데이트용)
-    private val _emotionRatios = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
-    val emotionRatios: LiveData<MutableMap<String, Float>> get() = _emotionRatios
-
-
     // 감정 데이터 저장
     fun setEmotionData(emotion: String, colorResId: Int, isPositive: Boolean) {
         _emotion.value = emotion
@@ -66,10 +55,33 @@ class EmotionModel : ViewModel() {
         _isPositive.value = isPositive
     }
 
+
+    // 커스텀뷰 이용
+    // 감정 비율 (상태바 업데이트용)
+    private val _emotionRatios = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
+    val emotionRatios: LiveData<MutableMap<String, Float>> get() = _emotionRatios
+
+
+
+
+
+
+
+    // 가장 비율 높은 감정
+    private val _dominantEmotion = MutableLiveData<String>()
+    val dominantEmotion: LiveData<String> get() = _dominantEmotion
+
+    // 최근 선택한 감정 (캐릭터 상태 변경을 위해)
+    private val _recentEmotion = MutableLiveData<String>()
+    val recentEmotion: LiveData<String> get() = _recentEmotion
+
     fun selectEmotion(emotion: String, colorResId: Int, isPositive: Boolean) {
         _emotion.value = emotion
         _colorResId.value = colorResId
         _isPositive.value = isPositive
+
+        // ✅ 최근 감정 업데이트
+        _recentEmotion.value = emotion
 
         // 선택된 감정을 상태바 비율에 반영 (Float 변환 추가)
         addEmotion(emotion, (_intensity.value ?: 10).toFloat())
@@ -82,7 +94,6 @@ class EmotionModel : ViewModel() {
     // 🚀 실제 감정 값 저장 (값 변환 X, 추가 및 증가만)
     private val _actualEmotionValues = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
     val actualEmotionValues: LiveData<MutableMap<String, Float>> get() = _actualEmotionValues
-
 
     fun addEmotion(emotion: String, value: Float) {
         val actualValues = _actualEmotionValues.value?.toMutableMap() ?: mutableMapOf()
@@ -98,6 +109,7 @@ class EmotionModel : ViewModel() {
         Log.d("EmotionViewModel", "🔵 Actual Emotion Values: $actualValues")
 
         _actualEmotionValues.value = actualValues
+
     }
 
     // ✅ UI 비율 변환 함수 (100% 기준으로 변환)
@@ -116,27 +128,42 @@ class EmotionModel : ViewModel() {
         Log.d("EmotionViewModel", "🟣 Normalized Emotion Ratios (for UI): $normalizedRatios")
 
         _normalizedEmotionRatios.value = normalizedRatios
+
+        // ✅ UI 비율 기준으로 지배적인 감정 업데이트
+        updateDominantEmotion()
+    }
+
+    // ✅ 지배적인 감정을 찾는 함수 (이제 UI에서 사용하는 비율 기반으로 계산)
+    private fun updateDominantEmotion() {
+        val normalizedValues = _normalizedEmotionRatios.value ?: return
+
+        if (normalizedValues.isEmpty()) return
+
+        // ✅ 가장 높은 비율 찾기
+        val maxEmotionList = normalizedValues.entries
+            .groupBy { it.value }
+            .maxByOrNull { it.key }
+            ?.value
+            ?.map { it.key } ?: return
+
+        // ✅ 비율이 같은 감정이 여러 개일 경우, 최근 감정을 우선 적용
+        val selectedEmotion = if (maxEmotionList.size > 1) {
+            _recentEmotion.value?.takeIf { it in maxEmotionList } ?: maxEmotionList.first()
+        } else {
+            maxEmotionList.first()
+        }
+
+
+        Log.d("EmotionViewModel", "🏆 최종 지배적인 감정: $selectedEmotion")
+        _dominantEmotion.value = selectedEmotion
     }
 
 
 
 
-//    // 감정 비율 업데이트
-//    private fun updateEmotionRatios(newEmotion: String) {
-//        val currentRatios = _emotionRatios.value ?: mutableMapOf()
-//
-//        // 새로운 감정을 추가하거나 기존 감정을 증가
-//        currentRatios[newEmotion] = (currentRatios[newEmotion] ?: 0f) + _intensity.value!!
-//
-//        // 전체 합이 100이 되도록 정규화
-//        val total = currentRatios.values.sum()
-//        if (total > 0) {
-//            currentRatios.forEach { (key, value) ->
-//                currentRatios[key] = (value / total) * 100
-//            }
-//        }
-//        _emotionRatios.value = currentRatios
-//    }
+
+
+
 
     // 상태바를 위한 감정 리스트 (부정→긍정 순서)
     fun getSortedEmotionRatios(): List<Pair<String, Float>> {

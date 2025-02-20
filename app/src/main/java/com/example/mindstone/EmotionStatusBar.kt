@@ -35,19 +35,7 @@ class EmotionStatusBar @JvmOverloads constructor(
         clipToOutline = true // ✅ 배경 외곽을 유지
     }
 
-
-//    // 감정 데이터를 업데이트하는 함수 (비율 기반으로 조정)
-//    fun updateEmotions(emotionMap: Map<String, Float>) {
-//        val total = emotionMap.values.sum()
-//        emotionRatios = if (total > 0) {
-//            emotionOrder.map { emotionMap[it] ?: 0f } // ✅ 비율 계산
-//        } else {
-//            List(emotionOrder.size) { 0f }
-//        }
-//        Log.d("EmotionStatusBar", "Updated UI Ratios: $emotionRatios")
-//        invalidate() // UI 다시 그리기 요청
-//    }
-// ✅ UI 업데이트 함수 (100% 기준 변환된 감정 비율을 바로 적용)
+    // ✅ UI 업데이트 함수 (100% 기준 변환된 감정 비율을 바로 적용)
     fun updateEmotions(normalizedRatios: Map<String, Float>) {
         currentRatios = normalizedRatios // ✅ 직접 저장 (onDraw에서 바로 사용)
         Log.d("EmotionStatusBar", "🎨 Updated UI Ratios: $currentRatios")
@@ -81,8 +69,4 @@ class EmotionStatusBar @JvmOverloads constructor(
             }
         }
     }
-
-
 }
-
-
