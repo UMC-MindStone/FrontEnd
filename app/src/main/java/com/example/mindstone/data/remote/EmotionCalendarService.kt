@@ -9,8 +9,7 @@ import retrofit2.http.Query
 interface EmotionCalendarService {
     @GET("/api/diary/calendar")
     fun getEmotionCalendar(
-        @Header("Authorization") token: String,
-        @Query("Year") year: Int,
-        @Query("Month") month: Int
+        @Query("year") year: Int,
+        @Query("month") month: Int
     ): Call<EmotionCalendarResponse>
 }

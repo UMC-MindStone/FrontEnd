@@ -47,17 +47,26 @@ class EmotionCalendarViewModel: ViewModel() {
     val _emotionCalendarData = MutableLiveData<EmotionCalendarResponse?>()
     val habitTotalData: LiveData<EmotionCalendarResponse?> get() = _emotionCalendarData
 
-    fun getEmotionCalendar(year: Int, month: Int){
+    private val _emotionMap = MutableLiveData<Map<String, String>>()  // 날짜별 감정 데이터 저장
+    val emotionMap: LiveData<Map<String, String>> get() = _emotionMap
 
-        val formattedToken = "Bearer $token"
-        apiService.getEmotionCalendar(formattedToken, year, month)
-            .enqueue(object : Callback<EmotionCalendarResponse>{
+    fun getEmotionCalendar(year: Int, month: Int) {
+        apiService.getEmotionCalendar(year, month)
+            .enqueue(object : Callback<EmotionCalendarResponse> {
                 override fun onResponse(
                     call: Call<EmotionCalendarResponse>,
                     response: Response<EmotionCalendarResponse>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
                         _emotionCalendarData.postValue(response.body())
+
+                        // 날짜별 감정을 저장하는 Map 생성
+                        val emotionData = response.body()!!.result.associate { entry ->
+                            val formattedDate = "$year-${String.format("%02d", month)}-${String.format("%02d", entry.dateIndex)}"
+                            formattedDate to entry.emotion
+                        }
+                        _emotionMap.postValue(emotionData)
+
                         Log.d("API_EMOTION_CALENDAR_SUCCESS", "데이터 로드 성공: ${response.body()}")
                     } else {
                         handleError(response, _errorMessage, "API_EMOTION_CALENDAR_ERROR")
@@ -67,7 +76,6 @@ class EmotionCalendarViewModel: ViewModel() {
                 override fun onFailure(call: Call<EmotionCalendarResponse>, t: Throwable) {
                     handleFailure(t, _errorMessage, "API_EMOTION_CALENDAR_FAILURE")
                 }
-
             })
     }
 }

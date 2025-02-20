@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.YearMonthPickerDialog
 import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
+import com.example.mindstone.ui.emotion.viewmodel.EmotionCalendarViewModel
 import com.example.mindstone.ui.home.diary.CalendarToDiaryFragment
 import com.example.mindstone.ui.home.diary.DiaryViewModel
 import java.util.Calendar
@@ -24,6 +26,9 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
     var currentYear = 2025 // 초기 년도 설정
     var currentMonth = 1   // 초기 월 설정 (1월)
 
+    private lateinit var calendarViewModel : EmotionCalendarViewModel
+    private lateinit var adapter : EmotionCalendarGridAdapter
+
     private val diaryViewModel : DiaryViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -32,6 +37,12 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentEmotionCalendarBinding.inflate(inflater, container, false)
+        calendarViewModel = ViewModelProvider(this).get(EmotionCalendarViewModel::class.java)
+
+        val calendarData = generateCalendarData(currentYear, currentMonth)
+
+        // GridView와 어댑터 연결
+        adapter = EmotionCalendarGridAdapter(requireContext(), calendarData)
 
         setupViewPager()
         setupCalendar() // 캘린더 설정 호출
@@ -54,6 +65,16 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        calendarViewModel.getEmotionCalendar(currentYear, currentMonth)
+
+        calendarViewModel.emotionMap.observe(viewLifecycleOwner){ emotion ->
+            adapter.setEmotionData(emotion)
+        }
+    }
+
     // 뷰페이저 설정
     private fun setupViewPager() {
         viewPagerAdapter = EmotionCalendarVPAdapter(this)
@@ -72,7 +93,7 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
         val calendarData = generateCalendarData(currentYear, currentMonth)
 
         // GridView와 어댑터 연결
-        val adapter = EmotionCalendarGridAdapter(requireContext(), calendarData)
+        adapter = EmotionCalendarGridAdapter(requireContext(), calendarData)
         binding.emotionCalendarCalendarGv.adapter = adapter
         adapter.listener = this
         // 날짜 표시: 2025 1월 형식으로 설정
@@ -154,6 +175,7 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
         // 캘린더 갱신
         setupCalendar()
         updateViewPagerFragments()
+        calendarViewModel.getEmotionCalendar(currentYear, currentMonth)
     }
 
     // 년도와 월 선택 다이얼로그 표시
