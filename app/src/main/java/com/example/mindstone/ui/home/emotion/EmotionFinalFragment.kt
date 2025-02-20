@@ -147,6 +147,8 @@ class EmotionFinalFragment : Fragment() {
         emotionNoteViewModel.emotionNoteResponse.observe(viewLifecycleOwner) { response ->
             if (response?.isSuccess == true) {
                 Log.d("EmotionNoteAPI", "✅ 감정 데이터 저장 성공: $response")
+                val emotionId = response.result?.id ?: return@observe
+                saveStressReasonId(emotionId)
             } else {
                 Log.e("EmotionNoteAPI", "❌ 감정 데이터 저장 실패: ${response?.message}")
             }

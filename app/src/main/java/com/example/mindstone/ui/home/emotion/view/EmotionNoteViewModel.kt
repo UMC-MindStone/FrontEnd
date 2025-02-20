@@ -31,8 +31,28 @@ class EmotionNoteViewModel : ViewModel() {
     fun postEmotionNote(token: String, emotion: String, emotionFigure: Int, content: String) {
         Log.d("EmotionNoteViewModel", "📡 EmotionNote API 호출 - 감정: $emotion, 강도: $emotionFigure, 이유: $content")
 
+        viewModelScope.launch {
+            try {
+                val request = EmotionNoteRequest(emotion, emotionFigure, content)
+
+                val response = RetrofitClient.emotionNoteService.postEmotionNote(token, request)
+
+                if (response.isSuccessful && response.body() != null) {
+                    Log.d("EmotionNoteViewModel", "✅ 감정 데이터 저장 성공! ID: ${response.body()?.result?.id}")
+                    _emotionNoteResponse.setValue(response.body())
+                } else {
+                    _emotionNoteResponse.setValue(
+                        EmotionNoteResponse(false, "ERROR", "API 호출 실패", null)
+                    )
+                }
+            } catch (e: Exception) {
+                _emotionNoteResponse.setValue(
+                    EmotionNoteResponse(false, "EXCEPTION", e.message ?: "알 수 없는 오류", null)
+                )
+            }
+        }
         val request = EmotionNoteRequest(emotion, emotionFigure, content)
-        emotionNoteService.postEmotionNote("Bearer $token", request).enqueue(object :
+        /*emotionNoteService.postEmotionNote("Bearer $token", request).enqueue(object :
             Callback<EmotionNoteResponse> {
             override fun onResponse(call: Call<EmotionNoteResponse>, response: Response<EmotionNoteResponse>) {
                 Log.d("EmotionNoteViewModel", "📡 EmotionNote API 응답 수신 - 코드: ${response.code()}")
@@ -50,9 +70,11 @@ class EmotionNoteViewModel : ViewModel() {
                 Log.e("EmotionNoteViewModel", "❌ EmotionNote API 호출 실패 - 네트워크 오류: ${t.message}")
                 _emotionNoteResponse.value = null // postValue() 대신 setValue() 사용
             }
-        })
-
+        })*/
     }
+
+
+
 
 
 

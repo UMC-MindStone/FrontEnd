@@ -13,10 +13,10 @@ import retrofit2.http.POST
 interface EmotionNoteService {
 
     @POST("/api/emotionnote")
-    fun postEmotionNote(
+    suspend fun postEmotionNote(
         @Header("Authorization") token: String, // 인증 토큰
         @Body requestBody: EmotionNoteRequest
-    ): Call<EmotionNoteResponse>
+    ): Response<EmotionNoteResponse>
 
 
     @POST("/api/emotionnote/stress")
