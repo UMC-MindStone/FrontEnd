@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.mindstone.MainActivity
 import com.example.mindstone.R
 import com.example.mindstone.data.remote.DiaryCreateRequest
@@ -76,16 +77,28 @@ class DiaryHomeFragment : Fragment() {
             changeComponent()
         }
 
-        diaryViewModel.images.observe(viewLifecycleOwner) { images ->
-            val imageViews = listOf(binding.diaryImg1Iv, binding.diaryImg2Iv, binding.diaryImg3Iv, binding.diaryImg4Iv)
-            for (i in imageViews.indices) {
-                if (i < images.size) {
-                    imageViews[i].setImageURI(images[i])
+//        diaryViewModel.images.observe(viewLifecycleOwner) { images ->
+//            val imageViews = listOf(binding.diaryImg1Iv, binding.diaryImg2Iv, binding.diaryImg3Iv, binding.diaryImg4Iv)
+//            for (i in imageViews.indices) {
+//                if (i < images.size) {
+//                    imageViews[i].setImageURI(images[i])
+//                } else {
+//                    imageViews[i].setImageDrawable(null)
+//                }
+//            }
+//            changeComponent()
+//        }
+        diaryViewModel.images.observe(viewLifecycleOwner){ imgUris ->
+            val img = listOf(binding.diaryImg1Iv, binding.diaryImg2Iv, binding.diaryImg3Iv, binding.diaryImg4Iv)
+            for (i in imgUris.indices) {
+                if (i < imgUris.size){
+                    Glide.with(this)
+                        .load(imgUris[i])
+                        .into(img[i])
                 } else {
-                    imageViews[i].setImageDrawable(null)
+                    img[i].setImageDrawable(null)
                 }
             }
-            changeComponent()
         }
 
         binding.diaryTextEditIv.setOnClickListener {

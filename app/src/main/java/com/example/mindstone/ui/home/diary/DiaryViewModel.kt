@@ -36,9 +36,7 @@ class DiaryViewModel : ViewModel() {
     val diaryCreated : LiveData<Boolean> get() = _diaryCreated
 
 
-    // 첨부된 이미지 데이터 리스트
-    private val _images = MutableLiveData<List<Uri>>()
-    val images: LiveData<List<Uri>> get() = _images
+
 
     private val _emotionIcon = MutableLiveData<Int>()
     val emotionIcon: LiveData<Int> get() = _emotionIcon
@@ -67,6 +65,9 @@ class DiaryViewModel : ViewModel() {
         currentImages.add(uri)
         _images.value = currentImages
     }
+    // 첨부된 이미지 데이터 리스트
+    private val _images = MutableLiveData<List<Uri>>()
+    val images: LiveData<List<Uri>> get() = _images
 
     fun fetchDiary(date: String) {
         viewModelScope.launch {

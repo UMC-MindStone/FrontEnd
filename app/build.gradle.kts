@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-parcelize") // ✅ Parcelize 사용을 위한 플러그인 추가
+    id("kotlin-kapt")
 }
 
 android {
@@ -85,4 +86,9 @@ dependencies {
     
     // ✅ OkHttp Logging Interceptor (네트워크 요청 로그 확인)
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+
+    // image load
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 }
