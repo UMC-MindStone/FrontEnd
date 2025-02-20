@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import com.example.mindstone.R
 import com.example.mindstone.databinding.GridHabitItemBinding
 import com.example.mindstone.domain.entity.DailyRecord
+import com.example.mindstone.ui.habit.viewmodel.HabitCalendarViewModel
 
 class HabitCalendarGridAdapter(
     private val context: Context,

@@ -32,12 +32,28 @@ data class DailyRecord(
     val totalHabits: Int
 )
 
+//특정일 습관 기록
 data class HabitHistoryResponse(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
-    val result: List<HabitHistoryPatch>
+    val result: List<HabitHistory>
 )
+
+data class HabitHistory(
+    val habitHistoryId: Long,
+    val comment: String,
+    val habitColor: String?,
+    val executions: List<ExecutionsTime>?
+)
+
+data class ExecutionsTime(
+    val id: Long,
+    val startTime: String,
+    val endTime: String
+)
+
+
 
 data class HabitHistoryTest(
     val isSuccess: Boolean,
@@ -48,6 +64,7 @@ data class HabitHistoryTest(
 
 data class HabitHistoryPost(
     var habitId: Long? = null,
+    var date: String? = null,
     var comment: String? = null,
     var startTime: String? = null,
     var endTime: String? = null,

@@ -11,6 +11,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.util.Log
 import com.example.mindstone.data.local.PreferenceManager
+import com.example.mindstone.domain.entity.HabitHistory
 import com.example.mindstone.domain.entity.HabitHistoryPatch
 import com.example.mindstone.domain.entity.HabitHistoryPost
 import com.example.mindstone.domain.entity.HabitHistoryResponse
@@ -35,8 +36,8 @@ class HabitCalendarViewModel : ViewModel() {
     private val _habitTotalData = MutableLiveData<HabitTotalResponse?>()
     val habitTotalData: LiveData<HabitTotalResponse?> get() = _habitTotalData
 
-    private val _habitCheckData = MutableLiveData<List<HabitHistoryPatch>>()
-    val habitCheckData: LiveData<List<HabitHistoryPatch>> get() = _habitCheckData
+    private val _habitCheckData = MutableLiveData<List<HabitHistory>>()
+    val habitCheckData: LiveData<List<HabitHistory>> get() = _habitCheckData
 
     private val _habitReport = MutableLiveData<HabitReportResponse?>()
     val habitReport: LiveData<HabitReportResponse?> = _habitReport
@@ -121,14 +122,13 @@ class HabitCalendarViewModel : ViewModel() {
     // API 호출: HabitCheck 데이터
     fun fetchCheckHabit(formattedDate: String) {
         val formattedToken = "Bearer $token"
-
         apiService.getHabitHistory(formattedToken, formattedDate)
             .enqueue(object : Callback<HabitHistoryResponse> {
                 override fun onResponse(call: Call<HabitHistoryResponse>, response: Response<HabitHistoryResponse>) {
                     if (response.isSuccessful && response.body() != null) {
                         val habitList = response.body()?.result ?: emptyList()
                         _habitCheckData.postValue(habitList)  // 🔹 List만 저장
-                        Log.d("API_SUCCESS", "데이터 로드 성공: $habitList")
+                        Log.d("API_SUCCESS", "Habit: $habitList")
                     } else {
                         handleError(response, _errorMessageCheck, "API3_ERROR")
                     }

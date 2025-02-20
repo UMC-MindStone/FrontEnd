@@ -60,7 +60,7 @@
             android:id="@+id/frame_habit_check_custom_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="하지 않았어요.."
+            android:hint="한줄 소감"
             android:textSize="13sp"
             android:background="@android:color/transparent"
             android:textColor="@color/gray"
@@ -130,7 +130,42 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="85dp"
-            android:layout_marginTop="102dp"
-            />
+            android:layout_marginTop="102dp"/>
+
+        <TextView
+            android:id="@+id/timeText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/timeText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/timeText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/timeText4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            android:textColor="@android:color/black"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

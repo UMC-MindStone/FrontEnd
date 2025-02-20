@@ -27,11 +27,13 @@ import com.example.mindstone.data.remote.HabitCalendarService
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.databinding.FragmentHabitCheckBinding
 import com.example.mindstone.databinding.FrameHabitCheckBinding
+import com.example.mindstone.domain.entity.HabitHistory
 import com.example.mindstone.domain.entity.HabitHistoryPatch
 import com.example.mindstone.domain.entity.HabitHistoryPost
 import com.example.mindstone.domain.entity.HabitHistoryResponse
 import com.example.mindstone.domain.entity.HabitTotal
 import com.example.mindstone.domain.entity.NewHabitHistoryPatch
+import com.example.mindstone.domain.entity.NewHabitHistoryTimePost
 import com.example.mindstone.ui.habit.viewmodel.HabitCalendarViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +48,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class HabitCheckFragment : Fragment() {
-    private val apiService: HabitCalendarService = RetrofitClient.habitCalendarService
     val token = PreferenceManager.getAccessToken() ?: ""
 
     private var selectedYear: Int? = null
@@ -56,8 +57,6 @@ class HabitCheckFragment : Fragment() {
     private var isEditing = false
     private var numOfFrame = 0
 
-    val timeIdList = listOf("id1", "id2", "id3", "id4") //time id 관리용
-
     private var editTextJob: Job? = null
 
     private var habitTotal: List<HabitTotal>? = null
@@ -66,10 +65,6 @@ class HabitCheckFragment : Fragment() {
 
     private lateinit var habitCheckContainerLL: LinearLayout
     private lateinit var binding: FragmentHabitCheckBinding
-
-    private val _habitData = MutableLiveData<HabitHistoryResponse?>()
-    val calendarData: LiveData<HabitHistoryResponse?> get() = _habitData
-    private val _errorMessage = MutableLiveData<String>()
 
     // 각 프레임의 timeNum을 관리할 Map
     private val frameTimeNums = mutableMapOf<Int, Int>()
@@ -108,11 +103,15 @@ class HabitCheckFragment : Fragment() {
 
         // 날짜 변경 버튼 클릭 처리
         binding.habitCheckLeftIv.setOnClickListener {
+            binding.habitCheckContainerLl.removeAllViews()
             changeDate(-1)  // 하루 전으로 변경
+            viewModel.fetchCheckHabit(formattedDate())
         }
 
         binding.habitCheckRightIv.setOnClickListener {
+            binding.habitCheckContainerLl.removeAllViews()
             changeDate(1)  // 하루 후로 변경
+            viewModel.fetchCheckHabit(formattedDate())
         }
 
         binding.habitCheckCloseIv.setOnClickListener {
@@ -134,8 +133,12 @@ class HabitCheckFragment : Fragment() {
                     binding.habitCheckNoHabitIv.visibility = View.GONE
                     Log.d("HabitId", "${habitId}")
 
+                    val dateT = "${selectedYear}-${String.format("%02d", selectedMonth)}-${String.format("%02d", selectedDay)}"
+
+
                     val habitHistory = HabitHistoryPost(
                         habitId = habitId,
+                        date = dateT,
                         comment = "한줄 소감",
                         startTime = null,
                         endTime = null,
@@ -164,9 +167,9 @@ class HabitCheckFragment : Fragment() {
     private fun observeViewModel() {
         // ✅ LiveData 감지하여 UI 업데이트
         viewModel.habitTotalData.observe(viewLifecycleOwner) { data ->
-            Log.d("HabitCheck", "습관 데이터 로드 안 완료: $data")
+            Log.d("HabitCheck", "dataLoadSuccess: $data")
             if (data != null) {
-                Log.d("HabitCheck", "습관 데이터 로드 완료: $data")
+                Log.d("HabitCheck", "dataLoadFailed: $data")
                 habitTotal = data.result
             }
         }
@@ -190,7 +193,7 @@ class HabitCheckFragment : Fragment() {
 
 
     // 날짜 업데이트 함수
-    private fun updateDateView(habitHistoryResponse: List<HabitHistoryPatch>) {
+    private fun updateDateView(habitHistoryResponse: List<HabitHistory>) {
         binding.habitCheckDateTv.text = "${selectedMonth}월 ${selectedDay}일 ${selectedDayOfWeek}"
 
         numOfFrame = habitHistoryResponse?.size ?: 0
@@ -276,7 +279,7 @@ class HabitCheckFragment : Fragment() {
         //setupHabitPicker(frameLayoutBinding)
     }
 
-    private fun createHabitCheckViewAPI(index: Int, habitHistory: HabitHistoryPatch) {
+    private fun createHabitCheckViewAPI(index: Int, habitHistory: HabitHistory) {
         val context = requireContext()
         val frameLayoutBinding = FrameHabitCheckBinding.inflate(LayoutInflater.from(context))
 
@@ -290,8 +293,32 @@ class HabitCheckFragment : Fragment() {
 
         val editText = frameLayoutBinding.frameHabitCheckCustomEt
 
+        val colorIconMap = mapOf(
+            "PURPLE" to R.drawable.ic_depression,
+            "ORANGE" to R.drawable.ic_angry,
+            "BLUE" to R.drawable.ic_sad,
+            "GRAY" to R.drawable.ic_calm_charac,
+            "GREEN" to R.drawable.ic_joy,
+            "YELLOW" to R.drawable.ic_happy,
+            "PINK" to R.drawable.ic_romance
+        )
+
+// null이나 매칭되지 않는 값에 대한 기본 아이콘
+        val defaultIcon = R.drawable.btn_nothing_normal
+
+        val apiColor: String? = habitHistory.habitColor
+        val iconResId = colorIconMap[apiColor] ?: defaultIcon
+
+        frameLayoutBinding.frameHabitCheckIconIv.setImageResource(iconResId)
+
         val commentText = if (habitHistory.comment?.isNotEmpty() == true) habitHistory.comment else "하지 않았어요"
         editText.setText(commentText)
+
+        if(commentText != "한줄 소감"){
+            editText.setTextColor(Color.BLACK)
+        }
+
+
 
         val imageView = frameLayoutBinding.frameHabitCheckBubbleIv
         val timeTextViews: List<TextView> = listOf(
@@ -300,11 +327,39 @@ class HabitCheckFragment : Fragment() {
             frameLayoutBinding.frameHabitCheckTime3Tv,
             frameLayoutBinding.frameHabitCheckTime4Tv
         )
+        val timeId: List<TextView> = listOf(
+            frameLayoutBinding.timeText1,
+            frameLayoutBinding.timeText2,
+            frameLayoutBinding.timeText3,
+            frameLayoutBinding.timeText4
+        )
 
         timeTextViews.forEach { it.visibility = View.GONE }
 
         // 각 프레임에 대한 고유한 timeNum을 관리
         var timeNum = frameTimeNums.getOrDefault(index, 1)
+        for (j in 0 until (habitHistory.executions?.size ?: 0)) {
+            val startTimeRaw = habitHistory.executions?.getOrNull(j)?.startTime
+            val endTimeRaw = habitHistory.executions?.getOrNull(j)?.endTime
+
+            val startTimeFormatted = startTimeRaw?.substring(11, 16) ?: "00:00"
+            val endTimeFormatted = endTimeRaw?.substring(11, 16) ?: "00:00"
+
+            timeId[j].text = habitHistory.executions?.getOrNull(j)?.id?.toString() ?: ""
+            timeTextViews[j].text = "$startTimeFormatted-$endTimeFormatted"
+            timeTextViews[j].visibility = View.VISIBLE
+            timeTextViews[j].setTextColor(Color.BLACK)
+        }
+
+// timeNum을 executions의 크기로 설정
+        timeNum = (habitHistory.executions?.size ?: 0) + 1
+        frameTimeNums[index] = timeNum
+        Log.d("API","$timeNum")
+
+        //habitHistoryId
+        frameLayoutBinding.frameHabitCheckIdContainerTv.text = habitHistory.habitHistoryId.toString()
+
+
         if (isEditing) {
             setEditMode(timeNum, timeTextViews, index, frameLayoutBinding)
         } else {
@@ -338,28 +393,88 @@ class HabitCheckFragment : Fragment() {
     }
 
     private fun setEditMode(timeNum: Int, timeTextViews: List<TextView>, index: Int, frameLayoutBinding: FrameHabitCheckBinding) {
+        val timeId = listOf(
+            frameLayoutBinding.timeText1,
+            frameLayoutBinding.timeText2,
+            frameLayoutBinding.timeText3,
+            frameLayoutBinding.timeText4
+        )
+
         for (j in 0 until timeNum) {
             timeTextViews[j].visibility = View.VISIBLE
-            timeTextViews[j].setOnClickListener { textView ->
-                showTimePickerDialog(frameLayoutBinding) { selectedTime ->
-                    (textView as TextView).text = selectedTime
-                    timeTextViews[j].setTextColor(Color.BLACK)
-                    frameLayoutBinding.frameHabitCheckHabitTv.setTextColor(Color.BLACK)
-                    frameLayoutBinding.frameHabitCheckCustomEt.setTextColor(Color.BLACK)
-                    // timeNum을 증가시키되 최대값은 4로 제한
-                    var updatedTimeNum = timeNum
-                    if (timeNum < (j + 2).coerceAtMost(5)) {
-                        updatedTimeNum = (j + 2).coerceAtMost(5)
+            if(j+1 == timeNum) {
+                timeTextViews[j].setOnClickListener { textView ->
+                    showTimePickerDialog(frameLayoutBinding) { starttime, endtime ->
+                        val selectedTime = "${starttime}:${endtime}"
+
+                        (textView as TextView).text = selectedTime
+                        val habitHabit = NewHabitHistoryTimePost(
+                            habitHistoryId = frameLayoutBinding.frameHabitCheckIdContainerTv.text.toString().toLongOrNull() ?: 0L,
+                            startTime = createTime(starttime),
+                            endTime = createTime(endtime)
+                        )
+                        viewModel.postHabitTime(habitHabit) { result ->
+                            if (result != null) {
+                                Log.d("HabitPost", "Post 성공! ID: $result")
+                                // 받아온 habitHistoryId를 UI에 반영
+                                timeId[j].text = result.toString()
+                            } else {
+                                Log.e("HabitPost", "Post 실패!")
+                            }
+                        }
+                        timeTextViews[j].setTextColor(Color.BLACK)
+                        frameLayoutBinding.frameHabitCheckHabitTv.setTextColor(Color.BLACK)
+                        frameLayoutBinding.frameHabitCheckCustomEt.setTextColor(Color.BLACK)
+                        // timeNum을 증가시키되 최대값은 4로 제한
+                        var updatedTimeNum = timeNum
+                        if (timeNum < (j + 2).coerceAtMost(5)) {
+                            updatedTimeNum = (j + 2).coerceAtMost(5)
+                        }
+
+                        // 각 프레임에 대해 timeNum을 업데이트
+                        frameTimeNums[index] = updatedTimeNum
+
+                        if (updatedTimeNum <= 4) {
+                            setEditMode(updatedTimeNum, timeTextViews, index, frameLayoutBinding)
+                        }
                     }
+                }
+            } else {
+                timeTextViews[j].setOnClickListener { textView ->
+                    showTimePickerDialog(frameLayoutBinding) { starttime, endtime ->
+                        val selectedTime = "${starttime}:${endtime}"
 
-                    // 각 프레임에 대해 timeNum을 업데이트
-                    frameTimeNums[index] = updatedTimeNum
+                        val habitHabit =  NewHabitHistoryPatch(
+                            habitHistoryId = frameLayoutBinding.frameHabitCheckIdContainerTv.text.toString().toLongOrNull() ?: 0L,
+                            excutionId = timeId[j].text.toString().toLongOrNull() ?: 0L,
+                            startTime = createTime(starttime),
+                            endTime = createTime(endtime),
+                            habitColor = null,
+                            comment = null
+                        )
 
-                    if (updatedTimeNum <= 4) {
-                        setEditMode(updatedTimeNum, timeTextViews, index, frameLayoutBinding)
+                        viewModel.patchCheckHabit(habitHabit)
+
+                        (textView as TextView).text = selectedTime
+                        timeTextViews[j].setTextColor(Color.BLACK)
+                        frameLayoutBinding.frameHabitCheckHabitTv.setTextColor(Color.BLACK)
+                        frameLayoutBinding.frameHabitCheckCustomEt.setTextColor(Color.BLACK)
+                        // timeNum을 증가시키되 최대값은 4로 제한
+                        var updatedTimeNum = timeNum
+                        if (timeNum < (j + 2).coerceAtMost(5)) {
+                            updatedTimeNum = (j + 2).coerceAtMost(5)
+                        }
+
+                        // 각 프레임에 대해 timeNum을 업데이트
+                        frameTimeNums[index] = updatedTimeNum
+
+                        if (updatedTimeNum <= 4) {
+                            setEditMode(updatedTimeNum, timeTextViews, index, frameLayoutBinding)
+                        }
                     }
                 }
             }
+
         }
     }
 
@@ -536,28 +651,11 @@ class HabitCheckFragment : Fragment() {
 
 
 
-    private fun showTimePickerDialog(frameLayoutBinding: FrameHabitCheckBinding, onTimeSelected: (String) -> Unit) {
+    private fun showTimePickerDialog(frameLayoutBinding: FrameHabitCheckBinding, onTimeSelected: (String, String) -> Unit) {
         frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_red)
 
         val dialog = TimePickerDialogFragment { startTime, endTime  ->
-            val selectedTime = "${startTime}:${endTime}"
-            onTimeSelected(selectedTime)
-
-            val startTimeT = createTime(startTime)
-            val endTimeT = createTime(endTime)
-
-            val tHabitId: Long? = frameLayoutBinding.frameHabitCheckIdContainerTv.text.toString().toLongOrNull()
-
-
-            val habitHistory = HabitHistoryPatch(
-                habitHistoryId = tHabitId,
-                comment = null,
-                startTime = startTimeT,
-                endTime = endTimeT,
-                habitColor = null
-            )
-
-
+            onTimeSelected(startTime,endTime)
             frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
         }
 
