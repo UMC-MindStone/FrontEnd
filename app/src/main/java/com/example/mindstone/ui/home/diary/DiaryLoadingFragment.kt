@@ -84,7 +84,7 @@ class DiaryLoadingFragment : Fragment() {
         }
     }
     private fun sendCreateDiaryRequest() {
-        val diaryRequest = DiaryCreateRequest("", date)
+        val diaryRequest = DiaryCreateRequest(".", date)
 
         val context = requireContext() // Context 가져오기
         val title = "자동 생성된 일기" // 기본 제목 (필요하면 변경 가능)
