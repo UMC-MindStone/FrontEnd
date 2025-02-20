@@ -4,11 +4,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mindstone.data.local.PreferenceManager
 import com.example.mindstone.data.remote.EmotionCalendarService
 import com.example.mindstone.data.remote.HabitCalendarService
 import com.example.mindstone.data.remote.RetrofitClient
+import com.example.mindstone.domain.entity.EmotionNoteResponse
+import com.example.mindstone.domain.entity.EmotionReportResponse
 import com.example.mindstone.domain.entity.HabitTotalResponse
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,6 +26,8 @@ class EmotionCalendarViewModel: ViewModel() {
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
 
+    private val _emotionReportResponse = MutableLiveData<EmotionReportResponse?>()
+    val emotionReportResponse:LiveData<EmotionReportResponse?> get() = _emotionReportResponse
 
     private fun handleError(response: Response<*>, errorMessageLiveData: MutableLiveData<String>, tag: String) {
         val errorMessage = try {
@@ -77,5 +83,30 @@ class EmotionCalendarViewModel: ViewModel() {
                     handleFailure(t, _errorMessage, "API_EMOTION_CALENDAR_FAILURE")
                 }
             })
+    }
+
+    fun getEmotionCalendarReport(year:Int, month:Int){
+        Log.d("EmotionReport", "Emotion Report 호출")
+
+        viewModelScope.launch {
+            try{
+                val response = RetrofitClient.emotionCalendarService.getEmotionReport(token, year, month)
+
+                if(response.isSuccessful && response.body() != null){
+                    Log.d("EmotionReport", "api 호출 성공, ${response.body()?.result?.toString()}")
+                    _emotionReportResponse.setValue(response.body())
+                }else{
+                    Log.d("EmotionReport", "api 호출 실패, ${response.body()?.result?.toString()}")
+                    _emotionReportResponse.setValue(
+                        EmotionReportResponse(false, "ERROR", "API 호출 실패", null)
+                    )
+                }
+            }catch (e: Exception) {
+                _emotionReportResponse.setValue(
+                    EmotionReportResponse(false, "EXCEPTION", e.message ?: "알 수 없는 오류", null)
+                )
+            }
+        }
+
     }
 }

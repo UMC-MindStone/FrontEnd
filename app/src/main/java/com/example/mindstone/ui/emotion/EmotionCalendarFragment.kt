@@ -12,6 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.YearMonthPickerDialog
 import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
+import com.example.mindstone.domain.entity.EmotionReportResponse
+import com.example.mindstone.domain.entity.EmotionReportResponseDTO
 import com.example.mindstone.ui.emotion.viewmodel.EmotionCalendarViewModel
 import com.example.mindstone.ui.home.diary.CalendarToDiaryFragment
 import com.example.mindstone.ui.home.diary.DiaryViewModel
@@ -69,10 +71,24 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
         super.onViewCreated(view, savedInstanceState)
 
         calendarViewModel.getEmotionCalendar(currentYear, currentMonth)
+        //리포트 받아오기 실행
+
 
         calendarViewModel.emotionMap.observe(viewLifecycleOwner){ emotion ->
             adapter.setEmotionData(emotion)
         }
+
+        calendarViewModel.emotionReportResponse.observe(viewLifecycleOwner){response ->
+            if(response?.isSuccess == true){
+                Log.d("EmotionReport", "observer 가동")
+                response.result?.let { updateViewPagerFragments(it,currentMonth) }
+            }else{
+                Log.d("EmotionReport", "observer 가동 실패 : ${response?.message}")
+            }
+
+        }
+
+        calendarViewModel.getEmotionCalendarReport(currentYear, currentMonth)
     }
 
     // 뷰페이저 설정
@@ -174,7 +190,10 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
 
         // 캘린더 갱신
         setupCalendar()
-        updateViewPagerFragments()
+
+        //updateVIewPager대신 이제 observe가 감지하고 내용을 바꿀거임!
+        calendarViewModel.getEmotionCalendarReport(currentYear, currentMonth)
+        //updateViewPagerFragments()
         calendarViewModel.getEmotionCalendar(currentYear, currentMonth)
     }
 
@@ -188,14 +207,15 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
 
             // 캘린더 갱신
             setupCalendar()
-            updateViewPagerFragments()
+            calendarViewModel.getEmotionCalendarReport(currentYear, currentMonth)
+            //updateViewPagerFragments()
         }
         dialog.show(parentFragmentManager, "YearMonthPickerDialog")
     }
 
-    private fun updateViewPagerFragments() {
-        viewPagerAdapter.updateFragment(0, MonthStatFragment.newInstance(currentMonth))
-        viewPagerAdapter.updateFragment(2, MonthSummaryFragment.newInstance(currentMonth))
+    private fun updateViewPagerFragments(response: EmotionReportResponseDTO, month: Int) {
+        viewPagerAdapter.updateFragment(0, MonthStatFragment.newInstance(response.totalReport))
+        viewPagerAdapter.updateFragment(2, MonthSummaryFragment.newInstance(month,response.totalSummary))
     }
 
 
