@@ -1,5 +1,6 @@
 package com.example.mindstone.ui.home.emotion.view
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -65,15 +66,6 @@ class EmotionModel : ViewModel() {
         _isPositive.value = isPositive
     }
 
-//    // 감정 선택 (감정이 추가될 때마다 비율 조정 - 상태바, 캐릭터 변경)
-//    fun selectEmotion(emotion: String, colorResId: Int, isPositive: Boolean) {
-//        _recentEmotion.value = emotion
-//        _colorResId.value = colorResId
-//        _isPositive.value = isPositive
-//
-//        updateEmotionRatios(emotion)
-//    }
-
     fun selectEmotion(emotion: String, colorResId: Int, isPositive: Boolean) {
         _emotion.value = emotion
         _colorResId.value = colorResId
@@ -83,41 +75,48 @@ class EmotionModel : ViewModel() {
         addEmotion(emotion, (_intensity.value ?: 10).toFloat())
     }
 
-    // 감정 비율 업데이트
-//    fun addEmotion(emotion: String, value: Float) {
-//        val currentRatios = _emotionRatios.value ?: mutableMapOf()
-//
-//        // ✅ 기존 감정 값이 있으면 누적, 없으면 새로 추가
-//        currentRatios[emotion] = (currentRatios[emotion] ?: 0f) + value
-//
-//        // ✅ 전체 합을 계산 (감정의 총합)
-//        val total = currentRatios.values.sum()
-//
-//        // ✅ 감정 값이 계속 누적된 상태에서, 전체 합 대비 비율을 유지
-//        val emotionProportions = if (total > 0) {
-//            currentRatios.mapValues { it.value / total } // 전체 합 대비 비율 변환
-//        } else {
-//            currentRatios
-//        }
-//
-//        _emotionRatios.value = emotionProportions.toMutableMap() // ✅ 변경된 비율 적용
-//    }
+    // 감정 비율 (UI 업데이트용, 100% 기준으로 변환됨)
+    private val _normalizedEmotionRatios = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
+    val normalizedEmotionRatios: LiveData<MutableMap<String, Float>> get() = _normalizedEmotionRatios
+
+    // 🚀 실제 감정 값 저장 (값 변환 X, 추가 및 증가만)
+    private val _actualEmotionValues = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
+    val actualEmotionValues: LiveData<MutableMap<String, Float>> get() = _actualEmotionValues
+
 
     fun addEmotion(emotion: String, value: Float) {
-        val currentRatios = _emotionRatios.value ?: mutableMapOf()
+        val actualValues = _actualEmotionValues.value?.toMutableMap() ?: mutableMapOf()
 
-        // 기존 감정 값이 있으면 누적, 없으면 새로 추가
-        currentRatios[emotion] = (currentRatios[emotion] ?: 0f) + value
+        // ✅ 기존 값이 있다면 누적, 없다면 새로 추가
+        actualValues[emotion] = (actualValues[emotion] ?: 0f) + value
 
-        // 전체 합 계산 (모든 감정의 총합)
-        val total = currentRatios.values.sum()
+        // ✅ 100% 기준으로 UI 비율 변환
+        updateNormalizedRatios(actualValues)
 
-        // ✅ 정확한 비율 계산 (각 감정을 전체 합 대비 비율로 변환)
-        val normalizedRatios = currentRatios.mapValues { it.value / total }
+        // ✅ 디버깅 로그 출력
+        Log.d("EmotionViewModel", "🟢 Added Emotion: $emotion, Value: $value")
+        Log.d("EmotionViewModel", "🔵 Actual Emotion Values: $actualValues")
 
-        _emotionRatios.value = normalizedRatios.toMutableMap() // ✅ 변경된 비율 적용
+        _actualEmotionValues.value = actualValues
     }
 
+    // ✅ UI 비율 변환 함수 (100% 기준으로 변환)
+    private fun updateNormalizedRatios(actualValues: MutableMap<String, Float>) {
+        val total = actualValues.values.sum()
+
+        // ✅ UI에서 100% 기준으로 정규화된 감정 비율 저장
+        val normalizedRatios = if (total > 0) {
+            actualValues.mapValues { (_, v) -> (v / total) * 100 }.toMutableMap()
+        } else {
+            actualValues
+        }
+
+        // ✅ 디버깅 로그 출력
+        Log.d("EmotionViewModel", "🔴 Total Emotion Sum: $total")
+        Log.d("EmotionViewModel", "🟣 Normalized Emotion Ratios (for UI): $normalizedRatios")
+
+        _normalizedEmotionRatios.value = normalizedRatios
+    }
 
 
 

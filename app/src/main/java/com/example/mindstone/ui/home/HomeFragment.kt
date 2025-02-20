@@ -1,6 +1,7 @@
 package com.example.mindstone.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -45,8 +46,9 @@ class HomeFragment : Fragment() {
         emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
 
         // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
-        viewModel.emotionRatios.observe(viewLifecycleOwner) { emotionRatios ->
-            emotionStatusBar.updateEmotions(emotionRatios)
+        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
+            Log.d("HomeFragment", "Observed Normalized Emotion Ratios: $normalizedRatios")
+            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
         }
 
         // 새로운 감정을 선택할 때 기존 데이터 초기화 (기존 감정 비율 & 최근 감정 유지)
