@@ -13,15 +13,18 @@ import com.example.mindstone.databinding.GridEmotionItemBinding
 
 class EmotionCalendarGridAdapter(
     private val context: Context,
-    private val dates: List<String>
+    private val dates: List<String>,
 ) : BaseAdapter() {
-    interface onDateClickListener{
+    interface onDateClickListener {
         fun onDateClick(date: String, isRecord: Boolean)
     }
 
     var listener: onDateClickListener? = null
     private var currentYear = 2025 // 기본값 설정
     private var currentMonth = 1
+
+    // 날짜별 감정을 저장할 맵
+    private val emotionMap = mutableMapOf<String, String>()
 
     override fun getCount(): Int = dates.size
 
@@ -30,7 +33,6 @@ class EmotionCalendarGridAdapter(
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-
         val binding = GridEmotionItemBinding.inflate(LayoutInflater.from(context), parent, false)
         val dateText = binding.dateText
         val dateIcon = binding.dateIcon
@@ -50,101 +52,50 @@ class EmotionCalendarGridAdapter(
                 dateText.visibility = View.VISIBLE
                 dateText.setTextColor(ContextCompat.getColor(context, R.color.black))
 
-
                 updateCurrentYearMonth(parent)
-                // API에서 해당 날짜에 대한 감정 상태 또는 이미지를 받아와서 아이콘 설정
-                val emotion = getEmotionForDate(text) // API 호출 예시
+
+                val formattedDate = "$currentYear-${String.format("%02d", currentMonth)}-${String.format("%02d", text.toInt())}"
+                val emotion = emotionMap[formattedDate] ?: "neutral" // 감정 값 가져오기
                 val isRecord = emotion != "neutral"
 
-
-
                 // 감정 상태에 따른 아이콘 설정
-                when (emotion) {
-                    "happy" -> {
-                        dateIcon.setImageResource(R.drawable.ic_happy)
-                        // 감정 아이콘일 경우 크기를 24x24로 설정
-                        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
-                        dateIcon.layoutParams.width = sizeInPixels
-                        dateIcon.layoutParams.height = sizeInPixels
-                    }
-
-                    "sad" -> {
-                        dateIcon.setImageResource(R.drawable.ic_sad)
-                        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
-                        dateIcon.layoutParams.width = sizeInPixels
-                        dateIcon.layoutParams.height = sizeInPixels
-                    }
-
-                    "calm" -> {
-                        dateIcon.setImageResource(R.drawable.ic_calm_charac)
-                        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
-                        dateIcon.layoutParams.width = sizeInPixels
-                        dateIcon.layoutParams.height = sizeInPixels
-                    }
-
-                    "angry" -> {
-                        dateIcon.setImageResource(R.drawable.ic_angry)
-                        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
-                        dateIcon.layoutParams.width = sizeInPixels
-                        dateIcon.layoutParams.height = sizeInPixels
-                    }
-
-                    "depression" -> {
-                        dateIcon.setImageResource(R.drawable.ic_depression)
-                        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
-                        dateIcon.layoutParams.width = sizeInPixels
-                        dateIcon.layoutParams.height = sizeInPixels
-                    }
-
-                    "joy" -> {
-                        dateIcon.setImageResource(R.drawable.ic_joy)
-                        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
-                        dateIcon.layoutParams.width = sizeInPixels
-                        dateIcon.layoutParams.height = sizeInPixels
-                    }
-
-                    "romance" -> {
-                        dateIcon.setImageResource(R.drawable.ic_romance)
-                        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
-                        dateIcon.layoutParams.width = sizeInPixels
-                        dateIcon.layoutParams.height = sizeInPixels
-                    }
-
-                    else -> {
-                        dateIcon.setImageResource(R.drawable.btn_empty_emotion_normal) // 기본 아이콘
-                    }
-                }
-                dateIcon.visibility = View.VISIBLE // 아이콘 표시
+                setEmotionIcon(emotion, binding)
 
                 binding.root.setOnClickListener {
-                    val day = text.toInt()
-                    val formattedDate = "$currentYear-${String.format("%02d", currentMonth)}-${String.format("%02d", day)}"
                     listener?.onDateClick(formattedDate, isRecord)
                 }
             }
         }
-
-        return binding.root // 바인딩된 루트 뷰 반환
+        return binding.root
     }
 
-    // 예시: 특정 날짜에 감정 상태를 받아오는 함수
-    fun getEmotionForDate(date: String): String {
-        // 일자가 한 자릿수일 때 두 자릿수로 변환
-        val dateNumber = date.padStart(2, '0')  // 예: "1" -> "01"
-        val fullDate = "2025-01-$dateNumber"    // 예: "2025-01-01"
+    // 감정 상태에 따라 아이콘 설정
+    private fun setEmotionIcon(emotion: String, binding: GridEmotionItemBinding) {
+        val dateIcon = binding.dateIcon
+        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
 
-        val emotion = when (fullDate) {
-            "2025-01-01" -> "happy"
-            "2025-01-02" -> "sad"
-            "2025-01-03" -> "calm"
-            "2025-01-04" -> "angry"
-            "2025-01-05" -> "depression"
-            "2025-01-06" -> "joy"
-            "2025-01-07" -> "romance"
-            else -> "neutral"
+        when (emotion) {
+            "happy" -> dateIcon.setImageResource(R.drawable.ic_happy)
+            "sad" -> dateIcon.setImageResource(R.drawable.ic_sad)
+            "calm" -> dateIcon.setImageResource(R.drawable.ic_calm_charac)
+            "angry" -> dateIcon.setImageResource(R.drawable.ic_angry)
+            "depression" -> dateIcon.setImageResource(R.drawable.ic_depression)
+            "joy" -> dateIcon.setImageResource(R.drawable.ic_joy)
+            "romance" -> dateIcon.setImageResource(R.drawable.ic_romance)
+            else -> dateIcon.setImageResource(R.drawable.btn_empty_emotion_normal) // 기본 아이콘
         }
-        return emotion
+
+        dateIcon.layoutParams.width = sizeInPixels
+        dateIcon.layoutParams.height = sizeInPixels
+        dateIcon.visibility = View.VISIBLE
     }
+
+    // 특정 날짜의 감정을 설정하는 함수
+    fun updateEmotionForDate(date: String, emotion: String) {
+        emotionMap[date] = emotion // 날짜에 감정 저장
+        notifyDataSetChanged() // UI 갱신
+    }
+
     private fun updateCurrentYearMonth(parent: ViewGroup?) {
         val fragment = (parent?.context as? FragmentActivity)?.supportFragmentManager?.fragments?.find {
             it is EmotionCalendarFragment
@@ -155,7 +106,5 @@ class EmotionCalendarGridAdapter(
             currentMonth = it.currentMonth
         }
     }
-
-
 }
 

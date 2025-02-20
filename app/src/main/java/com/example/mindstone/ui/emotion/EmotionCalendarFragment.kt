@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.example.mindstone.R
 import com.example.mindstone.YearMonthPickerDialog
 import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
+import com.example.mindstone.ui.emotion.viewmodel.EmotionCalendarViewModel
 import com.example.mindstone.ui.home.diary.CalendarToDiaryFragment
 import com.example.mindstone.ui.home.diary.DiaryViewModel
 import java.util.Calendar
@@ -25,7 +27,7 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
     var currentMonth = 1   // 초기 월 설정 (1월)
 
     private val diaryViewModel : DiaryViewModel by activityViewModels()
-
+    private val viewModel: EmotionCalendarViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,11 +70,23 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
 
     // 캘린더 데이터를 생성하고 GridView에 어댑터를 설정하는 메서드
     private fun setupCalendar() {
+
         // 캘린더 데이터 생성
         val calendarData = generateCalendarData(currentYear, currentMonth)
 
         // GridView와 어댑터 연결
         val adapter = EmotionCalendarGridAdapter(requireContext(), calendarData)
+
+        viewModel.getEmotionCalendar(currentYear,currentMonth)
+        viewModel.emotionCalendarDate.observe(viewLifecycleOwner) { response ->
+            if (response != null) {
+                for(j in 0 until response.result.size) {
+                    val currentDay = response.result[j].dateIndex
+                    val setDate = String.format("%04d-%02d-%02d", currentYear, currentMonth, currentDay)
+                    adapter.updateEmotionForDate(setDate,response.result[j].emotion)
+                }
+            }
+        }
         binding.emotionCalendarCalendarGv.adapter = adapter
         adapter.listener = this
         // 날짜 표시: 2025 1월 형식으로 설정
