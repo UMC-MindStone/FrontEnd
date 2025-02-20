@@ -27,6 +27,7 @@ import com.example.mindstone.ui.home.HomeFragment
 import com.example.mindstone.ui.home.emotion.negative.EmotionManageChoiceFragment
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
 import com.example.mindstone.ui.home.emotion.view.EmotionNoteViewModel
+import com.example.mindstone.ui.home.emotion.view.EmotionViewModel
 import com.example.mindstone.ui.search.SurveyViewModel
 import kotlinx.coroutines.launch
 
@@ -38,6 +39,7 @@ class EmotionFinalFragment : Fragment() {
     private lateinit var emotionStatusBar: EmotionStatusBar
     private lateinit var viewModel: EmotionModel
     private val emotionNoteViewModel: EmotionNoteViewModel by viewModels()
+    private val emotionViewModel: EmotionViewModel by viewModels()
 
     private var userName: String = "사용자"
 
@@ -74,6 +76,7 @@ class EmotionFinalFragment : Fragment() {
         }
 
 
+        emotionViewModel.fetchEmotionStatistics(getUserToken()) // 최신 감정 데이터 불러오기
 
         // SharedPreferences에서 사용자 이름 불러오기
         userName = getUserNickname()
@@ -109,12 +112,6 @@ class EmotionFinalFragment : Fragment() {
         saveEmotionData()
 
 
-        // 캐릭터 변경 (최근 감정 기준)
-        viewModel.recentEmotion.removeObservers(viewLifecycleOwner)
-        viewModel.recentEmotion.observe(viewLifecycleOwner) { recentEmotion ->
-            updateCharacter(recentEmotion)
-        }
-
         // 감정에 맞는 상태 업데이트
         viewModel.emotion.removeObservers(viewLifecycleOwner)
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
@@ -123,6 +120,12 @@ class EmotionFinalFragment : Fragment() {
 
         viewModel.selectEmotion(selectedEmotion, colorResId, isPositive)
         hideAllEmotionViews()
+
+        // ✅ EmotionModel에서 선택한 감정을 EmotionViewModel로 전달
+        updateEmotionViewModel()
+
+        // ✅ 사용자가 선택한 감정 적용
+        applySelectedEmotion()
 
         // 부정적 감정이면 finalStatus2Tv 보이기
         if (selectedEmotion in listOf("화남", "우울", "슬픔")) {
@@ -185,10 +188,29 @@ class EmotionFinalFragment : Fragment() {
         Log.d("EmotionFinalFragment", "✅ SharedPreferences에 stress_reason_id 저장됨: $id")
     }
 
-    // ✅ SharedPreferences에서 EmotionNote의 id 불러오기
-    private fun getStressReasonId(): Int {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1
+
+    /**
+     * 🚀 EmotionModel의 감정 데이터를 EmotionViewModel로 전달
+     */
+    private fun updateEmotionViewModel() {
+        val selectedEmotion = viewModel.emotion.value ?: return
+        val intensity = viewModel.intensity.value ?: 0
+
+        emotionViewModel.setSelectedEmotion(selectedEmotion, intensity)
+
+        Log.d("EmotionFinalFragment", "📌 EmotionModel → EmotionViewModel 적용: $selectedEmotion, Intensity: $intensity")
+    }
+
+    /**
+     * 🚀 사용자가 선택한 감정을 ViewModel에 반영
+     */
+    private fun applySelectedEmotion() {
+        val selectedEmotion = emotionViewModel.selectedEmotion.value ?: return
+        val intensity = emotionViewModel.emotionIntensity.value ?: 0
+
+        emotionViewModel.selectEmotion(selectedEmotion, intensity)
+
+        Log.d("EmotionFinalFragment", "📌 Selected Emotion Applied: $selectedEmotion, Intensity: $intensity")
     }
 
 
