@@ -85,9 +85,11 @@ class HabitCalendarViewModel : ViewModel() {
         apiService.getHabitCalendar(formattedToken, year, month)
             .enqueue(object : Callback<HabitCalendarResponse> {
                 override fun onResponse(call: Call<HabitCalendarResponse>, response: Response<HabitCalendarResponse>) {
+
+
                     if (response.isSuccessful && response.body() != null) {
                         _calendarData.postValue(response.body())
-                        Log.d("API_SUCCESS", "데이터 로드 성공: ${response.body()}")
+                        Log.d("API11_SUCCESS", "데이터 로드 성공: ${response.body()}")
                     } else {
                         handleError(response, _errorMessage, "API1_ERROR")
                     }

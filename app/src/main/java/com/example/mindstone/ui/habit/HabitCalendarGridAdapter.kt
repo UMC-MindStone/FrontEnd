@@ -17,6 +17,7 @@ import com.example.mindstone.ui.habit.viewmodel.HabitCalendarViewModel
 class HabitCalendarGridAdapter(
     private val context: Context,
     private val dates: List<Any>, // ✅ 요일 헤더 + DailyRecord 리스트
+    private val totalHabitNum: Int,
     private val onDateClick: (String) -> Unit
 ) : BaseAdapter() {
 
@@ -31,7 +32,7 @@ class HabitCalendarGridAdapter(
         val dateText = binding.dateText
         val dateProgressBar = binding.dateProgress
         val subText = binding.subText
-
+        Log.d("TOTAL2","${totalHabitNum}")
         val item = dates[position]
 
         if (item is String) { // ✅ 요일 헤더 처리
@@ -51,16 +52,16 @@ class HabitCalendarGridAdapter(
                 subText.visibility = View.GONE
             } else {
                 dateText.text = day
-                if (totalHabits == 0) {
+                if (totalHabitNum == 0) {
                     dateProgressBar.visibility = View.GONE
                     subText.visibility = View.VISIBLE
                     subText.text = "0/0"
                 } else {
-                    val progress = (completedHabits.toFloat() / totalHabits.toFloat()) * 100
+                    val progress = (completedHabits.toFloat() / totalHabitNum.toFloat()) * 100
                     dateProgressBar.progress = progress.toInt()
                     subText.visibility = View.VISIBLE
-                    Log.d("Calendar", "$completedHabits / $totalHabits")
-                    subText.text = "$completedHabits/$totalHabits"
+                    Log.d("Calendar", "$completedHabits / $totalHabitNum")
+                    subText.text = "$completedHabits/$totalHabitNum"
                 }
             }
 
