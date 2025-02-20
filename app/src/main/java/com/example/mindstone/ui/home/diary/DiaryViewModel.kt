@@ -139,6 +139,7 @@ class DiaryViewModel : ViewModel() {
     }
 
     fun saveOrUpdateDiary(context:Context, date: String, title: String) {
+
         Log.d("Upload Debug", "✅ saveOrUpdateDiary() 함수 호출됨")
         viewModelScope.launch {
             Log.d("UploadDebug", "✅ viewModelScope.launch 실행됨")
@@ -197,6 +198,7 @@ class DiaryViewModel : ViewModel() {
         diaryRequest: DiaryCreateRequest,
         onFailure: (String) -> Unit
     ) {
+        _diaryStatus.postValue(1)
         _diaryCreated.postValue(false)
         viewModelScope.launch {
             DiaryRepository.createDiary(diaryRequest,
@@ -222,6 +224,7 @@ class DiaryViewModel : ViewModel() {
         diaryRequest: DiaryCreateRequest,
         onFailure: (String) -> Unit
     ) {
+        _diaryStatus.postValue(1)
         viewModelScope.launch {
             DiaryRepository.recreateDiary(diaryRequest,
                 onSuccess = { diary ->
@@ -261,7 +264,7 @@ class DiaryViewModel : ViewModel() {
             R.drawable.ic_joy -> "JOY"
             R.drawable.ic_happy -> "HAPPINESS"
             R.drawable.ic_romance -> "THRILL"
-            else -> "NEURAL"
+            else -> "CALM"
         }
 
     }
@@ -280,6 +283,11 @@ class DiaryViewModel : ViewModel() {
 
         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("image", file.name, requestFile)
+    }
+
+    private fun fetchEmotion(data: Map<String, Float>){
+        val maxEntry = data.maxByOrNull { it.value }
+        _emotionIcon.value = getEmotionIcon(maxEntry?.key ?: "CALM")
     }
 
 }

@@ -31,9 +31,9 @@ class MainActivity : AppCompatActivity() {
 
         // 특정 시간에 띄우기
         todayViewModel = ViewModelProvider(this).get(TodayFinishViewModel::class.java)
-        todayViewModel.scheduleFragmentAtSpecificTime(this, 12, 11) //
+        todayViewModel.scheduleFragmentAtSpecificTime(this, 20, 52) //
 
-        // 🔹 시스템 바 인셋 적용 (네비게이션 바 패딩 설정)
+         //🔹 시스템 바 인셋 적용 (네비게이션 바 패딩 설정)
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavigationView) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -42,7 +42,9 @@ class MainActivity : AppCompatActivity() {
 
         // 🔹 앱 실행 시 기본 프래그먼트(HomeFragment) 설정
         if (savedInstanceState == null) {
-            replaceFragment(HabitCalendarFragment())
+
+            replaceFragment(HomeFragment())
+            binding.bottomNavigationView.selectedItemId = R.id.nav_home
         }
 
         // 🔹 네비게이션 바 아이템 클릭 시 프래그먼트 변경

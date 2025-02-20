@@ -65,8 +65,10 @@ class DiaryLoadingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         if(fragment == "today"){
             //오늘의 날짜 띄우기
+            updateEmotion()
             updateDateUI()
         } else{
             updateDateUI()
@@ -84,7 +86,7 @@ class DiaryLoadingFragment : Fragment() {
         }
     }
     private fun sendCreateDiaryRequest() {
-        val diaryRequest = DiaryCreateRequest("", date)
+        val diaryRequest = DiaryCreateRequest(".", date)
 
         val context = requireContext() // Context 가져오기
         val title = "자동 생성된 일기" // 기본 제목 (필요하면 변경 가능)
@@ -121,6 +123,10 @@ class DiaryLoadingFragment : Fragment() {
             .replace(R.id.main_container, fragment)
             .commit()
 
+    }
+
+    private fun updateEmotion(){
+        // EmotionViewmodel에 있는 actualEmotionRatios 를 diaryViewmodel.fetchEmotion에 넣어주기
     }
 
 }
