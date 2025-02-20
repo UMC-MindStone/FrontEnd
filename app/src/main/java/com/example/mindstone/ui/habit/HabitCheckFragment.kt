@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.example.mindstone.ColorPickerFragment
 import com.example.mindstone.R
 import com.example.mindstone.TimePickerDialogFragment
@@ -26,20 +27,18 @@ import com.example.mindstone.data.remote.HabitCalendarService
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.databinding.FragmentHabitCheckBinding
 import com.example.mindstone.databinding.FrameHabitCheckBinding
-import com.example.mindstone.domain.entity.HabitCalendarResponse
-import com.example.mindstone.domain.entity.HabitHistory
+import com.example.mindstone.domain.entity.HabitHistoryPatch
+import com.example.mindstone.domain.entity.HabitHistoryPost
 import com.example.mindstone.domain.entity.HabitHistoryResponse
 import com.example.mindstone.domain.entity.HabitTotal
-import com.example.mindstone.domain.entity.HabitTotalResponse
+import com.example.mindstone.domain.entity.NewHabitHistoryPatch
 import com.example.mindstone.ui.habit.viewmodel.HabitCalendarViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -56,6 +55,8 @@ class HabitCheckFragment : Fragment() {
     private var selectedDayOfWeek: String? = null
     private var isEditing = false
     private var numOfFrame = 0
+
+    val timeIdList = listOf("id1", "id2", "id3", "id4") //time id 관리용
 
     private var editTextJob: Job? = null
 
@@ -129,29 +130,24 @@ class HabitCheckFragment : Fragment() {
             if (index < (habitTotal?.size ?: 0)) {
                 val dialog = HabitPickerFragment { habitId, selectedHabit ->
                     // ✅ 확인 버튼을 눌렀을 때만 실행됨
-                    createHabitCheckView(index, selectedHabit, habitId)
                     binding.habitCheckStoneIv.visibility = View.GONE
                     binding.habitCheckNoHabitIv.visibility = View.GONE
                     Log.d("HabitId", "${habitId}")
-                    val tyear = selectedYear ?: 0
-                    val tmonth = selectedMonth ?: 0
-                    val tday = selectedDay ?: 0
 
-                    val localDateTime = LocalDateTime.of(tyear, tmonth, tday, 0, 0, 0, 0)
-                    val utcDateTime = localDateTime.atZone(ZoneOffset.UTC).toLocalDateTime()
-                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                    val testtime = utcDateTime.format(formatter)
-
-                    Log.d("API_TTTT", testtime)
-
-                    val habitHistory = HabitHistory(
+                    val habitHistory = HabitHistoryPost(
                         habitId = habitId,
                         comment = "한줄 소감",
-                        startTime = testtime,
-                        endTime = testtime,
+                        startTime = null,
+                        endTime = null,
                         habitColor = null
                     )
                     viewModel.postCheckHabit(habitHistory)
+
+                    viewModel.habitHistoryId.observe(viewLifecycleOwner, Observer { habitHistoryId ->
+                        habitHistoryId?.let {
+                            createHabitCheckView(index, selectedHabit, it)  // habitHistoryId 전달
+                        }
+                    })
                 }.apply {
                     onDismissListener = {
                         // ✅ Picker가 닫혔지만 선택되지 않은 경우 → 아무 동작도 하지 않음
@@ -194,7 +190,7 @@ class HabitCheckFragment : Fragment() {
 
 
     // 날짜 업데이트 함수
-    private fun updateDateView(habitHistoryResponse: List<HabitHistory>) {
+    private fun updateDateView(habitHistoryResponse: List<HabitHistoryPatch>) {
         binding.habitCheckDateTv.text = "${selectedMonth}월 ${selectedDay}일 ${selectedDayOfWeek}"
 
         numOfFrame = habitHistoryResponse?.size ?: 0
@@ -280,7 +276,7 @@ class HabitCheckFragment : Fragment() {
         //setupHabitPicker(frameLayoutBinding)
     }
 
-    private fun createHabitCheckViewAPI(index: Int, habitHistory: HabitHistory) {
+    private fun createHabitCheckViewAPI(index: Int, habitHistory: HabitHistoryPatch) {
         val context = requireContext()
         val frameLayoutBinding = FrameHabitCheckBinding.inflate(LayoutInflater.from(context))
 
@@ -411,12 +407,13 @@ class HabitCheckFragment : Fragment() {
                     val tComment = editText.text.toString()
                     val tHabitId: Long? = frameLayoutBinding.frameHabitCheckIdContainerTv.text.toString().toLongOrNull()
 
-                    val habitHistory = HabitHistory(
-                        habitId = tHabitId,
-                        comment = tComment,
+                    val habitHistory = NewHabitHistoryPatch(
+                        habitHistoryId = tHabitId,
+                        excutionId = null,
                         startTime = null,
                         endTime = null,
-                        habitColor = null
+                        habitColor = null,
+                        comment = tComment
                     )
 
                     viewModel.patchCheckHabit(habitHistory)
@@ -472,14 +469,16 @@ class HabitCheckFragment : Fragment() {
                                 7 -> "PINK"
                                 else -> null
                             }
+                            val tHabitId: Long? = frameLayoutBinding.frameHabitCheckIdContainerTv.text.toString().toLongOrNull()
 
                             // ✅ PATCH 요청 전송
-                            val habitHistory = HabitHistory(
-                                habitId = null,
-                                comment = null,
+                            val habitHistory = NewHabitHistoryPatch(
+                                habitHistoryId = tHabitId,
+                                excutionId = null,
                                 startTime = null,
                                 endTime = null,
-                                habitColor = habitColor
+                                habitColor = habitColor,
+                                comment = null
                             )
                             viewModel.patchCheckHabit(habitHistory)
                         }
@@ -540,8 +539,24 @@ class HabitCheckFragment : Fragment() {
     private fun showTimePickerDialog(frameLayoutBinding: FrameHabitCheckBinding, onTimeSelected: (String) -> Unit) {
         frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_red)
 
-        val dialog = TimePickerDialogFragment { selectedTime ->
+        val dialog = TimePickerDialogFragment { startTime, endTime  ->
+            val selectedTime = "${startTime}:${endTime}"
             onTimeSelected(selectedTime)
+
+            val startTimeT = createTime(startTime)
+            val endTimeT = createTime(endTime)
+
+            val tHabitId: Long? = frameLayoutBinding.frameHabitCheckIdContainerTv.text.toString().toLongOrNull()
+
+
+            val habitHistory = HabitHistoryPatch(
+                habitHistoryId = tHabitId,
+                comment = null,
+                startTime = startTimeT,
+                endTime = endTimeT,
+                habitColor = null
+            )
+
 
             frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
         }
@@ -550,6 +565,33 @@ class HabitCheckFragment : Fragment() {
             frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
         }
         dialog.show(parentFragmentManager, "TimePickerDialog")
+    }
+
+    fun createTime(startTime: String): String {
+        // startTime은 항상 "00:00" 형식이라고 가정하고, 이를 기반으로 시간을 설정합니다.
+
+        val year = selectedYear ?: 0
+        val month = selectedMonth ?: 1
+        val day = selectedDay ?: 0
+
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month - 1)  // 0부터 시작하는 월을 조정
+            set(Calendar.DAY_OF_MONTH, day)
+
+            // "00:00"에서 시간과 분을 설정
+            val timeParts = startTime.split(":")
+            set(Calendar.HOUR_OF_DAY, timeParts[0].toInt())  // 24시간 형식
+            set(Calendar.MINUTE, timeParts[1].toInt())
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        // SimpleDateFormat을 이용해 원하는 포맷으로 변환합니다.
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        dateFormat.timeZone = TimeZone.getTimeZone("UTC")  // UTC 시간대로 설정
+
+        return dateFormat.format(calendar.time)  // 포맷에 맞게 변환된 시간 리턴
     }
 
     private fun calculateWidthBasedOnTextLength(textLength: Int): Int {
@@ -604,4 +646,5 @@ class HabitCheckFragment : Fragment() {
         binding.habitCheckEditTv.text = if (isEditing) "완료" else "편집"
         updateDateViews()
     }
+
 }

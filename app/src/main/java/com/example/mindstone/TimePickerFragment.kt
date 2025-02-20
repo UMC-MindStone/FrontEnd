@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment
 import com.example.mindstone.databinding.FragmentTimePickerBinding
 
 class TimePickerDialogFragment(
-    private val onTimeSelected: (timeText: String) -> Unit
+    private val onTimeSelected: (startTime: String, endTime: String) -> Unit  // 두 개의 값을 넘기도록 수정
 ) : DialogFragment() {
 
     private var _binding: FragmentTimePickerBinding? = null
@@ -90,8 +90,8 @@ class TimePickerDialogFragment(
                 // 끝나는 시간 저장
                 endTime = String.format("%02d:%02d", endHour, endMinute)
 
-                val timeText = "$startTime-$endTime"
-                onTimeSelected(timeText)
+                // startTime과 endTime을 각각 넘기기
+                onTimeSelected(startTime, endTime)
 
                 // 다이얼로그 닫기
                 dismiss()

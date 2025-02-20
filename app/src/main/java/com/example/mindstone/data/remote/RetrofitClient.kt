@@ -153,4 +153,6 @@ object RetrofitClient {
     
     // ✅
     val habitCalendarService: HabitCalendarService = retrofit.create(HabitCalendarService::class.java)
+
+    val emotionCalendarService: EmotionCalendarService = retrofit.create(EmotionCalendarService::class.java)
 }
