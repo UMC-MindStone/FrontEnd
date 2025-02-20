@@ -33,6 +33,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="38dp"/>
+    
+    <ImageView
+        android:id="@+id/habit_check_stone_iv"
+        android:layout_width="112dp"
+        android:layout_height="96dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_habit_stone" />
+    
+    <ImageView
+        android:id="@+id/habit_check_no_habit_iv"
+        android:layout_width="112dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_no_report"
+        app:layout_constraintTop_toBottomOf="@id/habit_check_stone_iv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
 
     <ImageView
         android:id="@+id/habit_check_close_iv"
@@ -62,6 +82,18 @@
             android:paddingTop="0dp"
             android:layout_marginHorizontal="30dp"/>
     </ScrollView>
+
+
+    <ImageView
+        android:id="@+id/habit_check_report_btn_iv"
+        android:layout_width="280dp"
+        android:layout_height="52dp"
+        android:src="@drawable/btn_habit_report"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="53dp"
+        android:clickable="true"/>
 
     <ImageView
         android:id="@+id/habit_check_right_iv"

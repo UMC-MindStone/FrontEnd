@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,24 +12,63 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.mindstone.ColorPickerFragment
 import com.example.mindstone.R
 import com.example.mindstone.TimePickerDialogFragment
+import com.example.mindstone.data.local.PreferenceManager
+import com.example.mindstone.data.remote.HabitCalendarService
+import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.databinding.FragmentHabitCheckBinding
 import com.example.mindstone.databinding.FrameHabitCheckBinding
+import com.example.mindstone.domain.entity.HabitCalendarResponse
+import com.example.mindstone.domain.entity.HabitHistory
+import com.example.mindstone.domain.entity.HabitHistoryResponse
+import com.example.mindstone.domain.entity.HabitTotal
+import com.example.mindstone.domain.entity.HabitTotalResponse
+import com.example.mindstone.ui.habit.viewmodel.HabitCalendarViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class HabitCheckFragment : Fragment() {
+    private val apiService: HabitCalendarService = RetrofitClient.habitCalendarService
+    val token = PreferenceManager.getAccessToken() ?: ""
+
     private var selectedYear: Int? = null
     private var selectedMonth: Int? = null
     private var selectedDay: Int? = null
     private var selectedDayOfWeek: String? = null
     private var isEditing = false
+    private var numOfFrame = 0
+
+    private var editTextJob: Job? = null
+
+    private var habitTotal: List<HabitTotal>? = null
+
+    private val viewModel: HabitCalendarViewModel by viewModels() //뷰모델
 
     private lateinit var habitCheckContainerLL: LinearLayout
     private lateinit var binding: FragmentHabitCheckBinding
+
+    private val _habitData = MutableLiveData<HabitHistoryResponse?>()
+    val calendarData: LiveData<HabitHistoryResponse?> get() = _habitData
+    private val _errorMessage = MutableLiveData<String>()
 
     // 각 프레임의 timeNum을 관리할 Map
     private val frameTimeNums = mutableMapOf<Int, Int>()
@@ -53,8 +93,17 @@ class HabitCheckFragment : Fragment() {
         binding = FragmentHabitCheckBinding.inflate(inflater, container, false)
         habitCheckContainerLL = binding.habitCheckContainerLl
 
+        // 습관 정보
+        viewModel.fetchTotalHabit()
+        observeViewModel()
+
+
+        viewModel.habitCheckData.observe(viewLifecycleOwner) { habitHistoryList ->
+            updateDateView(habitHistoryList)
+        }
+
         // 초기 날짜 세팅
-        updateDateView()
+        viewModel.fetchCheckHabit(formattedDate())
 
         // 날짜 변경 버튼 클릭 처리
         binding.habitCheckLeftIv.setOnClickListener {
@@ -72,31 +121,127 @@ class HabitCheckFragment : Fragment() {
         binding.habitCheckEditTv.setOnClickListener {
             toggleEditMode()
         }
+
+        binding.habitCheckReportBtnIv.setOnClickListener {
+            Log.d("HabitCheck", "Report button clicked")
+
+            val index = habitCheckContainerLL.childCount
+            if (index < (habitTotal?.size ?: 0)) {
+                val dialog = HabitPickerFragment { habitId, selectedHabit ->
+                    // ✅ 확인 버튼을 눌렀을 때만 실행됨
+                    createHabitCheckView(index, selectedHabit, habitId)
+                    binding.habitCheckStoneIv.visibility = View.GONE
+                    binding.habitCheckNoHabitIv.visibility = View.GONE
+                    Log.d("HabitId", "${habitId}")
+                    val tyear = selectedYear ?: 0
+                    val tmonth = selectedMonth ?: 0
+                    val tday = selectedDay ?: 0
+
+                    val localDateTime = LocalDateTime.of(tyear, tmonth, tday, 0, 0, 0, 0)
+                    val utcDateTime = localDateTime.atZone(ZoneOffset.UTC).toLocalDateTime()
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                    val testtime = utcDateTime.format(formatter)
+
+                    Log.d("API_TTTT", testtime)
+
+                    val habitHistory = HabitHistory(
+                        habitId = habitId,
+                        comment = "한줄 소감",
+                        startTime = testtime,
+                        endTime = testtime,
+                        habitColor = null
+                    )
+                    viewModel.postCheckHabit(habitHistory)
+                }.apply {
+                    onDismissListener = {
+                        // ✅ Picker가 닫혔지만 선택되지 않은 경우 → 아무 동작도 하지 않음
+                        Log.d("HabitPicker", "Picker 닫힘 (프레임 생성 안 함)")
+                    }
+                }
+
+                dialog.show(parentFragmentManager, "HabitPickerDialog")
+            }
+        }
         return binding.root
     }
 
+    private fun observeViewModel() {
+        // ✅ LiveData 감지하여 UI 업데이트
+        viewModel.habitTotalData.observe(viewLifecycleOwner) { data ->
+            Log.d("HabitCheck", "습관 데이터 로드 안 완료: $data")
+            if (data != null) {
+                Log.d("HabitCheck", "습관 데이터 로드 완료: $data")
+                habitTotal = data.result
+            }
+        }
+
+        viewModel.errorMessageTotal.observe(viewLifecycleOwner) { error ->
+            Log.e("HabitCheck", "에러 발생: $error")
+            Toast.makeText(requireContext(), "데이터 불러오기 실패", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun formattedDate(): String {
+        val year = selectedYear ?: 2025
+        val month = selectedMonth ?: 1
+        val day = selectedDay ?: 1
+
+        val date = LocalDate.of(year, month, day)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return date.format(formatter)
+    }
 
 
     // 날짜 업데이트 함수
-    private fun updateDateView() {
+    private fun updateDateView(habitHistoryResponse: List<HabitHistory>) {
         binding.habitCheckDateTv.text = "${selectedMonth}월 ${selectedDay}일 ${selectedDayOfWeek}"
 
-        // 기존 뷰들을 초기화하지 않고 유지
-        val count = 3 // 예시: 3개의 FrameLayout 추가
-        for (i in 0 until count) {
+        numOfFrame = habitHistoryResponse?.size ?: 0
+
+        if(habitHistoryResponse.isEmpty()){
+            binding.habitCheckStoneIv.visibility = View.VISIBLE
+            binding.habitCheckNoHabitIv.visibility = View.VISIBLE
+        } else {
+            binding.habitCheckStoneIv.visibility = View.GONE
+            binding.habitCheckNoHabitIv.visibility = View.GONE
+        }
+        for (i in 0 until numOfFrame) {
             // 이미 뷰가 추가되어 있다면, 해당 뷰를 업데이트하도록 변경
             if (habitCheckContainerLL.childCount > i) {
                 val frameLayoutBinding = FrameHabitCheckBinding.bind(habitCheckContainerLL.getChildAt(i))
                 updateHabitCheckView(frameLayoutBinding, i)
             } else {
-                createHabitCheckView(i)
+                createHabitCheckViewAPI(i, habitHistoryResponse[i])
             }
         }
     }
 
-    private fun createHabitCheckView(index: Int) {
+    private fun updateDateViews() {
+        binding.habitCheckDateTv.text = "${selectedMonth}월 ${selectedDay}일 ${selectedDayOfWeek}"
+
+        numOfFrame = habitCheckContainerLL.childCount
+
+        if(numOfFrame == 0){
+            binding.habitCheckStoneIv.visibility = View.VISIBLE
+            binding.habitCheckNoHabitIv.visibility = View.VISIBLE
+        } else {
+            binding.habitCheckStoneIv.visibility = View.GONE
+            binding.habitCheckNoHabitIv.visibility = View.GONE
+        }
+        for (i in 0 until numOfFrame) {
+            val frameLayoutBinding = FrameHabitCheckBinding.bind(habitCheckContainerLL.getChildAt(i))
+            updateHabitCheckView(frameLayoutBinding, i)
+        }
+    }
+
+    private fun createHabitCheckView(index: Int, selectedHabit: String, habitId: Long) {
         val context = requireContext()
         val frameLayoutBinding = FrameHabitCheckBinding.inflate(LayoutInflater.from(context))
+
+        // ✅ 선택된 습관 이름을 표시
+        frameLayoutBinding.frameHabitCheckHabitTv.text = selectedHabit
+        frameLayoutBinding.frameHabitCheckIdContainerTv.text = "$habitId"
 
         // 각 FrameLayout에 LayoutParams 설정
         val layoutParams = LinearLayout.LayoutParams(
@@ -127,6 +272,52 @@ class HabitCheckFragment : Fragment() {
 
         setupEditTextListener(editText, imageView, frameLayoutBinding)
         setupIconClickListener(frameLayoutBinding)
+        setupHabitPickerClickListener(frameLayoutBinding)
+
+        habitCheckContainerLL.addView(frameLayoutBinding.root)
+        habitCheckContainerLL.requestLayout()
+
+        //setupHabitPicker(frameLayoutBinding)
+    }
+
+    private fun createHabitCheckViewAPI(index: Int, habitHistory: HabitHistory) {
+        val context = requireContext()
+        val frameLayoutBinding = FrameHabitCheckBinding.inflate(LayoutInflater.from(context))
+
+        // 각 FrameLayout에 LayoutParams 설정
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            380
+        )
+        layoutParams.topMargin = resources.getDimensionPixelSize(R.dimen.padding_top)
+        frameLayoutBinding.root.layoutParams = layoutParams
+
+        val editText = frameLayoutBinding.frameHabitCheckCustomEt
+
+        val commentText = if (habitHistory.comment?.isNotEmpty() == true) habitHistory.comment else "하지 않았어요"
+        editText.setText(commentText)
+
+        val imageView = frameLayoutBinding.frameHabitCheckBubbleIv
+        val timeTextViews: List<TextView> = listOf(
+            frameLayoutBinding.frameHabitCheckTime1Tv,
+            frameLayoutBinding.frameHabitCheckTime2Tv,
+            frameLayoutBinding.frameHabitCheckTime3Tv,
+            frameLayoutBinding.frameHabitCheckTime4Tv
+        )
+
+        timeTextViews.forEach { it.visibility = View.GONE }
+
+        // 각 프레임에 대한 고유한 timeNum을 관리
+        var timeNum = frameTimeNums.getOrDefault(index, 1)
+        if (isEditing) {
+            setEditMode(timeNum, timeTextViews, index, frameLayoutBinding)
+        } else {
+            setNonEditMode(timeNum, timeTextViews, index)
+        }
+
+        setupEditTextListener(editText, imageView, frameLayoutBinding)
+        setupIconClickListener(frameLayoutBinding)
+        setupHabitPickerClickListener(frameLayoutBinding)
 
         habitCheckContainerLL.addView(frameLayoutBinding.root)
     }
@@ -211,7 +402,26 @@ class HabitCheckFragment : Fragment() {
                 }
             }
 
-            override fun afterTextChanged(editable: Editable) {}
+            override fun afterTextChanged(editable: Editable) {
+                editTextJob?.cancel() // 기존 작업 취소 (Debounce)
+
+                editTextJob = CoroutineScope(Dispatchers.Main).launch {
+                    delay(500) // 0.5초 대기 (Debounce)
+
+                    val tComment = editText.text.toString()
+                    val tHabitId: Long? = frameLayoutBinding.frameHabitCheckIdContainerTv.text.toString().toLongOrNull()
+
+                    val habitHistory = HabitHistory(
+                        habitId = tHabitId,
+                        comment = tComment,
+                        startTime = null,
+                        endTime = null,
+                        habitColor = null
+                    )
+
+                    viewModel.patchCheckHabit(habitHistory)
+                }
+            }
         })
     }
 
@@ -250,6 +460,28 @@ class HabitCheckFragment : Fragment() {
                                 else -> R.drawable.btn_nothing_normal
                             }
                             frameLayoutBinding.frameHabitCheckIconIv.setImageResource(iconRes)
+
+                            // 🎨 colorIndex → habitColor 변환
+                            val habitColor = when (it) {
+                                1 -> "PURPLE"
+                                2 -> "ORANGE"
+                                3 -> "BLUE"
+                                4 -> "GRAY"
+                                5 -> "GREEN"
+                                6 -> "YELLOW"
+                                7 -> "PINK"
+                                else -> null
+                            }
+
+                            // ✅ PATCH 요청 전송
+                            val habitHistory = HabitHistory(
+                                habitId = null,
+                                comment = null,
+                                startTime = null,
+                                endTime = null,
+                                habitColor = habitColor
+                            )
+                            viewModel.patchCheckHabit(habitHistory)
                         }
                     }
 
@@ -268,6 +500,41 @@ class HabitCheckFragment : Fragment() {
             }
         }
     }
+
+
+    private fun setupHabitPickerClickListener(frameLayoutBinding: FrameHabitCheckBinding) {
+        frameLayoutBinding.frameHabitCheckHabitTv.setOnClickListener {
+            if (isEditing) {
+                val dialog = HabitPickerFragment { habitId, selectedHabit ->
+                    // 🔹 선택된 습관을 텍스트뷰에 반영
+                    frameLayoutBinding.frameHabitCheckHabitTv.text = selectedHabit
+                }.apply {
+                    // 🔹 다이얼로그가 열릴 때 테두리 강조
+                    onDismissListener = {
+                        frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
+                    }
+                }
+
+                // 🔹 다이얼로그 표시 전에 테두리 강조
+                frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_red)
+                dialog.show(parentFragmentManager, "HabitPickerDialog")
+            }
+        }
+    }
+
+    private fun setupHabitPicker(frameLayoutBinding: FrameHabitCheckBinding) {
+        val dialog = HabitPickerFragment { habitId, selectedHabit ->
+            Log.d("HabitPicker", "선택된 습관 ID: $habitId, 이름: $selectedHabit")
+            frameLayoutBinding.frameHabitCheckHabitTv.text = selectedHabit
+        }.apply {
+            onDismissListener = {
+                frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_gray)
+            }
+        }
+        frameLayoutBinding.root.setBackgroundResource(R.drawable.background_radius_red)
+        dialog.show(parentFragmentManager, "HabitPickerDialog")
+    }
+
 
 
     private fun showTimePickerDialog(frameLayoutBinding: FrameHabitCheckBinding, onTimeSelected: (String) -> Unit) {
@@ -306,7 +573,7 @@ class HabitCheckFragment : Fragment() {
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
         selectedDayOfWeek = getDayOfWeekString(dayOfWeek)
 
-        updateDateView()
+        updateDateViews()
     }
 
     private fun getDayOfWeekString(dayOfWeek: Int): String {
@@ -335,6 +602,6 @@ class HabitCheckFragment : Fragment() {
     private fun toggleEditMode() {
         isEditing = !isEditing
         binding.habitCheckEditTv.text = if (isEditing) "완료" else "편집"
-        updateDateView()
+        updateDateViews()
     }
 }

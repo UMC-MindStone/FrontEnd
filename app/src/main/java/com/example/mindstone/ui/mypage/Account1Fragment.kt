@@ -66,7 +66,6 @@ class Account1Fragment : Fragment() {
                 "계정 탈퇴" -> showSecessionDialog()
             }
         }
-
         binding.rvAccount1Option.layoutManager = LinearLayoutManager(requireContext())
         binding.rvAccount1Option.adapter = adapter
 

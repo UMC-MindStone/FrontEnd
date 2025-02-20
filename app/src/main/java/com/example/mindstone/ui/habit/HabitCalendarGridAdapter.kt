@@ -2,6 +2,7 @@ package com.example.mindstone.ui.habit
 
 import android.content.Context
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +10,11 @@ import android.widget.BaseAdapter
 import androidx.core.content.ContextCompat
 import com.example.mindstone.R
 import com.example.mindstone.databinding.GridHabitItemBinding
+import com.example.mindstone.domain.entity.DailyRecord
 
 class HabitCalendarGridAdapter(
     private val context: Context,
-    private val dates: List<String>,
+    private val dates: List<Any>, // ✅ 요일 헤더 + DailyRecord 리스트
     private val onDateClick: (String) -> Unit
 ) : BaseAdapter() {
 
@@ -24,73 +26,50 @@ class HabitCalendarGridAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val binding = GridHabitItemBinding.inflate(LayoutInflater.from(context), parent, false)
-        val dateProgress = binding.datetextFl
         val dateText = binding.dateText
-        val dateProgessBar = binding.dateProgress
+        val dateProgressBar = binding.dateProgress
         val subText = binding.subText
 
-        val text = dates[position]
-        dateText.text = text
+        val item = dates[position]
 
-        if (position < 7) { // 첫 7개는 요일 헤더
+        if (item is String) { // ✅ 요일 헤더 처리
+            dateText.text = item
             dateText.setTextColor(ContextCompat.getColor(context, R.color.black))
             dateText.setTypeface(null, Typeface.BOLD)
-            dateProgessBar.visibility = View.GONE
-            subText.visibility = View.GONE // 요일 헤더는 보조 텍스트 없음
-        } else {
-            if (text.isEmpty()) {
+            dateProgressBar.visibility = View.GONE
+            subText.visibility = View.GONE
+        } else if (item is DailyRecord) { // ✅ 날짜 처리
+            val day = item.day.toString()
+            val completedHabits = item.completedHabits
+            val totalHabits = item.totalHabits
+
+            if (item.day == 0) { // ✅ 빈 칸 처리
                 dateText.visibility = View.INVISIBLE
-                dateProgress.visibility = View.GONE
+                dateProgressBar.visibility = View.GONE
                 subText.visibility = View.GONE
             } else {
-                val denominator = getTotalHabit()
-                val numerator = getDoneHabit(text)
-
-                if (numerator == 0) {
-                    dateProgessBar.visibility = View.GONE
+                dateText.text = day
+                if (totalHabits == 0) {
+                    dateProgressBar.visibility = View.GONE
                     subText.visibility = View.VISIBLE
-                    subText.text = "${numerator}/${denominator}"
+                    subText.text = "0/0"
                 } else {
-                    // float으로 계산
-                    val progress = (numerator.toFloat() / denominator.toFloat()) * 100
-                    dateProgessBar.progress = progress.toInt()
+                    val progress = (completedHabits.toFloat() / totalHabits.toFloat()) * 100
+                    dateProgressBar.progress = progress.toInt()
                     subText.visibility = View.VISIBLE
-                    subText.text = "${numerator}/${denominator}"
+                    Log.d("Calendar", "$completedHabits / $totalHabits")
+                    subText.text = "$completedHabits/$totalHabits"
                 }
             }
-        }
-        binding.root.setOnClickListener {
-            //빈 날짜는 무시
-            if (text.isNotEmpty()) {
-                onDateClick(text)
+
+            binding.root.setOnClickListener {
+                if (item.day != 0) {
+                    onDateClick(day)
+                }
             }
         }
 
         return binding.root
     }
-
-    // 총 해야 할 일
-    fun getTotalHabit(): Int {
-        val denominator = 3 //예시 3
-        return denominator
-    }
-
-    // 해당 날짜에 완료한 일
-    fun getDoneHabit(date: String): Int {
-        val dateNumber = date.padStart(2, '0')
-        val fullDate = "2025-01-$dateNumber"
-
-
-        //예시 데이터
-        return when (fullDate) {
-            "2025-01-01" -> 1
-            "2025-01-02" -> 2
-            "2025-01-03" -> 3
-            "2025-01-04" -> 1
-            "2025-01-05" -> 2
-            "2025-01-06" -> 3
-            "2025-01-07" -> 1
-            else -> 0
-        }
-    }
 }
+
