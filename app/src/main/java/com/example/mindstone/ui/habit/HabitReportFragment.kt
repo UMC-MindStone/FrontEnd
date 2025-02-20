@@ -6,14 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.R
 import com.example.mindstone.YearMonthPickerDialog
 import com.example.mindstone.databinding.FragmentHabitReportBinding
+import com.example.mindstone.ui.habit.viewmodel.HabitCalendarViewModel
 
 class HabitReportFragment : Fragment() {
     private lateinit var binding: FragmentHabitReportBinding
     private var currentYear = arguments?.getInt("currentYear") ?: 2025
     private var currentMonth = arguments?.getInt("currentMonth") ?: 1
+
+    private lateinit var viewModel: HabitCalendarViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,7 +29,11 @@ class HabitReportFragment : Fragment() {
         currentYear = arguments?.getInt("currentYear") ?: 2025
         currentMonth = arguments?.getInt("currentMonth") ?: 1
         setUpDateText()
-        setUpHabitText()
+        //setUpHabitText()
+
+        viewModel = ViewModelProvider(this).get(HabitCalendarViewModel::class.java)
+        viewModel.getHabitReport(currentYear, currentMonth)
+
 
         binding.habitReportDownIv.setOnClickListener {
             showYearMonthPickerDialog()
@@ -65,7 +74,8 @@ class HabitReportFragment : Fragment() {
             currentYear = selectedYear
             currentMonth = selectedMonth
             setUpDateText()
-            setUpHabitText()
+            //viewModel.getHabitReport(currentYear, currentMonth)
+            //setUpHabitText()
         }
 
         dialog.show(parentFragmentManager, "YearMonthPickerDialog")
@@ -75,10 +85,11 @@ class HabitReportFragment : Fragment() {
         binding.habitReportDateTv.text = "${currentYear} ${currentMonth}월"
     }
 
-    private fun setUpHabitText(){
+    private fun setUpHabitText(recordPercentage: Double, achievementGrowth: Double, topHabit: String){
         binding.habitReportTitleTv.text = "${currentMonth}월 습관 요약"
-        binding.habitReportSuccessTv.text = "${currentMonth}월 한달 동안 습관 달성률은 40%입니다."
-        binding.habitReportUpTv.text = "${currentMonth}월 초에 비해 ${currentMonth}월 말에 습관 달성률이 50% 증가했습니다."
+        binding.habitReportSuccessTv.text = "${currentMonth}월 한달 동안 습관 달성률은 ${recordPercentage}%입니다."
+        binding.habitReportUpTv.text = "${currentMonth}월 초에 비해 ${currentMonth}월 말에 습관 달성률이 ${achievementGrowth}% 증가했습니다."
+        binding.habitReportHighestTv.text = "달성률이 가장 높은 습관은 ‘${topHabit}’ 입니다."
     }
 
     private fun changeMonth(delta: Int) {
@@ -94,7 +105,8 @@ class HabitReportFragment : Fragment() {
 
         // 캘린더 갱신
         setUpDateText()
-        setUpHabitText()
+        //viewModel.getHabitReport(currentYear, currentMonth)
+        //setUpHabitText()
     }
 
 }

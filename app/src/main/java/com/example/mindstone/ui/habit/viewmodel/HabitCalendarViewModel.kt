@@ -11,10 +11,16 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.util.Log
 import com.example.mindstone.data.local.PreferenceManager
-import com.example.mindstone.domain.entity.HabitHistory
+import com.example.mindstone.domain.entity.HabitHistoryPatch
+import com.example.mindstone.domain.entity.HabitHistoryPost
 import com.example.mindstone.domain.entity.HabitHistoryResponse
 import com.example.mindstone.domain.entity.HabitHistoryTest
+import com.example.mindstone.domain.entity.HabitReportResponse
 import com.example.mindstone.domain.entity.HabitTotalResponse
+import com.example.mindstone.domain.entity.NewHabitHistoryPatch
+import com.example.mindstone.domain.entity.NewHabitHistoryPatchResponse
+import com.example.mindstone.domain.entity.NewHabitHistoryTimePost
+import com.example.mindstone.domain.entity.NewHabitHistoryTimePostResponse
 
 class HabitCalendarViewModel : ViewModel() {
 
@@ -29,8 +35,14 @@ class HabitCalendarViewModel : ViewModel() {
     private val _habitTotalData = MutableLiveData<HabitTotalResponse?>()
     val habitTotalData: LiveData<HabitTotalResponse?> get() = _habitTotalData
 
-    private val _habitCheckData = MutableLiveData<List<HabitHistory>>()
-    val habitCheckData: LiveData<List<HabitHistory>> get() = _habitCheckData
+    private val _habitCheckData = MutableLiveData<List<HabitHistoryPatch>>()
+    val habitCheckData: LiveData<List<HabitHistoryPatch>> get() = _habitCheckData
+
+    private val _habitReport = MutableLiveData<HabitReportResponse?>()
+    val habitReport: LiveData<HabitReportResponse?> = _habitReport
+
+    private val _habitHistoryId = MutableLiveData<Long>()
+    val habitHistoryId: LiveData<Long> = _habitHistoryId
 
     // 오류 메시지
     private val _errorMessage = MutableLiveData<String>()
@@ -128,7 +140,7 @@ class HabitCalendarViewModel : ViewModel() {
             })
     }
 
-    fun postCheckHabit(habitHistory: HabitHistory){
+    fun postCheckHabit(habitHistory: HabitHistoryPost){
         val formattedToken = "Bearer $token"
 
         apiService.postHabitHistory(formattedToken, habitHistory)
@@ -138,6 +150,7 @@ class HabitCalendarViewModel : ViewModel() {
                     response: Response<HabitHistoryTest>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
+                        _habitHistoryId.postValue(response.body()?.result)
                         Log.d("API_POST", "SUCCESS")
                     } else {
                         handleError(response, _errorMessageCheck, "API4_ERROR")
@@ -151,14 +164,14 @@ class HabitCalendarViewModel : ViewModel() {
             })
     }
 
-    fun patchCheckHabit(habitHistory: HabitHistory) {
+    fun patchCheckHabit(habitHistory: NewHabitHistoryPatch) {
         val formattedToken = "Bearer $token"
 
         apiService.patchHabitHistory(formattedToken, habitHistory)
-            .enqueue(object  : Callback<HabitHistoryTest>{
+            .enqueue(object  : Callback<NewHabitHistoryPatchResponse>{
                 override fun onResponse(
-                    call: Call<HabitHistoryTest>,
-                    response: Response<HabitHistoryTest>
+                    call: Call<NewHabitHistoryPatchResponse>,
+                    response: Response<NewHabitHistoryPatchResponse>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
                         Log.d("API_PATCH", "SUCCESS")
@@ -167,10 +180,64 @@ class HabitCalendarViewModel : ViewModel() {
                     }
                 }
 
-                override fun onFailure(call: Call<HabitHistoryTest>, t: Throwable) {
+                override fun onFailure(call: Call<NewHabitHistoryPatchResponse>, t: Throwable) {
                     handleFailure(t, _errorMessageCheck, "API5_FAILURE")
                 }
 
+            })
+    }
+
+    fun getHabitReport(year: Int, month: Int){
+        val formattedToken = "Bearer $token"
+
+        apiService.getHabitReport(formattedToken, year, month)
+            .enqueue(object : Callback<HabitReportResponse>{
+                override fun onResponse(
+                    call: Call<HabitReportResponse>,
+                    response: Response<HabitReportResponse>
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+                        _habitReport.value = response.body()
+                        Log.d("API_REPORT_GET", "SUCCESS")
+                    } else {
+                        handleError(response, _errorMessageCheck, "API6_ERROR")
+                    }
+                }
+
+                override fun onFailure(call: Call<HabitReportResponse>, t: Throwable) {
+                    handleFailure(t, _errorMessageCheck, "API6_FAILURE")
+                }
+
+            })
+    }
+
+    //시간 POST
+    var habitTimeResult: Long? = null
+        private set
+
+    fun postHabitTime(habitTime: NewHabitHistoryTimePost, onResult: (Long?) -> Unit) {
+        val formattedToken = "Bearer $token"
+
+        apiService.postHabitTime(formattedToken, habitTime)
+            .enqueue(object : Callback<NewHabitHistoryTimePostResponse> {
+                override fun onResponse(
+                    call: Call<NewHabitHistoryTimePostResponse>,
+                    response: Response<NewHabitHistoryTimePostResponse>
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+                        habitTimeResult = response.body()?.result
+                        Log.d("API_POST_TIME", "SUCCESS: $habitTimeResult")
+                        onResult(habitTimeResult) // 콜백 함수로 프래그먼트에 값 전달
+                    } else {
+                        handleError(response, _errorMessageCheck, "API_POST_ERROR_TIME")
+                        onResult(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<NewHabitHistoryTimePostResponse>, t: Throwable) {
+                    handleFailure(t, _errorMessageCheck, "API_POST_FAILURE_TIME")
+                    onResult(null)
+                }
             })
     }
 

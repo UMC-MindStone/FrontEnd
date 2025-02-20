@@ -35,8 +35,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // 시스템 바(상태바, 네비게이션바) 공간 자동 조정
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            //val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            //v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 

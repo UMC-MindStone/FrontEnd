@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         // 🔹 앱 실행 시 기본 프래그먼트(HomeFragment) 설정
         if (savedInstanceState == null) {
-            replaceFragment(HomeFragment())
+            replaceFragment(HabitCalendarFragment())
         }
 
         // 🔹 네비게이션 바 아이템 클릭 시 프래그먼트 변경
