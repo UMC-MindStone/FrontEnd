@@ -29,6 +29,7 @@ class Start1Activity : AppCompatActivity() {
         binding.start1Tv.text = "안녕하세요. ${userName}님.\n마인드 스톤에 오신 걸 환영합니다.\n\n오늘부터 하루하루\n기록을 시작해볼까요?"
 
         binding.btnStart1ColoredIb.setOnClickListener {
+            PreferenceManager.setSurveyCompleted(this, true) // 기본 조사 완료 저장
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
@@ -45,7 +46,7 @@ class Start1Activity : AppCompatActivity() {
 
     // Mock 데이터로 사용자 이름 반환
     private fun getUserName(): String {
-        val nickname = intent.getStringExtra("userData").toString()
-        return nickname
+        val nickname = intent.getStringExtra("userNickname") // "userNickname"으로 변경!
+        return nickname ?: "사용자" // null이면 "사용자"로 기본값 설정
     }
 }
