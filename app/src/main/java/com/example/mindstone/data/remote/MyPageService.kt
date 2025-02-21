@@ -2,6 +2,8 @@ package com.example.mindstone.data.remote
 
 import com.example.mindstone.domain.entity.NicknameUpdateRequest
 import com.example.mindstone.domain.entity.NicknameUpdateResponse
+import com.example.mindstone.domain.entity.PasswordUpdateRequest
+import com.example.mindstone.domain.entity.PasswordUpdateResponse
 import com.example.mindstone.domain.entity.UserResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -19,4 +21,10 @@ interface MyPageService {
     fun updateNickname(
         @Body request: NicknameUpdateRequest
     ): Call<NicknameUpdateResponse>
+
+    @PATCH("/api/members/password")
+    @Headers("Content-Type: application/json") // ✅ Content-Type 명시
+    fun updatePassword(
+        @Body request: PasswordUpdateRequest
+    ): Call<PasswordUpdateResponse>
 }
