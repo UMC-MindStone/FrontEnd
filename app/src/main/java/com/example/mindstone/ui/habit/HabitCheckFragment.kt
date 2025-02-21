@@ -293,6 +293,15 @@ class HabitCheckFragment : Fragment() {
 
         val editText = frameLayoutBinding.frameHabitCheckCustomEt
 
+        val habitMap = habitTotal?.associate { it.habitId to it.title }
+
+        Log.d("GGGG","$habitMap")
+        val title = habitMap?.get(habitHistory.habitHistoryId)
+        Log.d("GGGG","${habitHistory.habitId},${habitHistory.habitHistoryId}")
+
+        frameLayoutBinding.frameHabitCheckHabitTv.text = title
+        Log.d("GGGG","$title")
+
         val colorIconMap = mapOf(
             "PURPLE" to R.drawable.ic_depression,
             "ORANGE" to R.drawable.ic_angry,

@@ -89,7 +89,7 @@ class HabitCalendarViewModel : ViewModel() {
 
                     if (response.isSuccessful && response.body() != null) {
                         _calendarData.postValue(response.body())
-                        Log.d("API11_SUCCESS", "데이터 로드 성공: ${response.body()}")
+                        Log.d("TTTTT", "데이터 로드 성공: ${response.body()}")
                     } else {
                         handleError(response, _errorMessage, "API1_ERROR")
                     }
@@ -130,7 +130,7 @@ class HabitCalendarViewModel : ViewModel() {
                     if (response.isSuccessful && response.body() != null) {
                         val habitList = response.body()?.result ?: emptyList()
                         _habitCheckData.postValue(habitList)  // 🔹 List만 저장
-                        Log.d("API_SUCCESS", "Habit: $habitList")
+                        Log.d("API_SUCCESS_AA", "Habit: $habitList")
                     } else {
                         handleError(response, _errorMessageCheck, "API3_ERROR")
                     }

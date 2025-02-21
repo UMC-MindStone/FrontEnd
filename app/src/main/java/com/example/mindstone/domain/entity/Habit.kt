@@ -21,7 +21,7 @@ data class HabitCalendarResponse(
 )
 
 data class HabitCalendarResult(
-    val recordPercentage: Int,
+    val recordPercentage: Double,
     val fullAchievementCount: Int,
     val dailyRecords: List<DailyRecord>
 )
@@ -41,6 +41,7 @@ data class HabitHistoryResponse(
 )
 
 data class HabitHistory(
+    val habitId: Long,
     val habitHistoryId: Long,
     val comment: String,
     val habitColor: String?,

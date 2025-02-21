@@ -18,6 +18,7 @@ class HabitCalendarGridAdapter(
     private val context: Context,
     private val dates: List<Any>, // ✅ 요일 헤더 + DailyRecord 리스트
     private val totalHabitNum: Int,
+    private val habit: List<DailyRecord>,
     private val onDateClick: (String) -> Unit
 ) : BaseAdapter() {
 
@@ -51,17 +52,18 @@ class HabitCalendarGridAdapter(
                 dateProgressBar.visibility = View.GONE
                 subText.visibility = View.GONE
             } else {
+                val compHabit = checkDate(day)
                 dateText.text = day
                 if (totalHabitNum == 0) {
                     dateProgressBar.visibility = View.GONE
                     subText.visibility = View.VISIBLE
                     subText.text = "0/0"
                 } else {
-                    val progress = (completedHabits.toFloat() / totalHabitNum.toFloat()) * 100
+                    val progress = ((compHabit?: 0) / item.totalHabits.toFloat()) * 100
                     dateProgressBar.progress = progress.toInt()
                     subText.visibility = View.VISIBLE
-                    Log.d("Calendar", "$completedHabits / $totalHabitNum")
-                    subText.text = "$completedHabits/$totalHabitNum"
+                    Log.d("Calendar", "$compHabit / ${item.totalHabits}")
+                    subText.text = "$compHabit/${item.totalHabits}"
                 }
             }
 
@@ -73,6 +75,14 @@ class HabitCalendarGridAdapter(
         }
 
         return binding.root
+    }
+
+    private fun checkDate(day: String): Int?{
+        val date = day.toInt()
+
+        val record = habit.find {it.day == date}
+
+        return record?.completedHabits
     }
 }
 
