@@ -9,13 +9,24 @@ data class EmotionResponse(
     val result: EmotionData?
 )
 
+//data class EmotionData(
+//    val date: String,
+//    @SerializedName("angerFigure") val anger: Int,
+//    @SerializedName("depressionFigure") val depression: Int,
+//    @SerializedName("sadFigure") val sad: Int,
+//    @SerializedName("calmFigure") val calm: Int,
+//    @SerializedName("joyFigure") val joy: Int,
+//    @SerializedName("thrillFigure") val thrill: Int,
+//    @SerializedName("happinessFigure") val happiness: Int
+//)
+
 data class EmotionData(
     val date: String,
-    @SerializedName("angerFigure") val anger: Int,
-    @SerializedName("depressionFigure") val depression: Int,
-    @SerializedName("sadFigure") val sad: Int,
-    @SerializedName("calmFigure") val calm: Int,
-    @SerializedName("joyFigure") val joy: Int,
-    @SerializedName("thrillFigure") val thrill: Int,
-    @SerializedName("happinessFigure") val happiness: Int
+    val angerFigure: Int,
+    val depressionFigure: Int,
+    val sadFigure: Int,
+    val calmFigure: Int,
+    val joyFigure: Int,
+    val thrillFigure: Int,
+    val happinessFigure: Int
 )

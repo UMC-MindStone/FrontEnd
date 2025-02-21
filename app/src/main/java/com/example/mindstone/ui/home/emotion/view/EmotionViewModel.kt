@@ -1,38 +1,40 @@
 package com.example.mindstone.ui.home.emotion.view
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.domain.entity.EmotionData
 import com.example.mindstone.domain.entity.EmotionResponse
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class EmotionViewModel : ViewModel() {
+class EmotionViewModel(application: Application) : AndroidViewModel(application) {
 
-    // ✅ 감정 데이터 API 응답 저장
-    private val _emotionData = MutableLiveData<EmotionData?>()
-    val emotionData: LiveData<EmotionData?> get() = _emotionData
-
-    // ✅ 실제 감정 값 저장
     private val _actualEmotionValues = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
     val actualEmotionValues: LiveData<MutableMap<String, Float>> get() = _actualEmotionValues
 
-    // ✅ 선택된 감정
-    private val _selectedEmotion = MutableLiveData<String>()
-    val selectedEmotion: LiveData<String> get() = _selectedEmotion
+    private val _normalizedEmotionRatios = MutableLiveData<Map<String, Float>>()
+    val normalizedEmotionRatios: LiveData<Map<String, Float>> get() = _normalizedEmotionRatios
 
-    // ✅ 감정 강도
-    private val _emotionIntensity = MutableLiveData<Int>()
-    val emotionIntensity: LiveData<Int> get() = _emotionIntensity
+    private val _dominantEmotion = MutableLiveData<String>()
+    val dominantEmotion: LiveData<String> get() = _dominantEmotion
 
-    /**
-     * 🚀 감정 데이터 API 호출 (서버에서 감정 통계 가져오기)
-     */
-    fun fetchEmotionStatistics(authToken: String) {
+    private val sharedPreferences = application.getSharedPreferences("EmotionData", Context.MODE_PRIVATE)
+
+    init {
+        // ✅ 앱 실행 시 저장된 데이터 불러오기
+        loadEmotionData()
+    }
+
+    fun fetchEmotionStatistics(authToken: String, emotionModel: EmotionModel) {
         Log.d("EmotionViewModel", "📡 Fetching Emotion Statistics...")
 
         val call = RetrofitClient.emotionService.getEmotionStatistics("Bearer $authToken")
@@ -41,78 +43,61 @@ class EmotionViewModel : ViewModel() {
             override fun onResponse(call: Call<EmotionResponse>, response: Response<EmotionResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.result?.let { emotionData ->
-                        _emotionData.value = emotionData  // ✅ API 원본 데이터 저장
-
                         Log.d("EmotionViewModel", "✅ API Response: $emotionData")
 
-                        // ✅ API 데이터를 MutableMap<String, Float> 형태로 변환
                         val emotionMap = mutableMapOf(
-                            "anger" to emotionData.anger.toFloat(),
-                            "depression" to emotionData.depression.toFloat(),
-                            "sad" to emotionData.sad.toFloat(),
-                            "calm" to emotionData.calm.toFloat(),
-                            "joy" to emotionData.joy.toFloat(),
-                            "thrill" to emotionData.thrill.toFloat(),
-                            "happiness" to emotionData.happiness.toFloat()
+                            "화남" to emotionData.angerFigure.toFloat(),
+                            "우울" to emotionData.depressionFigure.toFloat(),
+                            "슬픔" to emotionData.sadFigure.toFloat(),
+                            "평온" to emotionData.calmFigure.toFloat(),
+                            "기쁨" to emotionData.joyFigure.toFloat(),
+                            "설렘" to emotionData.thrillFigure.toFloat(),
+                            "행복" to emotionData.happinessFigure.toFloat()
                         )
 
-                        // ✅ 실제 감정 값 반영
                         _actualEmotionValues.value = emotionMap
+
+                        // ✅ EmotionModel에 API 데이터를 전달하여 상태 업데이트
+                        emotionModel.fetchEmotion(emotionMap)
+
+                        Log.d("EmotionViewModel", "🔵 Synced API data with EmotionModel: $emotionMap")
+
+                        // ✅ 감정 데이터를 SharedPreferences에 저장 (앱 재실행 시 유지)
+                        saveEmotionData(emotionMap)
                     }
                 } else {
                     Log.e("EmotionViewModel", "❌ API Error: ${response.errorBody()?.string()}")
-                    _emotionData.value = null
+                    _actualEmotionValues.value = mutableMapOf()
                 }
             }
 
             override fun onFailure(call: Call<EmotionResponse>, t: Throwable) {
                 Log.e("EmotionViewModel", "❌ API Failure: ${t.message}")
-                _emotionData.value = null
+                _actualEmotionValues.value = mutableMapOf()
             }
         })
     }
 
-    // ✅ EmotionModel에서 감정 데이터를 전달받기 위한 함수 추가
-    fun setSelectedEmotion(emotion: String, intensity: Int) {
-        _selectedEmotion.value = emotion
-        _emotionIntensity.value = intensity
-        Log.d("EmotionViewModel", "✅ setSelectedEmotion 호출됨: $emotion, Intensity: $intensity")
+
+    private fun saveEmotionData(emotionMap: Map<String, Float>) {
+        val editor = sharedPreferences.edit()
+        val jsonString = Gson().toJson(emotionMap) // Map을 JSON 문자열로 변환하여 저장
+        editor.putString("emotionRatios", jsonString)
+        editor.apply()
     }
 
-    /**
-     * 🚀 사용자가 선택한 감정을 저장
-     */
-    fun selectEmotion(emotion: String, intensity: Int) {
-        _selectedEmotion.value = emotion
-        _emotionIntensity.value = intensity
+    // ✅ 앱 실행 시 저장된 감정 데이터를 불러오기
+    private fun loadEmotionData() {
+        val jsonString = sharedPreferences.getString("emotionRatios", null)
+        if (jsonString != null) {
+            val type = object : TypeToken<Map<String, Float>>() {}.type
+            val ratios: Map<String, Float> = Gson().fromJson(jsonString, type)
 
-        Log.d("EmotionViewModel", "🟢 Selected Emotion: $emotion, Intensity: $intensity")
-
-        // ✅ 선택한 감정을 _actualEmotionValues에 반영
-        val actualValues = _actualEmotionValues.value?.toMutableMap() ?: mutableMapOf()
-
-        // ✅ 기존 값이 있다면 누적, 없다면 새로 추가
-        val emotionKey = convertEmotionToApiKey(emotion)
-        actualValues[emotionKey] = (actualValues[emotionKey] ?: 0f) + intensity.toFloat()
-
-        _actualEmotionValues.value = actualValues
-
-        Log.d("EmotionViewModel", "🔵 Updated Emotion Values: $actualValues")
-    }
-
-    /**
-     * 🚀 감정 이름을 API 응답 키로 변환
-     */
-    private fun convertEmotionToApiKey(emotion: String): String {
-        return when (emotion) {
-            "화남" -> "anger"
-            "우울" -> "depression"
-            "슬픔" -> "sad"
-            "평온" -> "calm"
-            "기쁨" -> "joy"
-            "설렘" -> "thrill"
-            "행복" -> "happiness"
-            else -> "calm"
+            // ✅ Map을 MutableMap으로 변환하여 해결
+            _actualEmotionValues.postValue(ratios.toMutableMap())
         }
     }
+
 }
+
+
