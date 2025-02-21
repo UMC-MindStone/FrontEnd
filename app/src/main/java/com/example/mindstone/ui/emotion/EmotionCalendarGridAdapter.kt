@@ -15,9 +15,9 @@ import com.example.mindstone.databinding.GridEmotionItemBinding
 
 class EmotionCalendarGridAdapter(
     private val context: Context,
-    private val dates: List<String>
+    private val dates: List<String>,
 ) : BaseAdapter() {
-    interface onDateClickListener{
+    interface onDateClickListener {
         fun onDateClick(date: String, isRecord: Boolean)
     }
 
@@ -26,6 +26,9 @@ class EmotionCalendarGridAdapter(
     private var currentMonth = 1
     private var emotionData: Map<String, String> = emptyMap()
 
+    // 날짜별 감정을 저장할 맵
+    private val emotionMap = mutableMapOf<String, String>()
+
     override fun getCount(): Int = dates.size
 
     override fun getItem(position: Int): Any = dates[position]
@@ -33,7 +36,6 @@ class EmotionCalendarGridAdapter(
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-
         val binding = GridEmotionItemBinding.inflate(LayoutInflater.from(context), parent, false)
         val dateText = binding.dateText
         val dateIcon = binding.dateIcon
@@ -53,16 +55,14 @@ class EmotionCalendarGridAdapter(
             } else {
                 dateText.visibility = View.VISIBLE
                 dateText.setTextColor(ContextCompat.getColor(context, R.color.black))
+                updateCurrentYearMonth(parent)
 
                 val formattedDate = "$currentYear-${String.format("%02d", currentMonth)}-${String.format("%02d", text.toInt())}"
-                updateCurrentYearMonth(parent)
-                // API에서 해당 날짜에 대한 감정 상태 또는 이미지를 받아와서 아이콘 설정
-                val emotion = emotionData[formattedDate] ?: "." // API 호출 예시
-                val isRecord = emotion != "."
+                val emotion = emotionMap[formattedDate] ?: "neutral" // 감정 값 가져오기
+                val isRecord = emotion != "neutral"
 
-                setEmotionIcon(emotion, dateIcon)
-
-                dateIcon.visibility = View.VISIBLE // 아이콘 표시
+                // 감정 상태에 따른 아이콘 설정
+                setEmotionIcon(emotion, binding)
 
                 binding.root.setOnClickListener {
                     listener?.onDateClick(formattedDate, isRecord)
@@ -70,8 +70,34 @@ class EmotionCalendarGridAdapter(
                 }
             }
         }
+        return binding.root
+    }
 
-        return binding.root // 바인딩된 루트 뷰 반환
+    // 감정 상태에 따라 아이콘 설정
+    private fun setEmotionIcon(emotion: String, binding: GridEmotionItemBinding) {
+        val dateIcon = binding.dateIcon
+        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
+
+        when (emotion) {
+            "happy" -> dateIcon.setImageResource(R.drawable.ic_happy)
+            "sad" -> dateIcon.setImageResource(R.drawable.ic_sad)
+            "calm" -> dateIcon.setImageResource(R.drawable.ic_calm_charac)
+            "angry" -> dateIcon.setImageResource(R.drawable.ic_angry)
+            "depression" -> dateIcon.setImageResource(R.drawable.ic_depression)
+            "joy" -> dateIcon.setImageResource(R.drawable.ic_joy)
+            "romance" -> dateIcon.setImageResource(R.drawable.ic_romance)
+            else -> dateIcon.setImageResource(R.drawable.btn_empty_emotion_normal) // 기본 아이콘
+        }
+
+        dateIcon.layoutParams.width = sizeInPixels
+        dateIcon.layoutParams.height = sizeInPixels
+        dateIcon.visibility = View.VISIBLE
+    }
+
+    // 특정 날짜의 감정을 설정하는 함수
+    fun updateEmotionForDate(date: String, emotion: String) {
+        emotionMap[date] = emotion // 날짜에 감정 저장
+        notifyDataSetChanged() // UI 갱신
     }
 
 
@@ -98,7 +124,6 @@ class EmotionCalendarGridAdapter(
         imageView.visibility = View.VISIBLE
     }
 
-
     private fun updateCurrentYearMonth(parent: ViewGroup?) {
         val fragment = (parent?.context as? FragmentActivity)?.supportFragmentManager?.fragments?.find {
             it is EmotionCalendarFragment
@@ -109,7 +134,5 @@ class EmotionCalendarGridAdapter(
             currentMonth = it.currentMonth
         }
     }
-
-
 }
 

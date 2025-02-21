@@ -51,7 +51,7 @@ class EmotionCalendarViewModel: ViewModel() {
 
     //emotionCalendar
     val _emotionCalendarData = MutableLiveData<EmotionCalendarResponse?>()
-    val habitTotalData: LiveData<EmotionCalendarResponse?> get() = _emotionCalendarData
+    val emotionCalendarDate: LiveData<EmotionCalendarResponse?> get() = _emotionCalendarData
 
     private val _emotionMap = MutableLiveData<Map<String, String>>()  // 날짜별 감정 데이터 저장
     val emotionMap: LiveData<Map<String, String>> get() = _emotionMap

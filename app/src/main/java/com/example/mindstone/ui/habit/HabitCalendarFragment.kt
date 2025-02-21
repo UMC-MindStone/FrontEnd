@@ -27,11 +27,14 @@ class HabitCalendarFragment : Fragment() {
     private var currentYear = arguments?.getInt("currentYear") ?: 2025
     private var currentMonth = arguments?.getInt("currentMonth") ?: 1
 
+    private var totalHabitNum = 0
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = ViewModelProvider(this)[HabitCalendarViewModel::class.java]
 
         currentYear = arguments?.getInt("currentYear") ?: 2025
         currentMonth = arguments?.getInt("currentMonth") ?: 1
@@ -73,26 +76,35 @@ class HabitCalendarFragment : Fragment() {
 
     private fun setupCalendar() {
 
-        viewModel = ViewModelProvider(this)[HabitCalendarViewModel::class.java]
-        // 캘린더 데이터 생성
+        viewModel.fetchTotalHabit()
+        viewModel.habitTotalData.observe(viewLifecycleOwner) { response ->
+            if (response != null) {
+                Log.d("TOTAL","${response.result.size}")
+                totalHabitNum = response.result.size
+                Log.d("TOTAL1","${totalHabitNum}")
+                // 캘린더 데이터 생성
 
-        viewModel.fetchHabitCalendar(currentYear, currentMonth)
+                viewModel.fetchHabitCalendar(currentYear, currentMonth)
 
-        val calendarData = generateCalendarData(currentYear, currentMonth, dailyRecords)
+                val calendarData = generateCalendarData(currentYear, currentMonth, dailyRecords)
 
-        // GridView와 어댑터 연결
-        val adapter = HabitCalendarGridAdapter(requireContext(), calendarData) { date ->
-            onDateClicked(date)
+                // GridView와 어댑터 연결
+                val adapter = HabitCalendarGridAdapter(requireContext(), calendarData, totalHabitNum) { date ->
+                    onDateClicked(date)
+                }
+                binding.habitCalendarCalendarGv.adapter = adapter
+
+                // 날짜 표시: 2025 1월 형식으로 설정
+                binding.habitCalendarDateTv.text = "${currentYear} ${currentMonth}월"
+            }
         }
-        binding.habitCalendarCalendarGv.adapter = adapter
 
-        // 날짜 표시: 2025 1월 형식으로 설정
-        binding.habitCalendarDateTv.text = "${currentYear} ${currentMonth}월"
 
 
         viewModel.calendarData.observe(viewLifecycleOwner) { response ->
             // 응답이 성공적일 때
             if (response?.isSuccess == true) {
+                Log.d("SUCCCCEEESSS","SSSUUU")
                 val recordPercentage = response.result?.recordPercentage ?: 0
                 val fullAchievementCount = response.result?.fullAchievementCount ?: 0
 
@@ -155,33 +167,52 @@ class HabitCalendarFragment : Fragment() {
 
 
 
-    private fun generateCalendarData(year: Int, month: Int, dailyRecords: List<DailyRecord>): List<Any> {
-        val calendar = Calendar.getInstance().apply {
-            set(year, month - 1, 1) // month는 0부터 시작
-        }
-
-        val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-
+    private fun generateCalendarData(currentYear: Int, currentMonth: Int, dailyRecords: List<DailyRecord>?): List<Any> {
         val calendarData = mutableListOf<Any>()
 
-        // ✅ 요일 헤더 추가
-        val weekDays = listOf("일", "월", "화", "수", "목", "금", "토")
-        calendarData.addAll(weekDays)
+        // `dailyRecords`가 null이면 빈 리스트로 처리
+        val records = dailyRecords ?: emptyList()
 
-        // ✅ 빈 칸 추가 (요일 맞추기)
-        for (i in 1 until firstDayOfWeek) {
-            calendarData.add("") // 빈 칸
+        val firstDayOfMonth = Calendar.getInstance().apply {
+            set(Calendar.YEAR, currentYear)
+            set(Calendar.MONTH, currentMonth - 1)
+            set(Calendar.DAY_OF_MONTH, 1)
         }
 
-        // ✅ 실제 날짜 추가
+        val lastDayOfMonth = Calendar.getInstance().apply {
+            set(Calendar.YEAR, currentYear)
+            set(Calendar.MONTH, currentMonth - 1)
+            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+        }
+
+        // 요일 헤더 추가 (일, 월, 화, ... )
+        val daysOfWeek = listOf("일", "월", "화", "수", "목", "금", "토")
+        calendarData.addAll(daysOfWeek)
+
+        val startDayOfWeek = firstDayOfMonth.get(Calendar.DAY_OF_WEEK) - 1
+        val daysInMonth = lastDayOfMonth.get(Calendar.DAY_OF_MONTH)
+
+        // 빈 칸 추가 (첫 번째 날 이전에 비어있는 날짜들을 추가)
+        for (i in 0 until startDayOfWeek) {
+            calendarData.add("") // 빈 값
+        }
+
+        // 실제 날짜들 추가
         for (day in 1..daysInMonth) {
-            val record = dailyRecords.find { it.day == day } ?: DailyRecord(day, 0, 0)
-            calendarData.add(record)
+            val dailyRecord = records.find { it.day == day }
+
+            if (dailyRecord != null) {
+                calendarData.add(dailyRecord)
+            } else {
+                // `DailyRecord`에는 여전히 `totalHabits`를 0으로 설정
+                calendarData.add(DailyRecord(day = day, completedHabits = 0, totalHabits = 0))
+            }
         }
 
         return calendarData
     }
+
+
 
 
     private fun showYearMonthPickerDialog() {
