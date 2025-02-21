@@ -40,6 +40,7 @@ class HabitCalendarFragment : Fragment() {
         currentMonth = arguments?.getInt("currentMonth") ?: 1
         _binding = FragmentHabitCalendarBinding.inflate(inflater, container, false)
 
+
         setupCalendar()
 
         binding.habitCalendarRightIv.setOnClickListener {
@@ -84,18 +85,31 @@ class HabitCalendarFragment : Fragment() {
                 Log.d("TOTAL1","${totalHabitNum}")
                 // 캘린더 데이터 생성
 
-                viewModel.fetchHabitCalendar(currentYear, currentMonth)
-
-                val calendarData = generateCalendarData(currentYear, currentMonth, dailyRecords)
-
-                // GridView와 어댑터 연결
-                val adapter = HabitCalendarGridAdapter(requireContext(), calendarData, totalHabitNum) { date ->
-                    onDateClicked(date)
-                }
-                binding.habitCalendarCalendarGv.adapter = adapter
 
                 // 날짜 표시: 2025 1월 형식으로 설정
                 binding.habitCalendarDateTv.text = "${currentYear} ${currentMonth}월"
+            }
+        }
+
+        val newCurrentMonth = String.format("%02d", currentMonth)
+        viewModel.fetchHabitCalendar(currentYear, newCurrentMonth.toInt())
+
+        viewModel.calendarData.observe(viewLifecycleOwner) { respon ->
+            if(respon != null) {
+                val calendarData = generateCalendarData(currentYear, currentMonth,
+                    respon.result?.dailyRecords
+                )
+                Log.d("TTTTT","${respon.result}")
+
+
+
+                // GridView와 어댑터 연결
+                val adapter = respon.result?.let {
+                    HabitCalendarGridAdapter(requireContext(), calendarData, totalHabitNum, it.dailyRecords) { date ->
+                        onDateClicked(date)
+                    }
+                }
+                binding.habitCalendarCalendarGv.adapter = adapter
             }
         }
 
@@ -109,6 +123,8 @@ class HabitCalendarFragment : Fragment() {
                 val fullAchievementCount = response.result?.fullAchievementCount ?: 0
 
                 // 습관 달성 퍼센트와 100% 달성 횟수를 텍스트에 반영
+                //val percentage = String.format("%.2d",recordPercentage)
+
                 binding.habitCalendarStatTv.text =
                     "${currentMonth}월에는 ${recordPercentage}% 기록했고\n습관 행동 100%를 ${fullAchievementCount}번 달성했어요."
 

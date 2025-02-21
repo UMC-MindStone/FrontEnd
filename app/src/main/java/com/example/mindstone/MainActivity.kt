@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         // 🔹 앱 실행 시 기본 프래그먼트(HomeFragment) 설정
         if (savedInstanceState == null) {
 
-            replaceFragment(EmotionCalendarFragment())
+            replaceFragment(HabitCalendarFragment())
             binding.bottomNavigationView.selectedItemId = R.id.nav_home
         }
 
