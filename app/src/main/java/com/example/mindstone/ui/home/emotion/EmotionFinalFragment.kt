@@ -63,12 +63,23 @@ class EmotionFinalFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
-        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
 
-        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+
+        // ✅ 감정 상태바에 업데이트된 감정 비율 반영
+        emotionStatusBar = binding.statusBar
+
+        // ✅ EmotionViewModel에서 감정 통계 불러오기 (EmotionModel과 동기화)
+        val authToken = getUserToken()
+
+        // ✅ API 호출 후 감정 데이터가 EmotionModel에 전달된 다음, 상태바 업데이트
+        emotionViewModel.fetchEmotionStatistics(authToken, viewModel)
+
+        // ✅ 감정 상태바 업데이트 (순서 변경: API 응답 후 반영되도록)
         viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
-            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+            Log.d("EmotionFinalFragment", "📊 감정 상태바 업데이트됨: $normalizedRatios")
+            emotionStatusBar.updateEmotions(normalizedRatios)
         }
+
 
         // 캐릭터 업데이트
         viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
@@ -76,7 +87,6 @@ class EmotionFinalFragment : Fragment() {
         }
 
 
-        emotionViewModel.fetchEmotionStatistics(getUserToken()) // 최신 감정 데이터 불러오기
 
         // SharedPreferences에서 사용자 이름 불러오기
         userName = getUserNickname()
@@ -121,11 +131,7 @@ class EmotionFinalFragment : Fragment() {
         viewModel.selectEmotion(selectedEmotion, colorResId, isPositive)
         hideAllEmotionViews()
 
-        // ✅ EmotionModel에서 선택한 감정을 EmotionViewModel로 전달
-        updateEmotionViewModel()
 
-        // ✅ 사용자가 선택한 감정 적용
-        applySelectedEmotion()
 
         // 부정적 감정이면 finalStatus2Tv 보이기
         if (selectedEmotion in listOf("화남", "우울", "슬픔")) {
@@ -189,29 +195,7 @@ class EmotionFinalFragment : Fragment() {
     }
 
 
-    /**
-     * 🚀 EmotionModel의 감정 데이터를 EmotionViewModel로 전달
-     */
-    private fun updateEmotionViewModel() {
-        val selectedEmotion = viewModel.emotion.value ?: return
-        val intensity = viewModel.intensity.value ?: 0
 
-        emotionViewModel.setSelectedEmotion(selectedEmotion, intensity)
-
-        Log.d("EmotionFinalFragment", "📌 EmotionModel → EmotionViewModel 적용: $selectedEmotion, Intensity: $intensity")
-    }
-
-    /**
-     * 🚀 사용자가 선택한 감정을 ViewModel에 반영
-     */
-    private fun applySelectedEmotion() {
-        val selectedEmotion = emotionViewModel.selectedEmotion.value ?: return
-        val intensity = emotionViewModel.emotionIntensity.value ?: 0
-
-        emotionViewModel.selectEmotion(selectedEmotion, intensity)
-
-        Log.d("EmotionFinalFragment", "📌 Selected Emotion Applied: $selectedEmotion, Intensity: $intensity")
-    }
 
 
     // 감정 종류 변환 (한글 → 영어)

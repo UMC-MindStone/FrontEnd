@@ -1,5 +1,6 @@
 package com.example.mindstone.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.mindstone.EmotionStatusBar
 import com.example.mindstone.R
 import com.example.mindstone.databinding.FragmentHomeBinding
 import com.example.mindstone.ui.home.emotion.EmotionIntensityFragment
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
+import com.example.mindstone.ui.home.emotion.view.EmotionViewModel
 
 class HomeFragment : Fragment() {
 
@@ -21,6 +24,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: EmotionModel
+    private val emotionViewModel: EmotionViewModel by viewModels()
     private lateinit var emotionStatusBar: EmotionStatusBar
 
     override fun onCreateView(
@@ -45,9 +49,21 @@ class HomeFragment : Fragment() {
 
         emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
 
-        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
-        viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
-            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+        val authToken = getUserToken()
+
+        // ✅ API 호출 후 감정 데이터가 EmotionModel에 전달된 다음, 상태바 업데이트
+        emotionViewModel.fetchEmotionStatistics(authToken, viewModel)
+
+        // ✅ 기존 데이터가 있으면 즉시 반영
+        viewModel.actualEmotionValues.value?.let { normalizedRatios ->
+            Log.d("HomeFragment", "📊 기존 감정 상태바 업데이트됨: $normalizedRatios")
+            emotionStatusBar.updateEmotions(normalizedRatios)
+        }
+
+        // ✅ LiveData 변경 시 즉시 반영
+        viewModel.actualEmotionValues.observe(viewLifecycleOwner) { normalizedRatios ->
+            Log.d("HomeFragment", "📊 새로운 감정 상태바 업데이트됨: $normalizedRatios")
+            emotionStatusBar.updateEmotions(normalizedRatios)
         }
 
         // 캐릭터 업데이트
@@ -59,8 +75,7 @@ class HomeFragment : Fragment() {
         // 새로운 감정을 선택할 때 기존 데이터 초기화 (기존 감정 비율 & 최근 감정 유지)
         resetEmotionData()
 
-        // 캐릭터 변경 (최근 감정 기준)
-        viewModel.recentEmotion.observe(viewLifecycleOwner) { updateCharacter(it) }
+
 
         // 감정 선택 버튼 클릭 이벤트 설정
         binding.homeHappyIv.setOnClickListener { navigateToIntensity("행복", R.color.happinessColor, true) }
@@ -77,6 +92,11 @@ class HomeFragment : Fragment() {
     private fun updateCharacter(emotion: String) {
         val characterResId = viewModel.getCharacterForEmotion(emotion) ?: R.drawable.ic_calm_charac
         binding.homeIconIv.setImageResource(characterResId)
+    }
+
+    private fun getUserToken(): String {
+        val sharedPreferences = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("auth_token", "") ?: ""
     }
 
     // 새로운 감정 선택 시 기존 데이터 초기화 (기존 감정 비율 & 최근 감정 유지)
