@@ -123,10 +123,10 @@ class HabitCalendarFragment : Fragment() {
                 val fullAchievementCount = response.result?.fullAchievementCount ?: 0
 
                 // 습관 달성 퍼센트와 100% 달성 횟수를 텍스트에 반영
-                //val percentage = String.format("%.2d",recordPercentage)
+                val percentage = String.format("%.1f",recordPercentage)
 
                 binding.habitCalendarStatTv.text =
-                    "${currentMonth}월에는 ${recordPercentage}% 기록했고\n습관 행동 100%를 ${fullAchievementCount}번 달성했어요."
+                    "${currentMonth}월에는 ${percentage}% 기록했고\n습관 행동 100%를 ${fullAchievementCount}번 달성했어요."
 
                 // 그 외에도 dailyRecords가 있으면 데이터를 처리하거나 UI 갱신을 할 수 있습니다.
                 response.result?.dailyRecords?.let { dailyRecords ->
