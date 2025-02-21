@@ -12,6 +12,9 @@ import androidx.fragment.app.viewModels
 import com.example.mindstone.R
 import com.example.mindstone.YearMonthPickerDialog
 import com.example.mindstone.databinding.FragmentEmotionCalendarBinding
+import androidx.lifecycle.ViewModelProvider
+import com.example.mindstone.domain.entity.EmotionReportResponse
+import com.example.mindstone.domain.entity.EmotionReportResponseDTO
 import com.example.mindstone.ui.emotion.viewmodel.EmotionCalendarViewModel
 import com.example.mindstone.ui.home.diary.CalendarToDiaryFragment
 import com.example.mindstone.ui.home.diary.DiaryViewModel
@@ -26,6 +29,9 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
     var currentYear = 2025 // 초기 년도 설정
     var currentMonth = 1   // 초기 월 설정 (1월)
 
+    private lateinit var calendarViewModel : EmotionCalendarViewModel
+    private lateinit var adapter : EmotionCalendarGridAdapter
+
     private val diaryViewModel : DiaryViewModel by activityViewModels()
     private val viewModel: EmotionCalendarViewModel by viewModels()
     override fun onCreateView(
@@ -34,6 +40,12 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentEmotionCalendarBinding.inflate(inflater, container, false)
+        calendarViewModel = ViewModelProvider(this).get(EmotionCalendarViewModel::class.java)
+
+        val calendarData = generateCalendarData(currentYear, currentMonth)
+
+        // GridView와 어댑터 연결
+        adapter = EmotionCalendarGridAdapter(requireContext(), calendarData)
 
         setupViewPager()
         setupCalendar() // 캘린더 설정 호출
@@ -54,6 +66,30 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        calendarViewModel.getEmotionCalendar(currentYear, currentMonth)
+        //리포트 받아오기 실행
+
+
+        calendarViewModel.emotionMap.observe(viewLifecycleOwner){ emotion ->
+            adapter.setEmotionData(emotion)
+        }
+
+        calendarViewModel.emotionReportResponse.observe(viewLifecycleOwner){response ->
+            if(response?.isSuccess == true){
+                Log.d("EmotionReport", "observer 가동")
+                response.result?.let { updateViewPagerFragments(it,currentMonth) }
+            }else{
+                Log.d("EmotionReport", "observer 가동 실패 : ${response?.message}")
+            }
+
+        }
+
+        calendarViewModel.getEmotionCalendarReport(currentYear, currentMonth)
     }
 
     // 뷰페이저 설정
@@ -167,7 +203,11 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
 
         // 캘린더 갱신
         setupCalendar()
-        updateViewPagerFragments()
+
+        //updateVIewPager대신 이제 observe가 감지하고 내용을 바꿀거임!
+        calendarViewModel.getEmotionCalendarReport(currentYear, currentMonth)
+        //updateViewPagerFragments()
+        calendarViewModel.getEmotionCalendar(currentYear, currentMonth)
     }
 
     // 년도와 월 선택 다이얼로그 표시
@@ -180,14 +220,15 @@ class EmotionCalendarFragment : Fragment(), EmotionCalendarGridAdapter.onDateCli
 
             // 캘린더 갱신
             setupCalendar()
-            updateViewPagerFragments()
+            calendarViewModel.getEmotionCalendarReport(currentYear, currentMonth)
+            //updateViewPagerFragments()
         }
         dialog.show(parentFragmentManager, "YearMonthPickerDialog")
     }
 
-    private fun updateViewPagerFragments() {
-        viewPagerAdapter.updateFragment(0, MonthStatFragment.newInstance(currentMonth))
-        viewPagerAdapter.updateFragment(2, MonthSummaryFragment.newInstance(currentMonth))
+    private fun updateViewPagerFragments(response: EmotionReportResponseDTO, month: Int) {
+        viewPagerAdapter.updateFragment(0, MonthStatFragment.newInstance(response.totalReport))
+        viewPagerAdapter.updateFragment(2, MonthSummaryFragment.newInstance(month,response.totalSummary))
     }
 
 

@@ -11,14 +11,15 @@ import com.example.mindstone.databinding.FragmentMonthStatBinding
 class MonthStatFragment : Fragment() {
     private lateinit var binding: FragmentMonthStatBinding
 
+    //우선 첫째 장 String으로 넘겨주기 때문에 변경하였음.
     companion object {
         private const val ARG_MONTH = "month"
 
         // Month 정보를 전달받아 프래그먼트를 생성하는 메서드
-        fun newInstance(month: Int): MonthStatFragment {
+        fun newInstance(string: String): MonthStatFragment {
             val fragment = MonthStatFragment()
             val args = Bundle()
-            args.putInt(ARG_MONTH, month)
+            args.putString(ARG_MONTH, string)
             fragment.arguments = args
             return fragment
         }
@@ -32,13 +33,12 @@ class MonthStatFragment : Fragment() {
         binding = FragmentMonthStatBinding.inflate(inflater, container, false)
 
         // 전달받은 month 값 가져오기
-        val month = arguments?.getInt(ARG_MONTH) ?: 1 // 기본값: 1월
+        val data = arguments?.getString(ARG_MONTH) ?: "값을 받아오는 중이에요" // 기본값: 1월
 
         // 동적으로 텍스트와 이미지를 설정
-        val text = "${month}월에는 50% 기록했고\n행복 감정이 가장 많았어요."
         val imageResId = R.drawable.ic_happy // 예: 감정에 따라 이미지를 변경할 수 있음
 
-        binding.monthStatMonthTv.text = text
+        binding.monthStatMonthTv.text = data
         binding.monthStatIconIv.setImageResource(imageResId)
 
         return binding.root

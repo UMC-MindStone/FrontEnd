@@ -146,6 +146,8 @@ object RetrofitClient {
     // EmotionNoteService (일반 감정 기록 + 부정적 감정 관리 API 포함)
     val emotionNoteService: EmotionNoteService by lazy { retrofit.create(EmotionNoteService::class.java) }
 
+    // 감정 수치
+    val emotionService: EmotionApiService by lazy { retrofit.create(EmotionApiService::class.java) }
 
 
     // ✅ SurveyService 제공 (AccessToken 자동 포함)
@@ -155,4 +157,8 @@ object RetrofitClient {
     val habitCalendarService: HabitCalendarService = retrofit.create(HabitCalendarService::class.java)
 
     val emotionCalendarService: EmotionCalendarService = retrofit.create(EmotionCalendarService::class.java)
+
+    // ✅ MyPageService 추가
+    val myPageService: MyPageService by lazy { retrofit.create(MyPageService::class.java) }
+
 }

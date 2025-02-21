@@ -2,10 +2,12 @@ package com.example.mindstone.ui.emotion
 
 import android.content.Context
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.example.mindstone.R
@@ -22,6 +24,7 @@ class EmotionCalendarGridAdapter(
     var listener: onDateClickListener? = null
     private var currentYear = 2025 // 기본값 설정
     private var currentMonth = 1
+    private var emotionData: Map<String, String> = emptyMap()
 
     // 날짜별 감정을 저장할 맵
     private val emotionMap = mutableMapOf<String, String>()
@@ -37,6 +40,7 @@ class EmotionCalendarGridAdapter(
         val dateText = binding.dateText
         val dateIcon = binding.dateIcon
 
+
         val text = dates[position]
         dateText.text = text
 
@@ -51,7 +55,6 @@ class EmotionCalendarGridAdapter(
             } else {
                 dateText.visibility = View.VISIBLE
                 dateText.setTextColor(ContextCompat.getColor(context, R.color.black))
-
                 updateCurrentYearMonth(parent)
 
                 val formattedDate = "$currentYear-${String.format("%02d", currentMonth)}-${String.format("%02d", text.toInt())}"
@@ -63,6 +66,7 @@ class EmotionCalendarGridAdapter(
 
                 binding.root.setOnClickListener {
                     listener?.onDateClick(formattedDate, isRecord)
+                    Log.d("Adapter", "Is It Recorded?: $isRecord")
                 }
             }
         }
@@ -94,6 +98,30 @@ class EmotionCalendarGridAdapter(
     fun updateEmotionForDate(date: String, emotion: String) {
         emotionMap[date] = emotion // 날짜에 감정 저장
         notifyDataSetChanged() // UI 갱신
+    }
+
+
+    fun setEmotionData(data: Map<String, String>) {
+        emotionData = data
+        notifyDataSetChanged() // 데이터 변경 시 새로고침
+    }
+
+    private fun setEmotionIcon(emotion: String, imageView: ImageView) {
+        val sizeInPixels = (24 * context.resources.displayMetrics.density).toInt()
+        imageView.layoutParams.width = sizeInPixels
+        imageView.layoutParams.height = sizeInPixels
+
+        when (emotion) {
+            "HAPPINESS" -> imageView.setImageResource(R.drawable.ic_happy)
+            "SAD" -> imageView.setImageResource(R.drawable.ic_sad)
+            "CALM" -> imageView.setImageResource(R.drawable.ic_calm_charac)
+            "ANGER" -> imageView.setImageResource(R.drawable.ic_angry)
+            "DEPRESSION" -> imageView.setImageResource(R.drawable.ic_depression)
+            "JOY" -> imageView.setImageResource(R.drawable.ic_joy)
+            "THRILL" -> imageView.setImageResource(R.drawable.ic_romance)
+            else -> imageView.setImageResource(R.drawable.btn_empty_emotion_normal)
+        }
+        imageView.visibility = View.VISIBLE
     }
 
     private fun updateCurrentYearMonth(parent: ViewGroup?) {

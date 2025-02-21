@@ -1,5 +1,6 @@
 package com.example.mindstone
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
@@ -15,18 +16,27 @@ import com.example.mindstone.ui.habit.HabitCalendarFragment
 import com.example.mindstone.ui.home.HomeFragment
 import com.example.mindstone.ui.home.TodayFinishFragment
 import com.example.mindstone.ui.home.TodayFinishViewModel
+import com.example.mindstone.ui.home.emotion.view.EmotionModel
 import com.example.mindstone.ui.mypage.MyPageFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var todayViewModel: TodayFinishViewModel
+    private lateinit var emotionModel: EmotionModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 🔹 ViewBinding 초기화
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        // ✅ 감정 상태 복원
+        //emotionModel.loadEmotionState()
+
+        // ✅ 마지막 화면 복원
+        //restoreLastFragment()
 
 
         // 특정 시간에 띄우기
@@ -59,6 +69,30 @@ class MainActivity : AppCompatActivity() {
             true
         }
     }
+
+    // 마지막 화면 저장
+    private fun saveLastFragment(fragmentTag: String) {
+        val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("last_fragment", fragmentTag).apply()
+    }
+
+    // 마지막 화면 복원
+    private fun restoreLastFragment() {
+        val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val lastFragment = sharedPreferences.getString("last_fragment", "HomeFragment")
+
+        val fragment = when (lastFragment) {
+            //"EmotionFinalFragment" -> EmotionFinalFragment()
+            //"EmotionManageChoiceFragment" -> EmotionManageChoiceFragment()
+            else -> HomeFragment()
+        }
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .commit()
+    }
+
+
     fun showTargetFragment() {
         val fragment = TodayFinishFragment()
         supportFragmentManager.beginTransaction()
