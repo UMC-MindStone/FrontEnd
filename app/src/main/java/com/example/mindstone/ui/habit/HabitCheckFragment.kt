@@ -296,7 +296,7 @@ class HabitCheckFragment : Fragment() {
         val habitMap = habitTotal?.associate { it.habitId to it.title }
 
         Log.d("GGGG","$habitMap")
-        val title = habitMap?.get(habitHistory.habitHistoryId)
+        val title = habitMap?.get(habitHistory.habitId)
         Log.d("GGGG","${habitHistory.habitId},${habitHistory.habitHistoryId}")
 
         frameLayoutBinding.frameHabitCheckHabitTv.text = title
