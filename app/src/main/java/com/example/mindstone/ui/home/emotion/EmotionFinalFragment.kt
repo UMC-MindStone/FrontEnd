@@ -27,6 +27,7 @@ import com.example.mindstone.ui.home.HomeFragment
 import com.example.mindstone.ui.home.emotion.negative.EmotionManageChoiceFragment
 import com.example.mindstone.ui.home.emotion.view.EmotionModel
 import com.example.mindstone.ui.home.emotion.view.EmotionNoteViewModel
+import com.example.mindstone.ui.home.emotion.view.EmotionViewModel
 import com.example.mindstone.ui.search.SurveyViewModel
 import kotlinx.coroutines.launch
 
@@ -38,6 +39,7 @@ class EmotionFinalFragment : Fragment() {
     private lateinit var emotionStatusBar: EmotionStatusBar
     private lateinit var viewModel: EmotionModel
     private val emotionNoteViewModel: EmotionNoteViewModel by viewModels()
+    private val emotionViewModel: EmotionViewModel by viewModels()
 
     private var userName: String = "사용자"
 
@@ -61,12 +63,23 @@ class EmotionFinalFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(EmotionModel::class.java)
 
-        emotionStatusBar = binding.statusBar // ✅ EmotionStatusBar 연결
 
-        // ✅ 감정 비율을 실시간으로 감지하여 상태바 업데이트
+
+        // ✅ 감정 상태바에 업데이트된 감정 비율 반영
+        emotionStatusBar = binding.statusBar
+
+        // ✅ EmotionViewModel에서 감정 통계 불러오기 (EmotionModel과 동기화)
+        val authToken = getUserToken()
+
+        // ✅ API 호출 후 감정 데이터가 EmotionModel에 전달된 다음, 상태바 업데이트
+        emotionViewModel.fetchEmotionStatistics(authToken, viewModel)
+
+        // ✅ 감정 상태바 업데이트 (순서 변경: API 응답 후 반영되도록)
         viewModel.normalizedEmotionRatios.observe(viewLifecycleOwner) { normalizedRatios ->
-            emotionStatusBar.updateEmotions(normalizedRatios) // ✅ 바로 최신 비율 적용
+            Log.d("EmotionFinalFragment", "📊 감정 상태바 업데이트됨: $normalizedRatios")
+            emotionStatusBar.updateEmotions(normalizedRatios)
         }
+
 
         // 캐릭터 업데이트
         viewModel.dominantEmotion.observe(viewLifecycleOwner) { dominantEmotion ->
@@ -109,12 +122,6 @@ class EmotionFinalFragment : Fragment() {
         saveEmotionData()
 
 
-        // 캐릭터 변경 (최근 감정 기준)
-        viewModel.recentEmotion.removeObservers(viewLifecycleOwner)
-        viewModel.recentEmotion.observe(viewLifecycleOwner) { recentEmotion ->
-            updateCharacter(recentEmotion)
-        }
-
         // 감정에 맞는 상태 업데이트
         viewModel.emotion.removeObservers(viewLifecycleOwner)
         viewModel.emotion.observe(viewLifecycleOwner) { emotion ->
@@ -123,6 +130,8 @@ class EmotionFinalFragment : Fragment() {
 
         viewModel.selectEmotion(selectedEmotion, colorResId, isPositive)
         hideAllEmotionViews()
+
+
 
         // 부정적 감정이면 finalStatus2Tv 보이기
         if (selectedEmotion in listOf("화남", "우울", "슬픔")) {
@@ -185,11 +194,8 @@ class EmotionFinalFragment : Fragment() {
         Log.d("EmotionFinalFragment", "✅ SharedPreferences에 stress_reason_id 저장됨: $id")
     }
 
-    // ✅ SharedPreferences에서 EmotionNote의 id 불러오기
-    private fun getStressReasonId(): Int {
-        val sharedPreferences = requireContext().getSharedPreferences("emotion_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getInt("stress_reason_id", -1) // 기본값 -1
-    }
+
+
 
 
     // 감정 종류 변환 (한글 → 영어)

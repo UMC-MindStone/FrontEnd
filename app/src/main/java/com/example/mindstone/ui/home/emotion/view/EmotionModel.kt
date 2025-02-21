@@ -1,10 +1,19 @@
 package com.example.mindstone.ui.home.emotion.view
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mindstone.R
+import com.example.mindstone.data.remote.RetrofitClient
+import com.example.mindstone.domain.entity.EmotionData
+import com.example.mindstone.domain.entity.EmotionResponse
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class EmotionModel : ViewModel() {
 
@@ -63,10 +72,6 @@ class EmotionModel : ViewModel() {
 
 
 
-
-
-
-
     // 가장 비율 높은 감정
     private val _dominantEmotion = MutableLiveData<String>()
     val dominantEmotion: LiveData<String> get() = _dominantEmotion
@@ -74,6 +79,8 @@ class EmotionModel : ViewModel() {
     // 최근 선택한 감정 (캐릭터 상태 변경을 위해)
     private val _recentEmotion = MutableLiveData<String>()
     val recentEmotion: LiveData<String> get() = _recentEmotion
+
+
 
     fun selectEmotion(emotion: String, colorResId: Int, isPositive: Boolean) {
         _emotion.value = emotion
@@ -95,6 +102,36 @@ class EmotionModel : ViewModel() {
     private val _actualEmotionValues = MutableLiveData<MutableMap<String, Float>>().apply { value = mutableMapOf() }
     val actualEmotionValues: LiveData<MutableMap<String, Float>> get() = _actualEmotionValues
 
+
+
+    /**
+     * 🚀 EmotionViewModel에서 API 데이터를 받아와서 상태 업데이트
+     */
+    fun fetchEmotion(data: MutableMap<String, Float>) {
+        Log.d("EmotionModel", "✅ fetchEmotion() 실행됨! data: $data") // ✅ 로그 추가
+
+        _actualEmotionValues.value = data
+        updateNormalizedRatios(data)
+    }
+
+    /**
+     * 🚀 API에서 받은 감정 데이터를 100% 기준으로 변환하여 UI 업데이트
+     */
+    private fun updateNormalizedRatios(actualValues: MutableMap<String, Float>) {
+        val total = actualValues.values.sum()
+        val normalizedRatios = if (total > 0) {
+            actualValues.mapValues { (_, v) -> (v / total) * 100 }.toMutableMap()
+        } else {
+            actualValues
+        }
+
+        Log.d("EmotionModel", "✅ 감정 비율 변환됨! normalizedRatios: $normalizedRatios") // ✅ 로그 추가
+
+        _normalizedEmotionRatios.value = normalizedRatios
+
+        updateDominantEmotion()
+    }
+
     fun addEmotion(emotion: String, value: Float) {
         val actualValues = _actualEmotionValues.value?.toMutableMap() ?: mutableMapOf()
 
@@ -110,27 +147,6 @@ class EmotionModel : ViewModel() {
 
         _actualEmotionValues.value = actualValues
 
-    }
-
-    // ✅ UI 비율 변환 함수 (100% 기준으로 변환)
-    private fun updateNormalizedRatios(actualValues: MutableMap<String, Float>) {
-        val total = actualValues.values.sum()
-
-        // ✅ UI에서 100% 기준으로 정규화된 감정 비율 저장
-        val normalizedRatios = if (total > 0) {
-            actualValues.mapValues { (_, v) -> (v / total) * 100 }.toMutableMap()
-        } else {
-            actualValues
-        }
-
-        // ✅ 디버깅 로그 출력
-        Log.d("EmotionViewModel", "🔴 Total Emotion Sum: $total")
-        Log.d("EmotionViewModel", "🟣 Normalized Emotion Ratios (for UI): $normalizedRatios")
-
-        _normalizedEmotionRatios.value = normalizedRatios
-
-        // ✅ UI 비율 기준으로 지배적인 감정 업데이트
-        updateDominantEmotion()
     }
 
     // ✅ 지배적인 감정을 찾는 함수 (이제 UI에서 사용하는 비율 기반으로 계산)
@@ -157,6 +173,44 @@ class EmotionModel : ViewModel() {
         Log.d("EmotionViewModel", "🏆 최종 지배적인 감정: $selectedEmotion")
         _dominantEmotion.value = selectedEmotion
     }
+
+
+
+//    private val _emotionData = MutableLiveData<EmotionData?>()
+//    val emotionData: LiveData<EmotionData?> get() = _emotionData
+//
+//    fun fetchEmotionStatistics(authToken: String) {
+//        val call = RetrofitClient.emotionService.getEmotionStatistics("Bearer $authToken")
+//
+//        call.enqueue(object : Callback<EmotionResponse> {
+//            override fun onResponse(call: Call<EmotionResponse>, response: Response<EmotionResponse>) {
+//                if (response.isSuccessful) {
+//                    response.body()?.result?.let { emotionData ->
+//                        _emotionData.value = emotionData  // 기존 로직 유지
+//
+//                        // ✅ API 응답을 MutableMap<String, Float> 형태로 변환 후 저장
+//                        val emotionMap = mutableMapOf(
+//                            "anger" to emotionData.anger.toFloat(),
+//                            "depression" to emotionData.depression.toFloat(),
+//                            "sad" to emotionData.sad.toFloat(),
+//                            "calm" to emotionData.calm.toFloat(),
+//                            "joy" to emotionData.joy.toFloat(),
+//                            "thrill" to emotionData.thrill.toFloat(),
+//                            "happiness" to emotionData.happiness.toFloat()
+//                        )
+//
+//                        // ✅ _actualEmotionValues 업데이트
+//                        fetchEmotion(emotionMap)
+//                    }
+//                } else {
+//                    _emotionData.value = null  // 에러 처리
+//                }
+//            }
+//            override fun onFailure(call: Call<EmotionResponse>, t: Throwable) {
+//                _emotionData.value = null  // 네트워크 오류 처리
+//            }
+//        })
+//    }
 
 
 

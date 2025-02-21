@@ -6,10 +6,17 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.mindstone.R
+import com.example.mindstone.data.remote.RetrofitClient
 import com.example.mindstone.databinding.FragmentAccount2Binding
+import com.example.mindstone.domain.entity.NicknameUpdateRequest
+import com.example.mindstone.domain.entity.NicknameUpdateResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class Account2Fragment : Fragment() {
 
@@ -44,11 +51,51 @@ class Account2Fragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // 완료 버튼 클릭 시 동작
+        // 완료 버튼 클릭 시 닉네임 수정 API 호출
         binding.tvComplete.setOnClickListener {
-            // Navigation Component를 사용해 account1Fragment로 이동
-            findNavController().navigate(R.id.action_account2Fragment_to_account1Fragment)
+            val newNickname = binding.etNickname.text.toString().trim()
+            if (newNickname.isNotEmpty()) {
+                updateNickname(newNickname)
+            } else {
+                showToast("닉네임을 입력해주세요.")
+            }
         }
+
+        // 뒤로 가기 버튼
+        binding.ibBackAccount2.setOnClickListener {
+            parentFragmentManager.popBackStack() // ✅ 현재 Fragment를 종료하고 이전 Fragment로 돌아가기
+        }
+    }
+
+    private fun updateNickname(nickname: String) {
+        val request = NicknameUpdateRequest(nickname)
+        RetrofitClient.myPageService.updateNickname(request)
+            .enqueue(object : Callback<NicknameUpdateResponse> {
+                override fun onResponse(call: Call<NicknameUpdateResponse>, response: Response<NicknameUpdateResponse>) {
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            if (it.isSuccess) {
+                                showToast("닉네임이 변경되었습니다.")
+
+                                // ✅ 닉네임 변경 후 이전 Fragment(즉, Account1Fragment)로 돌아가기
+                                parentFragmentManager.popBackStack()
+                            } else {
+                                showToast("닉네임 변경 실패: ${it.message}")
+                            }
+                        }
+                    } else {
+                        showToast("서버 오류: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<NicknameUpdateResponse>, t: Throwable) {
+                    showToast("네트워크 오류: ${t.message}")
+                }
+            })
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

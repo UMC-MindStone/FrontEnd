@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -167,6 +168,7 @@ class EmotionManageActionFragment : Fragment() {
             viewModel2.fetchAIStressRecommendations("Bearer $accessToken", previousRecommand)
         } else {
             Log.e("TOKEN_ERROR", "Access token is null or empty")
+            Toast.makeText(requireContext(), "하루에 사용가능한 횟수를 모두 사용하였습니다.", Toast.LENGTH_LONG).show()
         }
     }
 
